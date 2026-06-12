@@ -5,7 +5,7 @@ import { defineAstroPaperConfig } from "./src/types/config";
 export default defineAstroPaperConfig({
   site: {
     url: "https://colorfulrl.github.io",
-    title: "Reinforcement Learning — Research Blog",
+    title: "Colorful RL",
     description:
       "Cùng chia sẻ kiến thức và nghiên cứu về Reinforcement Learning",
     author: "Phạm Nhật Khoa",
