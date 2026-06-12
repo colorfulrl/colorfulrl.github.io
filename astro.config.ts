@@ -22,7 +22,7 @@ import config from "./astro-paper.config";
 // Đổi `base` khi tạo GH Pages repo. Nếu deploy lên user-page
 // (https://<user>.github.io/) thì để base = "/". Nếu là project-page
 // (https://<user>.github.io/<repo>/) thì đặt = "/<repo>/".
-const BASE_PATH = "/world-models-blog/";
+const BASE_PATH = "/";
 
 export default defineConfig({
   site: config.site.url,
