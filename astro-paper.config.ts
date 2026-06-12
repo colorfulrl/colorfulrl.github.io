@@ -7,7 +7,7 @@ export default defineAstroPaperConfig({
     url: "https://colorfulrl.github.io",
     title: "Colorful RL",
     description:
-      "Cùng chia sẻ kiến thức và nghiên cứu về Reinforcement Learning",
+      "Cùng chia sẻ kiến thức và nghiên cứu về Reinforcement Learning  ",
     author: "Phạm Nhật Khoa",
     profile: "https://github.com/colorfulrl",
     ogImage: "default-og.jpg",
