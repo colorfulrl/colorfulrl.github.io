@@ -17,33 +17,50 @@
     var(--font-google-sans-code), ui-monospace, "Cascadia Code", monospace;
 }
 
-/* ===== Light theme — Dreamer Pastel =====
-   Off-white paper bg, mint/sage primary accent, apricot secondary.
+/* ===== Rainbow gradient — matches ColorfulRL logo =====
+   Purple → Indigo → Blue → Cyan → Green → Yellow → Orange → Red
+*/
+:root {
+  --rainbow: linear-gradient(
+    135deg,
+    #9333ea 0%,
+    #4f46e5 18%,
+    #2563eb 35%,
+    #0ea5e9 50%,
+    #10b981 65%,
+    #eab308 80%,
+    #f97316 90%,
+    #ef4444 100%
+  );
+}
+
+/* ===== Light theme — ColorfulRL Day =====
+   Clean cool-white bg, royal blue accent, navy text.
 */
 :root,
 [data-theme="light"] {
-  --background: #fbfaf7;
-  --surface: #f3efe7;
-  --foreground: #2a2a2a;
-  --accent: #4f9d83;
-  --accent-soft: #6ab39b;
+  --background: #f7f8ff;
+  --surface: #edf0fc;
+  --foreground: #1a1b2e;
+  --accent: #2952d9;
+  --accent-soft: #4a6fe8;
   --accent-foreground: #ffffff;
-  --muted: #ede8df;
-  --muted-foreground: #6e6a64;
-  --border: #ddd6c5;
+  --muted: #e2e6f7;
+  --muted-foreground: #5a6080;
+  --border: #c5cceb;
 }
 
-/* ===== Dark theme — Deep Lab =====
-   Đậm hơn để cùng vibe "research lab về đêm", giữ accent xanh-mint dịu.
+/* ===== Dark theme — ColorfulRL Night =====
+   Deep dark navy bg, bright electric blue accent.
 */
 [data-theme="dark"] {
-  --background: #18211e;
-  --surface: #1f2a26;
-  --foreground: #f0ecdf;
-  --accent: #84d4b8;
-  --accent-soft: #6ab39b;
-  --accent-foreground: #18211e;
-  --muted: #2a3a35;
-  --muted-foreground: #b5b1a2;
-  --border: #3a4a44;
+  --background: #0c0e1a;
+  --surface: #141629;
+  --foreground: #e2e8ff;
+  --accent: #5577ff;
+  --accent-soft: #7b96ff;
+  --accent-foreground: #0c0e1a;
+  --muted: #1c2040;
+  --muted-foreground: #8090c5;
+  --border: #262d52;
 }
