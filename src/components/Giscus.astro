@@ -1,0 +1,49 @@
+---
+---
+
+<div id="giscus-container" class="mt-8">
+  <script
+    is:inline
+    src="https://giscus.app/client.js"
+    data-repo="phamnhatkhoa2506/world-models-blog"
+    data-repo-id="R_kgDOSu3eZw"
+    data-category="Announcements"
+    data-category-id="DIC_kwDOSu3eZ84C-4Tg"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme="light"
+    data-lang="vi"
+    crossorigin="anonymous"
+    async
+  ></script>
+</div>
+
+<script is:inline>
+  function setGiscusTheme(theme) {
+    const iframe = document.querySelector("iframe.giscus-frame");
+    if (iframe) {
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: theme === "dark" ? "dark" : "light" } } },
+        "https://giscus.app"
+      );
+    }
+  }
+
+  function initGiscusTheme() {
+    const theme = document.documentElement.getAttribute("data-theme") ?? "light";
+    setGiscusTheme(theme);
+  }
+
+  // Sync theme khi trang load
+  document.addEventListener("astro:page-load", initGiscusTheme);
+
+  // Sync theme khi user đổi theme
+  const observer = new MutationObserver(() => {
+    const theme = document.documentElement.getAttribute("data-theme") ?? "light";
+    setGiscusTheme(theme);
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
