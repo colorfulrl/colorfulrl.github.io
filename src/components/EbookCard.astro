@@ -7,14 +7,17 @@ import config from "@/config";
 type Props = CollectionEntry<"ebooks">;
 
 const { data } = Astro.props;
-const { title, author, description, cover, link } = data;
+const { title, author, description, descriptionEn, cover, link } = data;
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
+
+const localizedDescription =
+  locale === "en" ? descriptionEn ?? description : description;
 ---
 
-<li class="border-border bg-surface flex flex-col overflow-hidden rounded-lg border">
-  <div class="bg-muted aspect-[2/3] w-full overflow-hidden">
+<li class="border-border bg-surface flex flex-row overflow-hidden rounded-lg border">
+  <div class="bg-muted aspect-[2/3] w-24 shrink-0 overflow-hidden sm:w-32">
     {
       cover ? (
         <Image
@@ -24,7 +27,7 @@ const t = useTranslations(locale);
           class="h-full w-full object-cover"
         />
       ) : (
-        <div class="text-muted-foreground flex h-full w-full items-center justify-center text-sm italic">
+        <div class="text-muted-foreground flex h-full w-full items-center justify-center p-2 text-center text-xs italic">
           {title}
         </div>
       )
@@ -33,7 +36,9 @@ const t = useTranslations(locale);
   <div class="flex flex-1 flex-col gap-2 p-4">
     <h2 class="font-display text-lg font-semibold tracking-tight">{title}</h2>
     {author && <p class="text-muted-foreground text-sm">{t.ebooks.by} {author}</p>}
-    {description && <p class="text-sm leading-relaxed">{description}</p>}
+    {localizedDescription && (
+      <p class="text-sm leading-relaxed">{localizedDescription}</p>
+    )}
     <div class="mt-auto pt-2">
       {
         link ? (

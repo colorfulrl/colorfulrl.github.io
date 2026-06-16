@@ -14,6 +14,7 @@ import LinkButton from "@/components/LinkButton.astro";
 import FloatingDecor from "@/components/decor/FloatingDecor.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { useTranslations } from "@/i18n";
+import { getAssetPath } from "@/utils/withBase";
 import config from "@/config";
 
 const { socials, posts: postsConfig } = config;
@@ -83,7 +84,7 @@ const homePath = getRelativeLocaleUrl(locale, "");
         </LinkButton>
         <a
           target="_blank"
-          href={getRelativeLocaleUrl(locale, "rss.xml")}
+          href={getAssetPath("rss.xml")}
           aria-label="RSS Feed"
           title="RSS Feed"
           class="text-accent hover:text-accent-soft ml-auto"

@@ -45,7 +45,10 @@ const ebooks = defineCollection({
     z.object({
       title: z.string(),
       author: z.string().optional(),
+      // description = bản tiếng Việt (mặc định). descriptionEn = bản tiếng Anh,
+      // hiện khi xem ở /en/ebooks; nếu không có thì fallback dùng description.
       description: z.string().optional(),
+      descriptionEn: z.string().optional(),
       // Đặt file ảnh bìa (vd. cover.jpg) cùng thư mục với index.md, rồi tham chiếu ở đây.
       cover: image().optional(),
       // Để trống lúc mới thêm sách, điền link sau khi có.
