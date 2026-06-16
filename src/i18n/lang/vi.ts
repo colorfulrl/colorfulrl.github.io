@@ -4,10 +4,13 @@ export default {
   nav: {
     home: "Trang chủ",
     posts: "Bài viết",
-    tags: "Chủ đề",
+    tags: "Thẻ",
     about: "Giới thiệu",
     archives: "Lưu trữ",
     search: "Tìm kiếm",
+    ebooks: "Ebook",
+    categories: "Chủ đề",
+    more: "Thêm",
   },
   post: {
     publishedAt: "Đăng",
@@ -52,6 +55,20 @@ export default {
 
     searchTitle: "Tìm kiếm",
     searchDesc: "Tìm bài viết bất kỳ…",
+
+    ebooksTitle: "Ebook gợi ý",
+    ebooksDesc: "Những ebook mình đã đọc và muốn giới thiệu tới bạn.",
+
+    categoryTitle: "Chủ đề",
+    categoryDesc: "Tất cả bài có chủ đề",
+
+    categoriesTitle: "Chủ đề",
+    categoriesDesc: "Mọi chủ đề được dùng để phân loại bài viết.",
+  },
+  ebooks: {
+    viewLink: "Xem ebook",
+    comingSoon: "Sắp có liên kết",
+    by: "Tác giả",
   },
   a11y: {
     skipToContent: "Bỏ qua tới nội dung",

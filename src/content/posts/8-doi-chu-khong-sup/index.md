@@ -21,7 +21,7 @@ description: >-
 
 ## Table of contents
 
-## 0. Hai cách đổ lỗi cho cùng một thất bại
+## 1. Hai cách đổ lỗi cho cùng một thất bại
 
 Cho một agent một môi trường reward thưa — phần thưởng hiếm, hầu hết các bước là số không —
 và nó thường học kém. Câu hỏi: *vì sao?* Có hai câu trả lời nghe đều hợp lý, nhưng chỉ vào
@@ -40,9 +40,9 @@ phá. Chữa nhầm thì vô ích. Vậy với **Dreamer** — một world model
 sát* — khi nó gục dưới reward thưa, là cái nào?
 
 Tôi đặt cược trước, viết ra giấy: **starvation, không collapse.** Lý do có cơ sở cơ học, tôi
-sẽ nói ở §4. Rồi tôi đi đo.
+sẽ nói ở §5. Rồi tôi đi đo.
 
-## 1. Một cái thước cho "biểu diễn có sụp không": effective rank
+## 2. Một cái thước cho "biểu diễn có sụp không": effective rank
 
 Để đo "biểu diễn có còn dùng nhiều chiều hay đã nén về một điểm", có một con số gọn:
 **effective rank** (tôi dùng định nghĩa srank của Kumar 2020).
@@ -59,7 +59,7 @@ thái, trục sau ít dần. **srank = cần bao nhiêu trục đầu để gom 
 Với latent 640 chiều của tôi, một biểu diễn khỏe cho srank cỡ vài trăm. Tôi log nó mỗi lần
 đánh giá, song song với điểm số.
 
-## 2. Kết quả đầu: policy chết, biểu diễn vẫn sống
+## 3. Kết quả đầu: policy chết, biểu diễn vẫn sống
 
 Tôi lấy cartpole — một họ task tôi có cả bản reward dày lẫn reward thưa *cùng động lực*, nên
 khác biệt duy nhất là độ thưa của phần thưởng. Chạy cả hai, đo điểm và srank.
@@ -82,7 +82,7 @@ suy thoái *có hệ thống* khi reward thưa dần. Nhưng cái tôi thấy l�
 phần thưởng rồi học ngon, hoặc không chạm được và đứng im với biểu diễn vẫn nguyên vẹn" —
 đó là chữ ký của một vấn đề *tìm đường*, không phải vấn đề *biểu diễn*.
 
-## 3. Cái bẫy: một con số phẳng chứng minh được gì?
+## 4. Cái bẫy: một con số phẳng chứng minh được gì?
 
 Đến đây tôi suýt viết kết luận. Nhưng có một câu hỏi tự dội lại, và nó là toàn bộ lý do bài
 này đáng viết:
@@ -98,10 +98,10 @@ bệnh nhân khỏe; nó chứng minh nhiệt kế hỏng.
 > tin "biểu diễn không sụp vì srank không tụt", tôi phải tự tạo ra một ca biểu diễn **chắc
 > chắn** sụp, và kiểm xem srank của tôi có bắt được nó không.
 
-Đây là bước mà tôi nghĩ phân biệt đo-cho-có với đo-để-biết. Không có nó, cả §2 chỉ là một
+Đây là bước mà tôi nghĩ phân biệt đo-cho-có với đo-để-biết. Không có nó, cả §3 chỉ là một
 biểu đồ phẳng đẹp mắt mà vô nghĩa.
 
-## 4. Hiệu chuẩn cái thước bằng một ablation
+## 5. Hiệu chuẩn cái thước bằng một ablation
 
 Làm sao tạo một ca collapse *chắc chắn*? Quay lại lý do tôi cược starvation ngay từ đầu.
 
@@ -125,7 +125,7 @@ Kết quả sạch:
   cùng thời điểm, rõ nhất ở giai đoạn đầu.
 
 Vậy là cái thước **nhạy**. srank *biết* tụt khi biểu diễn thật sự sụp. Điều đó cứu toàn bộ
-§2: srank giữ cao ở các run reward-thưa-thất-bại bây giờ *có nghĩa* — biểu diễn thật sự khỏe,
+§3: srank giữ cao ở các run reward-thưa-thất-bại bây giờ *có nghĩa* — biểu diễn thật sự khỏe,
 không phải cái thước bị kẹt. Và như một phần thưởng kèm theo, cùng cái ablation này trả lời
 luôn *cơ chế*: **chính recon+KL là thứ giữ cho biểu diễn của Dreamer không sụp** — bỏ nó đi,
 Dreamer cũng collapse y như model-free, ngay cả trên task reward dày.
@@ -137,7 +137,7 @@ nghiệm này vì lỡ chạy nó ở một cỡ latent khác — số srank tuy
 phải chạy lại cho khớp. Lại một lần nữa: con số chỉ có nghĩa khi mọi thứ quanh nó được giữ
 giống nhau.)*
 
-## 5. Một quan sát thì chưa thành quy luật: thử ở hai sân khác
+## 6. Một quan sát thì chưa thành quy luật: thử ở hai sân khác
 
 Mọi thứ trên đều ở cartpole. Trước khi tin, tôi mang câu hỏi sang hai họ task khác hẳn: một
 con **tay máy hai khớp với tới đích**, và một trò **hất bóng vào cốc** (phần thưởng nhị phân
@@ -148,7 +148,7 @@ Cùng một câu hỏi: có run nào srank tụt về vùng collapse không? Câ
 một phần ba quãng đường, chưa học xong — mà srank vẫn nằm gọn trong vùng khỏe. Đúng cái vùng
 giữa mà nếu collapse có thật thì dễ lộ nhất, nó vẫn không lộ.
 
-## 6. Tôi kết luận được gì — và không được gì
+## 7. Tôi kết luận được gì — và không được gì
 
 Được: trên bản Dreamer tôi tự dựng, **reward thưa gây policy starvation chứ không
 representation collapse**, và lý do cơ học là biểu diễn được nặn bởi recon+KL độc lập với
@@ -161,7 +161,7 @@ luật cho mọi world model. Đây là một *research note* — một quan sá
 đáng tin với phóng đại.
 
 Nhưng nếu có một thứ tôi muốn mang ra khỏi bài này, nó không phải kết luận về Dreamer. Nó là
-cái khung ở §3–§4:
+cái khung ở §4–§5:
 
 > Đừng tin một đường phẳng cho tới khi bạn đã làm nó cong. Trước khi kết luận "X không đổi
 > nên hệ khỏe", hãy tự tay tạo một ca mà X *phải* đổi, và kiểm cái thước có bắt được không.

@@ -16,7 +16,7 @@ description: >-
 
 ## Table of contents
 
-## 0. Một lời giải thích chưa được kiểm
+## 1. Một lời giải thích chưa được kiểm
 
 Ở [bài trước](/world-models-blog/posts/5-mo-dai-co-troi-khong/mo-dai-co-troi-khong/) tôi
 đo "độ trôi" của giấc mơ mà world model tự dựng: cho nó nhìn một quan sát, rồi bắt nó mơ
@@ -38,7 +38,7 @@ cũng bịa được một câu chuyện nghe xuôi tai. Vậy làm sao biết n
 
 Đó là một dự đoán *bác bỏ được*. Nên tôi đi kiểm.
 
-## 1. Cách kiểm: bắt chính mình sai nếu mình sai
+## 2. Cách kiểm: bắt chính mình sai nếu mình sai
 
 Tôi chọn bốn môi trường, chia hai nhóm:
 
@@ -54,7 +54,7 @@ Tôi viết dự đoán ra giấy *trước khi chạy*, kèm điều kiện th�
 *không* tuần hoàn mà vẫn dao động, thì lời giải thích của tôi sụp đổ. Viết trước nghĩa là
 sau khi thấy số tôi không được phép sửa câu chuyện cho khớp.
 
-## 2. Cái bẫy suýt làm tôi kết luận sai
+## 3. Cái bẫy suýt làm tôi kết luận sai
 
 Khi kết quả về, có một con số chặn tôi lại: reacher (với tay tới đích) đạt điểm ~95–187
 trên thang 1000. Tức là nó **gần như không học được**.
@@ -73,7 +73,7 @@ nó như "bằng chứng".
 Sau khi loại reacher, bài kiểm sạch còn lại: cheetah + walker (tuần hoàn, học tốt) so với
 cartpole (không tuần hoàn, học ổn).
 
-## 3. Dự đoán đúng — và rồi một bất ngờ lớn hơn
+## 4. Dự đoán đúng — và rồi một bất ngờ lớn hơn
 
 **Phần dự đoán: đúng y như viết trên giấy.** Tôi đếm số "cú tụt" trong mỗi đường:
 
@@ -110,7 +110,7 @@ Một chi tiết tôi thấy đẹp: dù *trạng thái* của cartpole trong m�
 đổ), bền với kiểu lệch chi tiết. Trạng thái có thể loạn, mà tín hiệu học vẫn còn dùng được
 — đúng điều tôi đã thấy ở bài trước.
 
-## 4. Vì sao chuyện này giải thích Dreamer 4
+## 5. Vì sao chuyện này giải thích Dreamer 4
 
 Nhớ lại: Dreamer 4 (DeepMind, 2025) đổi sang một cách dự đoán mới (*x-prediction*) **để
 chống compounding error**, cho phép mơ dài tùy ý mà không vỡ. Ở [bài
@@ -128,7 +128,7 @@ của vấn đề mà Dreamer 4 phải dùng kiến trúc 2 tỉ tham số để
 Dreamer 4 — nhưng tôi *hiểu được điều kiện* khiến kỹ thuật của nó trở nên thiết yếu, thay
 vì thừa. Và đó, với một người ít tài nguyên, là một vị trí tốt để đứng cạnh frontier.
 
-## 5. Ba thí nghiệm, một câu hỏi tự lớn lên
+## 6. Ba thí nghiệm, một câu hỏi tự lớn lên
 
 Nhìn lại, ba dự án nghiên cứu nhỏ của tôi nối thành một chuỗi mà mỗi cái đẻ ra cái sau:
 
@@ -147,7 +147,7 @@ Tất nhiên vẫn còn lỗ hổng thành thật: reacher hỏng nên nhóm "kh
 có một thành viên chắc chắn (cartpole). Để nói mạnh về *cả nhóm* tôi cần thêm một môi
 trường không tuần hoàn mà học được. Đó là việc của lần sau.
 
-## 6. "Lần sau" đến sớm — và nó dạy tôi rằng tôi gọi sai tên
+## 7. "Lần sau" đến sớm — và nó dạy tôi rằng tôi gọi sai tên
 
 Lỗ hổng ở trên làm tôi khó chịu, nên tôi chạy thêm vài môi trường *không tuần hoàn nhưng
 học được*, để xem nhóm "không tuần hoàn" có thật sự đồng loạt vỡ không. Một trong số đó
@@ -204,7 +204,7 @@ thì không có phản hồi để cứu một hệ bất ổn. (Ghi chú thành
 của tôi, nên cả hai ca *bất ổn* trụ được đều là cartpole. Để nói chắc hơn tôi cần một ca
 bất ổn ngoài họ cartpole mà học được. Kết luận về *ổn định* thì đã đủ vững nhờ walker đứng.)
 
-## 7. Kết
+## 8. Kết
 
 Tôi bắt đầu với một nỗi nghi về lời giải thích của chính mình và đi tìm cách bắt nó sai. Nó
 sống sót qua phép thử đầu — rồi phép thử thứ hai dạy tôi rằng tôi đã *nắm đúng hiện tượng

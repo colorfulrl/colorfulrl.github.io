@@ -22,7 +22,7 @@ description: >-
 
 ## Table of contents
 
-## 0. Ba mươi giây nguy hiểm
+## 1. Ba mươi giây nguy hiểm
 
 Tôi vừa dựng lại DreamerV3 từ đầu bằng PyTorch — không copy, gõ lại từng mảnh để hiểu nó
 sống ra sao. Chạy trên `cheetah-run`, để 200 nghìn bước, rồi nhìn dòng cuối:
@@ -50,7 +50,7 @@ Nên thay vì ăn mừng, tôi làm cái việc mà lẽ ra một advisor sẽ b
 DreamerV3" là một **nghi phạm**, và đi tìm mọi cách nó có thể sai. Hóa ra có bốn cách. Tôi
 loại từng cái một.
 
-## 1. Nghi can thứ nhất: chúng tôi không đếm "bước" giống nhau
+## 2. Nghi can thứ nhất: chúng tôi không đếm "bước" giống nhau
 
 Cái bẫy đầu tiên rẻ tiền nhất, và tôi suýt bỏ qua: **"bước" của tôi và "bước" của họ không
 phải cùng một thứ.**
@@ -82,7 +82,7 @@ Bài học nhỏ mà tôi suýt vấp: **trước khi sướng vì một con s�
 bằng gì.** `action_repeat`, frame-skip, số môi trường song song — mỗi thứ bẻ cong "bước"
 theo một kiểu.
 
-## 2. Nghi can thứ hai: tôi đo lúc agent diễn, họ đo lúc agent tập
+## 3. Nghi can thứ hai: tôi đo lúc agent diễn, họ đo lúc agent tập
 
 Nghi can này tinh hơn nhiều, và nó là cái lớn nhất.
 
@@ -115,12 +115,12 @@ Cú nhảy từ ~700 lên 860 — khoảng 23% — chính là khoảng cách "di
 > là "chúng tôi có đang đo cùng một thứ ở cùng một khoảnh khắc không?". Eval-tất-định so với
 > train-có-nhiễu là cái bẫy so-táo-với-cam kinh điển, và nó luôn nghiêng về phía bạn.
 
-## 3. Nghi can thứ ba: tôi chơi ở mức dễ hơn
+## 4. Nghi can thứ ba: tôi chơi ở mức dễ hơn
 
 Còn lại khoảng cách ~700 (tôi, lúc tập) so với 482 (họ, lúc tập) ở cùng số khung hình. Dư
 ra ~45%. Cái này từ đâu?
 
-Quay lại `action_repeat = 2`. Nó không chỉ bẻ cong trục đếm bước (mục 1) — nó còn **làm bài
+Quay lại `action_repeat = 2`. Nó không chỉ bẻ cong trục đếm bước (mục 2) — nó còn **làm bài
 toán dễ đi**. Khi mỗi quyết định kéo dài hai khung hình, agent ra ít quyết định hơn cho cùng
 một quãng thời gian (500 thay vì 1000 trên mỗi tập), tín dụng (cái gì dẫn tới phần thưởng)
 lan ngược nhanh hơn, và việc thăm dò "đi được xa" hơn cho mỗi lần thử. Trên `cheetah`, lặp
@@ -140,7 +140,7 @@ Không còn một xu nào của khoảng cách cần tới giả thuyết "tôi 
 giải thích được bằng *cách tôi đo* và *mức tôi chơi*. Nghi phạm gốc — "tôi beat SOTA" —
 sụp đổ hoàn toàn.
 
-## 4. Hai bài học phụ mà cùng tuần đó dạy tôi
+## 5. Hai bài học phụ mà cùng tuần đó dạy tôi
 
 Trong lúc đối chứng, hai môi trường khác dạy tôi thêm hai cái bẫy nhỏ.
 
@@ -166,7 +166,7 @@ tốt.** Nếu bản dựng lại của tôi bỗng đạt acrobot 500 điểm t
 acrobot theo đúng thang và đúng độ-hỗn-loạn của bản gốc là bằng chứng tôi dựng lại *trung
 thực*.
 
-## 5. Phép thử cuối: nếu câu chuyện đúng, ba môi trường kia phải im lặng
+## 6. Phép thử cuối: nếu câu chuyện đúng, ba môi trường kia phải im lặng
 
 Tới đây tôi đã trừ xong mọi confound cho *một* môi trường — cheetah. Nhưng một lời giải
 thích chỉ thành kiến thức khi nó **dự đoán được điều mình chưa nhìn**. Câu chuyện ở trên —
@@ -210,7 +210,7 @@ Bản thân chênh lệch giữa hai lần chạy của *chính tôi* đã đủ
 đeo một vầng nhiễu quanh nó. Huống chi là đem so với con số của người khác, đo bằng giao
 thức khác.
 
-## 6. Vậy rốt cuộc tôi đã làm được gì?
+## 7. Vậy rốt cuộc tôi đã làm được gì?
 
 Không phải "vượt DreamerV3". Câu đó chết ngay khi tôi tháo nó ra.
 

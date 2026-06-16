@@ -16,7 +16,7 @@ description: >-
 
 ## Table of contents
 
-## 0. Vấn đề: vì sao phải "mơ"?
+## 1. Vấn đề: vì sao phải "mơ"?
 
 RL không có mô hình (model-free) như DQN hay PPO học bằng cách *thử và sai trong môi trường thật*. Vấn đề: nó **đói mẫu** — cần hàng triệu lần tương tác mới giỏi. Với người ít compute như mình, đó là rào cản lớn.
 
@@ -24,17 +24,17 @@ RL không có mô hình (model-free) như DQN hay PPO học bằng cách *thử 
 
 Dreamer V1 (Hafner et al. 2020) đưa ý tưởng này vào deep RL một cách sạch sẽ: học một world model, rồi **huấn luyện toàn bộ policy bên trong những giấc mơ do world model sinh ra** — gần như không cần chạm môi trường thật.
 
-## 1. Ba quyết định cốt lõi
+## 2. Ba quyết định cốt lõi
 
 Dreamer V1 đứng trên ba lựa chọn thiết kế:
 
 1. **World model sống trong không gian ẩn (latent) gọn nhẹ**, không phải pixel. Mô hình không mơ ra từng pixel ở mỗi bước tưởng tượng — nó mơ trong một vector trạng thái nén.
 2. **Học hành vi hoàn toàn trong tưởng tượng.** Actor (policy) và critic (hàm giá trị) khi cập nhật **không nhìn thấy** môi trường thật — chúng chỉ thấy các chuỗi do world model sinh.
-3. **Pathwise gradient chảy xuyên qua world model.** Đây là mẹo then chốt, mình sẽ nói ở §5 — và là điểm phân biệt Dreamer với cả model-free lẫn các world model đời trước.
+3. **Pathwise gradient chảy xuyên qua world model.** Đây là mẹo then chốt, mình sẽ nói ở §6 — và là điểm phân biệt Dreamer với cả model-free lẫn các world model đời trước.
 
 Giữ trong đầu một câu xuyên suốt bài: **actor chỉ giỏi tới mức world model cho phép.** (Mình đã học bài này theo cách đau thương ở [bài về Atari](/posts/vi-sao-dreamer-mu-truoc-atari).)
 
-## 2. World model = RSSM
+## 3. World model = RSSM
 
 Trái tim Dreamer là **RSSM** (Recurrent State-Space Model). Mỗi bước, trạng thái ẩn gồm **hai phần**:
 
@@ -52,7 +52,7 @@ Tách đôi như vậy cho ta cả hai: $h_t$ giữ thông tin dài hạn ổn �
 
 Khi huấn luyện world model, ta ép prior và posterior **gần nhau** (qua một số hạng KL). Vì sao? Để lúc mơ (chỉ có prior, mắt nhắm), giấc mơ không trôi xa khỏi thực tế (posterior, mắt mở từng thấy). Nếu prior dở, mơ một hồi là lạc vào thế giới ảo tưởng.
 
-## 3. Học world model: ba thứ phải đoán đúng
+## 4. Học world model: ba thứ phải đoán đúng
 
 World model học bằng cách xem lại các chuỗi đã lưu trong bộ nhớ (replay buffer) và tối ưu một hàm mất mát gồm **ba số hạng** (đây là ELBO mở rộng qua thời gian — họ hàng với VAE):
 
@@ -68,7 +68,7 @@ Trực giác từng phần:
 
 > Một cảnh báo mình học được khi tự code: số hạng KL hay đi kèm mẹo **free nats** (chỉ phạt KL khi vượt một ngưỡng sàn). Đặt sàn *cao hơn* KL tự nhiên của bài toán → gradient KL bị triệt tiêu → world model học latent kém. Mình từng để return cheetah-run nghẽn ở 449 chỉ vì free nats quá cao; hạ xuống đúng mức → 646. Chi tiết ở [bài thực nghiệm](/posts/vi-sao-dreamer-mu-truoc-atari).
 
-## 4. Học hành vi trong giấc mơ
+## 5. Học hành vi trong giấc mơ
 
 Khi world model đủ tốt, Dreamer **không** dùng môi trường thật để luyện policy. Thay vào đó:
 
@@ -112,7 +112,7 @@ Cả hai dùng *cùng* $V_\lambda$, nhưng xử lý khác nhau:
 - **Critic** học để **dự đoán** $V_\lambda$: $\mathcal{L}_{\text{critic}} = \big(v(s_\tau) - \text{sg}(V_\lambda)\big)^2$ (sg = stop-gradient, coi target là cố định).
 - **Actor** học để **làm $V_\lambda$ lớn lên**: $\mathcal{L}_{\text{actor}} = -V_\lambda$.
 
-## 5. Mẹo then chốt: pathwise gradient
+## 6. Mẹo then chốt: pathwise gradient
 
 Đây là chỗ Dreamer khác biệt thật sự, và cũng là chỗ đẹp nhất.
 
@@ -130,7 +130,7 @@ $$
 
 (Để so sánh: World Models của Ha & Schmidhuber dùng CMA-ES — tối ưu không cần gradient; Dreamer thay nó bằng gradient chảy qua mô hình.)
 
-## 6. Ba vòng lặp, gói lại
+## 7. Ba vòng lặp, gói lại
 
 Toàn bộ Dreamer V1 chạy ba vòng lặp đan xen:
 
@@ -142,7 +142,7 @@ Toàn bộ Dreamer V1 chạy ba vòng lặp đan xen:
 
 Vòng 1 tốn tương tác thật (thứ đắt đỏ), nên Dreamer cố làm ít. Vòng 2 và 3 — phần "luyện trong đầu" — chạy nhiều mà gần như miễn phí. Đó là nguồn gốc của sample-efficiency.
 
-## 7. Kết
+## 8. Kết
 
 Dreamer V1 là một bản tổng hợp đẹp: VAE (cho latent) + RSSM (cho thời gian) + actor-critic (cho hành vi) + pathwise gradient (cho hiệu quả), ráp lại thành một hệ thống học chơi bằng cách *mơ*.
 

@@ -3,7 +3,6 @@ import { Image } from "astro:assets";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import IconUnderline from "@/assets/icons/IconUnderline.svg";
 import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
-import IconArchive from "@/assets/icons/IconArchive.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
@@ -60,16 +59,15 @@ const isActive = (path: string) => {
         src={logoSrc}
         alt=""
         width={96}
-        height={96}
         loading="eager"
-        class="size-10 shrink-0 rounded-full ring-1 ring-border bg-background object-cover transition-transform group-hover:rotate-3 sm:size-12"
+        class="w-10 h-auto shrink-0 transition-transform group-hover:rotate-3 sm:w-12"
       />
       <span class="flex flex-col">
         <span class="font-display text-base font-semibold sm:text-lg">
-          World Models <span class="text-accent italic">&amp;</span> RL
+          Colorful RL
         </span>
         <span class="text-muted-foreground -mt-0.5 text-xs sm:text-[0.8rem]">
-          — Blog nghiên cứu
+          — Blog for everyone
         </span>
       </span>
     </a>
@@ -103,44 +101,83 @@ const isActive = (path: string) => {
         </li>
         <li class="col-span-2">
           <a
-            href={getRelativeLocaleUrl(locale, "tags")}
-            class:list={{ "active-nav": isActive("/tags") }}
-          >
-            {t.nav.tags}
-          </a>
-        </li>
-        <li class="col-span-2">
-          <a
             href={getRelativeLocaleUrl(locale, "about")}
             class:list={{ "active-nav": isActive("/about") }}
           >
             {t.nav.about}
           </a>
         </li>
-        {
-          features.showArchives && (
-            <li class="col-span-2">
-              <LinkButton
-                href={getRelativeLocaleUrl(locale, "archives")}
+        <li class="relative col-span-2">
+          <button
+            type="button"
+            id="nav-more-btn"
+            class="focus-outline group flex w-full items-center justify-center gap-1 px-4 py-3 font-medium hover:text-accent sm:w-auto sm:px-2 sm:py-1"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="nav-more-panel"
+          >
+            {t.nav.more}
+            <span
+              aria-hidden="true"
+              class="inline-block text-[0.6rem] transition-transform duration-200 group-aria-expanded:rotate-180"
+            >
+              ▾
+            </span>
+          </button>
+          <ul
+            id="nav-more-panel"
+            class="hidden w-full flex-col gap-1 ps-2 sm:absolute sm:end-0 sm:top-full sm:z-20 sm:mt-2 sm:w-48 sm:gap-0 sm:rounded-md sm:border sm:border-border sm:bg-background sm:py-1.5 sm:shadow-lg sm:ps-0"
+          >
+            <li>
+              <a
+                href={getRelativeLocaleUrl(locale, "categories")}
                 class:list={[
-                  "focus-outline flex size-full justify-center p-3 sm:relative sm:size-8 sm:p-0",
-                  { "active-nav": isActive("/archives") },
+                  "block px-4 py-2 text-center font-medium hover:text-accent sm:px-3 sm:py-1.5 sm:text-start",
+                  { "active-nav": isActive("/categories") },
                 ]}
-                title={t.nav.archives}
-                aria-label={t.nav.archives}
               >
-                <IconArchive class="hidden sm:absolute sm:top-1/2 sm:left-1/2 sm:block sm:size-6 sm:-translate-x-1/2 sm:-translate-y-1/2" />
-                <span class="sm:sr-only">{t.nav.archives}</span>
-                {isActive("/archives") && (
-                  <IconUnderline
-                    aria-hidden="true"
-                    class="scale-125 max-sm:hidden sm:absolute sm:bottom-0 sm:w-6"
-                  />
-                )}
-              </LinkButton>
+                {t.nav.categories}
+              </a>
             </li>
-          )
-        }
+            <li>
+              <a
+                href={getRelativeLocaleUrl(locale, "tags")}
+                class:list={[
+                  "block px-4 py-2 text-center font-medium hover:text-accent sm:px-3 sm:py-1.5 sm:text-start",
+                  { "active-nav": isActive("/tags") },
+                ]}
+              >
+                {t.nav.tags}
+              </a>
+            </li>
+            <li>
+              <a
+                href={getRelativeLocaleUrl(locale, "ebooks")}
+                class:list={[
+                  "block px-4 py-2 text-center font-medium hover:text-accent sm:px-3 sm:py-1.5 sm:text-start",
+                  { "active-nav": isActive("/ebooks") },
+                ]}
+              >
+                {t.nav.ebooks}
+              </a>
+            </li>
+            {
+              features.showArchives && (
+                <li>
+                  <a
+                    href={getRelativeLocaleUrl(locale, "archives")}
+                    class:list={[
+                      "block px-4 py-2 text-center font-medium hover:text-accent sm:px-3 sm:py-1.5 sm:text-start",
+                      { "active-nav": isActive("/archives") },
+                    ]}
+                  >
+                    {t.nav.archives}
+                  </a>
+                </li>
+              )
+            }
+          </ul>
+        </li>
         {
           features.search !== false && (
             <li class="col-span-1 flex items-center justify-center">
@@ -215,4 +252,49 @@ const isActive = (path: string) => {
   toggleNav();
 
   document.addEventListener("astro:after-swap", toggleNav);
+
+  function closeNavMore() {
+    const moreBtn = document.querySelector<HTMLButtonElement>("#nav-more-btn");
+    const morePanel = document.querySelector<HTMLElement>("#nav-more-panel");
+    if (!moreBtn || !morePanel) return;
+
+    moreBtn.setAttribute("aria-expanded", "false");
+    morePanel.classList.add("hidden");
+    morePanel.classList.remove("flex");
+  }
+
+  function toggleNavMore() {
+    const moreBtn = document.querySelector<HTMLButtonElement>("#nav-more-btn");
+    const morePanel = document.querySelector<HTMLElement>("#nav-more-panel");
+    if (!moreBtn || !morePanel) return;
+
+    moreBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      const isOpen = moreBtn.getAttribute("aria-expanded") === "true";
+      moreBtn.setAttribute("aria-expanded", String(!isOpen));
+      morePanel.classList.toggle("hidden", isOpen);
+      morePanel.classList.toggle("flex", !isOpen);
+    });
+  }
+
+  toggleNavMore();
+
+  document.addEventListener("astro:after-swap", toggleNavMore);
+
+  // Registered once — looks up elements live, safe across client-side swaps.
+  document.addEventListener("click", e => {
+    const moreBtn = document.querySelector("#nav-more-btn");
+    const morePanel = document.querySelector("#nav-more-panel");
+    if (!moreBtn || !morePanel) return;
+    if (
+      !moreBtn.contains(e.target as Node) &&
+      !morePanel.contains(e.target as Node)
+    ) {
+      closeNavMore();
+    }
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeNavMore();
+  });
 </script>

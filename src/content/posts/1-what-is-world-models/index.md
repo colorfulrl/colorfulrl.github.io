@@ -14,6 +14,6 @@ description: >-
 
 ## Table of contents
 
-## 0. Vấn đề cần giải (vì sao cần thứ này)
+## 1. Vấn đề cần giải (vì sao cần thứ này)
 
-## 1. Ý tưởng 1 — λ-return: thay vì chọn 1 cái n, lấy trung bình MỌI n
+## 2. Ý tưởng 1 — λ-return: thay vì chọn 1 cái n, lấy trung bình MỌI n

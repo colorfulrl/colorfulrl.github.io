@@ -16,7 +16,7 @@ description: >-
 
 ## Table of contents
 
-## 0. Một con số nhảy bất ngờ
+## 1. Một con số nhảy bất ngờ
 
 Khi tôi cho Dreamer V1 (tự viết) chạy trên cheetah-run của DM Control, nó nghẽn ở mức return ~450/1000. Tôi đổi **đúng một** hyperparameter — `free_nats` từ 3.0 xuống 1.0 — và return nhảy lên **646**. Tăng 44% chỉ từ một dòng.
 
@@ -24,7 +24,7 @@ Phản xạ đầu tiên là hài lòng và đi tiếp. Nhưng tôi dừng lại
 
 > Lưu ý thành thật về quy mô: đây là một study nhỏ (một môi trường, vài seed). Nó **không** phải khám phá chấn động. Giá trị của nó là (a) một hiểu biết cụ thể về free nats, và (b) một minh họa *cách* làm research khi bạn ít tài nguyên. Tôi cố không thổi phồng.
 
-## 1. Free nats là gì
+## 2. Free nats là gì
 
 Dreamer học một world model bằng cách (một phần) tối thiểu hóa **KL divergence** giữa hai phân phối latent: *prior* (đoán trạng thái khi nhắm mắt) và *posterior* (suy ra trạng thái khi nhìn quan sát). KL này kéo hai bên về gần nhau.
 
@@ -36,7 +36,7 @@ $$
 
 Trực giác: cho model một "hạn mức KL miễn phí". Dưới hạn mức thì không phạt; trên thì phạt. Câu hỏi của tôi: **đặt hạn mức đó bao nhiêu, và tại sao nó quan trọng đến thế?**
 
-## 2. Làm research, không phải nghịch hyperparameter
+## 3. Làm research, không phải nghịch hyperparameter
 
 Sai lầm số một của người mới (tôi suýt mắc): chạy thử một đống giá trị, nhìn cái nào đẹp, rồi kể một câu chuyện hợp lý quanh nó. Đó không phải research — đó là *kể chuyện sau khi thấy kết quả*.
 
@@ -47,7 +47,7 @@ Tôi ép mình làm ngược lại: **viết giả thuyết ra giấy TRƯỚC k
 
 Viết trước nghĩa là sau khi thấy số, tôi *không được* sửa giả thuyết cho khớp. Đó là thứ giữ mình trung thực.
 
-## 3. Kết quả: sweet spot có thật
+## 4. Kết quả: sweet spot có thật
 
 Tôi quét free nats ∈ {0, 0.5, 1, 2, 3, 5}, mỗi giá trị vài seed, đo return tốt nhất (mean ± std):
 
@@ -62,9 +62,9 @@ Tôi quét free nats ∈ {0, 0.5, 1, 2, 3, 5}, mỗi giá trị vài seed, đo r
 
 Đường lõm, đỉnh quanh free nats ≈ 1. **H1 đúng.** Đặc biệt, free nats = 0 (phạt KL tối đa) cho return *thấp* — xác nhận đầu thấp cũng tệ, không chỉ đầu cao.
 
-(Một chi tiết tôi sẽ quay lại ở §5: con số 634 ở free nats=0.5 trông như đỉnh, nhưng nó chỉ có 1 seed — và là một seed "may". Đừng vội tin.)
+(Một chi tiết tôi sẽ quay lại ở §6: con số 634 ở free nats=0.5 trông như đỉnh, nhưng nó chỉ có 1 seed — và là một seed "may". Đừng vội tin.)
 
-## 4. Khúc ngoặt: `kl_raw` lộ ra HAI cơ chế hỏng
+## 5. Khúc ngoặt: `kl_raw` lộ ra HAI cơ chế hỏng
 
 Đây là lúc nghiên cứu trở nên thú vị — khi dữ liệu **bác bỏ một phần** giả thuyết của tôi và cho hiểu biết giàu hơn.
 
@@ -94,7 +94,7 @@ over-regularization    →    latent giàu, KL ~2    ←   sàn nuốt gradient
 
 Tồn tại một mức KL "tối ưu" cho latent (~2 nat ở cheetah-run); free nats nên đặt sao cho hạn mức miễn phí nhắm tới mức đó. Đây là hiểu biết tôi *không* có trước thí nghiệm, và thành thật mà nói, sâu hơn cách tôi từng đọc về free nats.
 
-## 5. Ba cái bẫy đọc dữ liệu (phần tôi học nhiều nhất)
+## 6. Ba cái bẫy đọc dữ liệu (phần tôi học nhiều nhất)
 
 Kết quả thì gọn, nhưng *đọc* nó đúng mới khó. Ba lần tôi suýt tự lừa:
 
@@ -104,7 +104,7 @@ Kết quả thì gọn, nhưng *đọc* nó đúng mới khó. Ba lần tôi su�
 
 **Bẫy 3 — cùng seed, khác kết quả.** Cùng một cấu hình (free nats = 1, seed = 42) cho 646 ở một lần chạy và 481 ở lần khác. Tôi tưởng seed khóa chặt kết quả — nhưng các phép tính trên GPU không hoàn toàn deterministic, nên vẫn có biến động run-to-run. "Seed" cố định điểm khởi đầu, *không* cố định toàn bộ. Một nguồn nhiễu nữa phải tính tới.
 
-## 6. Bài học lớn nhất về research
+## 7. Bài học lớn nhất về research
 
 Khi tôi viết H2, tôi nghĩ mình biết câu trả lời (một cơ chế: sàn nuốt gradient). Dữ liệu nói: "đúng một nửa — còn một cơ chế thứ hai mày chưa thấy."
 
@@ -114,7 +114,7 @@ Phản ứng đúng *không* phải thất vọng. Mà là phấn khích — vì
 
 Và đó là khác biệt giữa làm research và nghịch hyperparameter: nghịch thì dừng ở "646 đẹp đấy"; research thì hỏi "tại sao", viết giả thuyết trước, đọc dữ liệu honest, và *vui* khi mình sai một phần.
 
-## 7. Kết
+## 8. Kết
 
 Đây là dự án nghiên cứu đầu tiên của tôi, và nó nhỏ: một môi trường, vài seed, một hyperparameter. Tôi không khám phá ra gì làm rung chuyển ngành. Nhưng tôi đã đi trọn một vòng *đúng kỷ luật* — preregister, chạy, đọc trung thực, để dữ liệu sửa giả thuyết — và rút ra một hiểu biết cụ thể: **free nats hỏng theo hai cơ chế đối nghịch, và sweet spot là nơi hạn mức miễn phí gặp mức KL tự nhiên của bài toán.**
 

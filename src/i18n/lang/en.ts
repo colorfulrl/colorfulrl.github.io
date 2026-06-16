@@ -8,6 +8,9 @@ export default {
     about: "About",
     archives: "Archives",
     search: "Search",
+    ebooks: "Ebooks",
+    categories: "Categories",
+    more: "More",
   },
   post: {
     publishedAt: "Published at",
@@ -52,6 +55,20 @@ export default {
 
     searchTitle: "Search",
     searchDesc: "Search any article ...",
+
+    ebooksTitle: "Recommended Ebooks",
+    ebooksDesc: "Ebooks I've read and want to recommend to you.",
+
+    categoryTitle: "Category",
+    categoryDesc: "All the articles in the category",
+
+    categoriesTitle: "Categories",
+    categoriesDesc: "All the categories used to classify articles.",
+  },
+  ebooks: {
+    viewLink: "View ebook",
+    comingSoon: "Link coming soon",
+    by: "By",
   },
   a11y: {
     skipToContent: "Skip to content",

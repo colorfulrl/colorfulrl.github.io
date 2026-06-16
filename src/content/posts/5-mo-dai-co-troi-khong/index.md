@@ -16,7 +16,7 @@ description: >-
 
 ## Table of contents
 
-## 0. Một con vật mơ về chính nó đang chạy
+## 1. Một con vật mơ về chính nó đang chạy
 
 Dreamer học hành vi mà gần như không cần chạm vào môi trường thật. Nó dựng một
 *world model* — một mô phỏng bên trong — rồi cho agent "nhắm mắt mơ" tương lai vài
@@ -35,7 +35,7 @@ giới hạn việc mơ dài bao nhiêu là hữu ích?**
 > compute nhỏ. Giá trị không nằm ở "khám phá chấn động" mà ở (a) một câu trả lời cụ thể
 > và (b) nó tình cờ giải thích được một quyết định kiến trúc của một mô hình SOTA.
 
-## 1. Vì sao câu hỏi này không tầm thường — Dreamer 4
+## 2. Vì sao câu hỏi này không tầm thường — Dreamer 4
 
 Tháng 9/2025, DeepMind ra Dreamer 4: agent đầu tiên lấy được kim cương trong Minecraft
 *hoàn toàn từ dữ liệu offline*. Một trong những thay đổi kỹ thuật của nó là đổi cách
@@ -48,7 +48,7 @@ frontier vẫn đang giải. Tôi không có TPU để đua kiến trúc của h
 đo chính hiện tượng đó trên world model nhỏ của mình, để hiểu nó định lượng ra sao. Đó
 là cách một người ít tài nguyên đứng cạnh frontier mà không cần đua compute.
 
-## 2. Đo trực tiếp, và một thói quen research mới
+## 3. Đo trực tiếp, và một thói quen research mới
 
 Ở [dự án trước](/world-models-blog/posts/4-free-nats-hai-co-che-hong/free-nats-hai-co-che-hong/) tôi học cách *quét một hyperparameter
 rồi tìm cơ chế giải thích*. Lần này tôi muốn tiến một bước: **đo thẳng cơ chế nghi ngờ**,
@@ -76,7 +76,7 @@ luyện hơn. Hai cái này dính nhau. Nếu mơ dài giúp điểm cao, tôi s
 > thí nghiệm mình *là một phần của việc làm research cho tử tế*, không phải điểm yếu cần
 > giấu.
 
-## 3. Ba giả thuyết (viết trước, không sửa sau)
+## 4. Ba giả thuyết (viết trước, không sửa sau)
 
 - **H1 — sai số tăng đơn điệu.** $\text{err}(k)$ càng lúc càng lớn theo $k$. (Hình dạng
   cụ thể — tuyến tính? nổ? bão hòa? — tôi để ngỏ, coi là phần đi khám phá.)
@@ -87,7 +87,7 @@ luyện hơn. Hai cái này dính nhau. Nếu mơ dài giúp điểm cao, tôi s
   đó, world model đoán phần thưởng sai cỡ bằng chính độ lớn phần thưởng (tỉ lệ tín
   hiệu/nhiễu rớt về $\approx 1$) → mơ xa hơn $k^*$ chỉ còn là nhiễu.
 
-## 4. Kết quả: tôi sai cả ba
+## 5. Kết quả: tôi sai cả ba
 
 ### H1 — sai số KHÔNG nổ, nó dao động
 
@@ -110,7 +110,7 @@ lõm quanh $k\approx 8\text{–}12$ chính là một chu kỳ sải chân.
 Điểm số gần như phẳng khi giấc mơ ngắn (độ dài 3–10), rồi **đi lên** ở 15 và 25. Không
 có đỉnh ở giữa. Đây là đúng nhánh "dài luôn tốt" — ngược hẳn dự đoán lõm của tôi.
 
-Nhưng nhớ confound đã khai ở §2: tôi **không** được kết luận "dài tốt *vì nhìn xa*", vì
+Nhưng nhớ confound đã khai ở §3: tôi **không** được kết luận "dài tốt *vì nhìn xa*", vì
 dài cũng nghĩa là nhiều dữ liệu huấn luyện hơn. Với hai seed và độ lệch lớn, câu an toàn
 nhất chỉ là: *độ dài 15–25 tốt hơn rõ so với 3–10*. Có thế thôi. Việc kìm mình lại đúng
 ở ranh giới dữ liệu cho phép — đó là bài học, không phải sự rụt rè.
@@ -125,7 +125,7 @@ Vì sao trạng thái trôi mà phần thưởng đứng yên? Phần thưởng 
 tới (mượt, bị chặn). Khớp chân cụ thể có thể lệch, nhưng "nó đang chạy tới nhanh cỡ nào"
 là một tín hiệu thô — bền vững với đúng kiểu trôi đang xảy ra.
 
-## 5. Ba cái sai khớp thành một câu trả lời
+## 6. Ba cái sai khớp thành một câu trả lời
 
 Để ý: cả ba kết quả chỉ về *cùng một hướng*.
 
@@ -145,7 +145,7 @@ Nói cách khác: x-prediction quan trọng đúng ở chế độ không-tuần
 **không phải ở mọi nơi**. Một thí nghiệm $8 đô trên một con cheetah chạy vòng tròn lại
 nói cho tôi biết *điều kiện* để một kỹ thuật SOTA trở nên cần thiết.
 
-## 6. Bài học research
+## 7. Bài học research
 
 Đây là dự án thứ hai của tôi, và nó dạy ba điều mà dự án đầu chưa dạy:
 
@@ -163,7 +163,7 @@ Và như mọi khi: sai ba trên ba giả thuyết, nhưng ba cái sai khớp nh
 *giàu hơn* cả khi tôi đoán đúng. Research giỏi không phải đoán trúng — mà là để dữ liệu
 sửa lại hiểu biết của mình một cách trung thực.
 
-## 7. Kết
+## 8. Kết
 
 Tôi bắt đầu với một nỗi lo ("mơ dài chắc trôi xa") và kết thúc với một bức tranh tinh tế
 hơn: giấc mơ *có* lệch, nhưng nếu thế giới lặp lại và phần thưởng thô, độ lệch ấy tự giới

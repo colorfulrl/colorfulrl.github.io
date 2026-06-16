@@ -6,6 +6,9 @@ export interface UIStrings {
     about: string;
     archives: string;
     search: string;
+    ebooks: string;
+    categories: string;
+    more: string;
   };
   post: {
     publishedAt: string;
@@ -50,6 +53,20 @@ export interface UIStrings {
 
     searchTitle: string;
     searchDesc: string;
+
+    ebooksTitle: string;
+    ebooksDesc: string;
+
+    categoryTitle: string;
+    categoryDesc: string;
+
+    categoriesTitle: string;
+    categoriesDesc: string;
+  };
+  ebooks: {
+    viewLink: string;
+    comingSoon: string;
+    by: string;
   };
   a11y: {
     skipToContent: string;
