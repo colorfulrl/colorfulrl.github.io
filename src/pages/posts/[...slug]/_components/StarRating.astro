@@ -1,0 +1,132 @@
+---
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "astro:env/client";
+
+type Props = {
+  slug: string;
+};
+
+const { slug } = Astro.props;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+---
+
+<div
+  class="rating-widget flex flex-wrap items-center gap-3"
+  data-rating-slug={slug}
+>
+  <div class="flex gap-1" role="group" aria-label={t.post.ratingLabel}>
+    {
+      [1, 2, 3, 4, 5].map(value => (
+        <button
+          type="button"
+          data-rating-star={value}
+          aria-pressed="false"
+          aria-label={t.post.ratingStarLabel.replace("{{value}}", String(value))}
+          class="rating-star text-muted-foreground hover:text-accent text-2xl leading-none transition-colors"
+        >
+          ★
+        </button>
+      ))
+    }
+  </div>
+  <span
+    data-rating-summary
+    data-empty-label={t.post.ratingEmpty}
+    data-template={t.post.ratingSummary}
+    class="text-muted-foreground text-sm"
+  ></span>
+</div>
+
+<script
+  data-astro-rerun
+  define:vars={{
+    supabaseUrl: PUBLIC_SUPABASE_URL,
+    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
+  }}
+>
+  function voterId() {
+    const KEY = "rating-voter-id";
+    let id = localStorage.getItem(KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem(KEY, id);
+    }
+    return id;
+  }
+
+  function renderSummary(widget, rows) {
+    const summary = widget.querySelector("[data-rating-summary]");
+    if (!summary) return;
+    if (rows.length === 0) {
+      summary.textContent = summary.dataset.emptyLabel ?? "";
+      return;
+    }
+    const avg = rows.reduce((sum, row) => sum + row.value, 0) / rows.length;
+    summary.textContent = (summary.dataset.template ?? "")
+      .replace("{{avg}}", avg.toFixed(1))
+      .replace("{{count}}", String(rows.length));
+  }
+
+  function highlightStars(widget, value) {
+    for (const star of widget.querySelectorAll("[data-rating-star]")) {
+      const isActive = Number(star.dataset.ratingStar) <= value;
+      star.classList.toggle("text-accent", isActive);
+      star.classList.toggle("text-muted-foreground", !isActive);
+      star.setAttribute("aria-pressed", String(isActive));
+    }
+  }
+
+  async function loadRatings(widget, supabaseUrl, supabaseKey) {
+    const slug = widget.dataset.ratingSlug;
+    const headers = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/post_ratings?slug=eq.${encodeURIComponent(slug)}&select=value,voter_id`,
+      { headers }
+    );
+    if (!res.ok) return;
+    const rows = await res.json();
+    renderSummary(widget, rows);
+    const mine = rows.find(row => row.voter_id === voterId());
+    highlightStars(widget, mine?.value ?? 0);
+  }
+
+  async function submitRating(widget, value, supabaseUrl, supabaseKey) {
+    highlightStars(widget, value);
+    await fetch(`${supabaseUrl}/rest/v1/post_ratings?on_conflict=slug,voter_id`, {
+      method: "POST",
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=representation",
+      },
+      body: JSON.stringify({
+        slug: widget.dataset.ratingSlug,
+        voter_id: voterId(),
+        value,
+      }),
+    });
+    await loadRatings(widget, supabaseUrl, supabaseKey);
+  }
+
+  function initRatingWidgets() {
+    if (!supabaseUrl || !supabaseKey) return;
+
+    for (const widget of document.querySelectorAll("[data-rating-slug]")) {
+      for (const star of widget.querySelectorAll("[data-rating-star]")) {
+        star.addEventListener("click", () =>
+          submitRating(widget, Number(star.dataset.ratingStar), supabaseUrl, supabaseKey)
+        );
+      }
+      loadRatings(widget, supabaseUrl, supabaseKey);
+    }
+  }
+
+  initRatingWidgets();
+</script>

@@ -7,13 +7,19 @@ import config from "@/config";
 type Props = CollectionEntry<"ebooks">;
 
 const { data } = Astro.props;
-const { title, author, description, descriptionEn, cover, link } = data;
+const { title, author, description, descriptionEn, cover, link, restricted } =
+  data;
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 
 const localizedDescription =
   locale === "en" ? descriptionEn ?? description : description;
+
+const mailUrl = config.socials.find(social => social.name === "mail")?.url;
+const contactHref = mailUrl
+  ? `${mailUrl}?subject=${encodeURIComponent(`${t.ebooks.requestSubject}: ${title}`)}`
+  : undefined;
 ---
 
 <li class="border-border bg-surface flex flex-row overflow-hidden rounded-lg border">
@@ -41,7 +47,20 @@ const localizedDescription =
     )}
     <div class="mt-auto pt-2">
       {
-        link ? (
+        restricted ? (
+          contactHref ? (
+            <a
+              href={contactHref}
+              class="text-accent inline-block text-sm font-medium decoration-dashed underline-offset-4 hover:underline"
+            >
+              {t.ebooks.contactToGet} →
+            </a>
+          ) : (
+            <span class="text-muted-foreground text-sm italic">
+              {t.ebooks.contactToGet}
+            </span>
+          )
+        ) : link ? (
           <a
             href={link}
             target="_blank"
@@ -57,5 +76,12 @@ const localizedDescription =
         )
       }
     </div>
+    {
+      restricted && (
+        <p class="text-muted-foreground text-xs italic">
+          {t.ebooks.restrictedNote}
+        </p>
+      )
+    }
   </div>
 </li>

@@ -10,6 +10,7 @@ descriptionEn: "An introductory Reinforcement Learning book published by the ren
 cover: ./bia.png
 # Để trống link nếu chưa có, điền sau khi có link thật.
 link: "https://www.oreilly.com/library/view/reinforcement-learning/9781492072386/"
+restricted: true
 order: 2
 draft: false
 ---

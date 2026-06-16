@@ -10,6 +10,7 @@ descriptionEn: "An introductory book on Deep Reinforcement Learning, a combinati
 cover: ./bia.png
 # Để trống link nếu chưa có, điền sau khi có link thật.
 link: "https://www.oreilly.com/library/view/deep-reinforcement-learning/9781835882702/"
+restricted: true
 order: 5
 draft: false
 ---

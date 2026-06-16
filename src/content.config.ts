@@ -53,6 +53,11 @@ const ebooks = defineCollection({
       cover: image().optional(),
       // Để trống lúc mới thêm sách, điền link sau khi có.
       link: z.string().optional(),
+      // Đặt true nếu sách KHÔNG thể chia sẻ link công khai (rủi ro bị nhà xuất
+      // bản kiện bản quyền). Khi đó card sẽ ẩn nút link, thay bằng nút "Liên hệ
+      // để nhận sách" (mailto tới social "mail" trong astro-paper.config.ts).
+      // `link` lúc này có thể để trống hoặc dùng làm ghi chú riêng, không hiện ra ngoài.
+      restricted: z.boolean().optional(),
       order: z.number().optional(),
       draft: z.boolean().optional(),
       lang: z.string().optional(),

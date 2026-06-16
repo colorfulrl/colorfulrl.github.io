@@ -12,6 +12,7 @@ import { slugifyStr } from "@/utils/slugify";
 import EditPost from "./_components/EditPost.astro";
 import ShareLinks from "./_components/ShareLinks.astro";
 import SupportCTA from "./_components/SupportCTA.astro";
+import StarRating from "./_components/StarRating.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
@@ -74,6 +75,7 @@ const {
 } = post.data;
 
 const { Content } = await render(post);
+const ratingSlug = getPostSlug(post.id, post.filePath).replace(/^\//, "");
 
 let ogImageUrl: string | undefined;
 
@@ -160,6 +162,8 @@ const ogImage = ogImageUrl
     </ul>
 
     <ShareLinks />
+
+    <StarRating slug={ratingSlug} />
 
     <SupportCTA />
 

@@ -109,6 +109,18 @@ export default defineConfig({
         context: "client",
         optional: true,
       }),
+      // Dùng cho chức năng đánh giá sao theo bài viết (StarRating.astro).
+      // Lấy ở Supabase Project Settings > API. Để trống thì widget tự ẩn.
+      PUBLIC_SUPABASE_URL: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
+      PUBLIC_SUPABASE_ANON_KEY: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
     },
   },
   experimental: {

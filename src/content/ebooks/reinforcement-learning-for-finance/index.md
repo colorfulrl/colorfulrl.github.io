@@ -10,6 +10,7 @@ descriptionEn: "An introductory book on applying Reinforcement Learning to finan
 cover: ./bia.png
 # Để trống link nếu chưa có, điền sau khi có link thật.
 link: "https://www.oreilly.com/library/view/reinforcement-learning-for/9781098169169/"
+restricted: true
 order: 4
 draft: false
 ---

@@ -28,6 +28,10 @@ export default {
     supportTitle: "Thích bài viết này?",
     supportDesc: "Nếu bài viết có ích, bạn có thể ủng hộ mình để có thêm động lực viết tiếp.",
     supportCta: "Buy me a coffee",
+    ratingLabel: "Đánh giá bài viết",
+    ratingStarLabel: "{{value}} sao",
+    ratingEmpty: "Chưa có đánh giá",
+    ratingSummary: "{{avg}}/5 · {{count}} lượt đánh giá",
   },
   pagination: {
     prev: "Trước",
@@ -76,6 +80,9 @@ export default {
     viewLink: "Xem ebook",
     comingSoon: "Sắp có liên kết",
     by: "Tác giả",
+    contactToGet: "Liên hệ để nhận sách",
+    restrictedNote: "Sách này không thể chia sẻ công khai do bản quyền, vui lòng liên hệ riêng.",
+    requestSubject: "Xin sách",
   },
   a11y: {
     skipToContent: "Bỏ qua tới nội dung",

@@ -28,6 +28,10 @@ export default {
     supportTitle: "Enjoyed this post?",
     supportDesc: "If you found it useful, you can support me to keep writing more.",
     supportCta: "Buy me a coffee",
+    ratingLabel: "Rate this post",
+    ratingStarLabel: "{{value}} star",
+    ratingEmpty: "No ratings yet",
+    ratingSummary: "{{avg}}/5 · {{count}} ratings",
   },
   pagination: {
     prev: "Prev",
@@ -76,6 +80,9 @@ export default {
     viewLink: "View ebook",
     comingSoon: "Link coming soon",
     by: "By",
+    contactToGet: "Contact to get this book",
+    restrictedNote: "This book can't be shared publicly due to copyright, please reach out privately.",
+    requestSubject: "Book request",
   },
   a11y: {
     skipToContent: "Skip to content",

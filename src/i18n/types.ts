@@ -26,6 +26,10 @@ export interface UIStrings {
     supportTitle: string;
     supportDesc: string;
     supportCta: string;
+    ratingLabel: string;
+    ratingStarLabel: string;
+    ratingEmpty: string;
+    ratingSummary: string;
   };
   pagination: {
     prev: string;
@@ -74,6 +78,9 @@ export interface UIStrings {
     viewLink: string;
     comingSoon: string;
     by: string;
+    contactToGet: string;
+    restrictedNote: string;
+    requestSubject: string;
   };
   a11y: {
     skipToContent: string;
