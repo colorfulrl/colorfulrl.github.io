@@ -11,6 +11,7 @@ import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
 import EditPost from "./_components/EditPost.astro";
 import ShareLinks from "./_components/ShareLinks.astro";
+import SupportCTA from "./_components/SupportCTA.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
@@ -19,7 +20,7 @@ import config from "@/config";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
-  const sortedPosts = getSortedPosts(posts);
+  const sortedPosts = getSortedPosts(posts, "vi");
 
   return sortedPosts.map((post, index) => ({
     params: { slug: getPostSlug(post.id, post.filePath) },
@@ -159,6 +160,8 @@ const ogImage = ogImageUrl
     </ul>
 
     <ShareLinks />
+
+    <SupportCTA />
 
     <hr class="my-8 border-dashed" />
 

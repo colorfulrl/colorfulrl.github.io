@@ -9,6 +9,7 @@ export interface UIStrings {
     ebooks: string;
     categories: string;
     more: string;
+    support: string;
   };
   post: {
     publishedAt: string;
@@ -22,6 +23,9 @@ export interface UIStrings {
     editPage: string;
     previousPost: string;
     nextPost: string;
+    supportTitle: string;
+    supportDesc: string;
+    supportCta: string;
   };
   pagination: {
     prev: string;
@@ -62,6 +66,9 @@ export interface UIStrings {
 
     categoriesTitle: string;
     categoriesDesc: string;
+
+    supportTitle: string;
+    supportDesc: string;
   };
   ebooks: {
     viewLink: string;

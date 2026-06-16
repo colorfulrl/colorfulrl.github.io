@@ -8,29 +8,29 @@ import Footer from "@/components/Footer.astro";
 import FloatingDecor from "@/components/decor/FloatingDecor.astro";
 import config from "@/config";
 
-const about = await getEntry("pages", "about-en");
+const support = await getEntry("pages", "support");
 
-if (!about) {
+if (!support) {
   throw new Error(
-    "Missing content entry: `about-en.md` or `about-en.mdx` in `src/content/pages/`"
+    "Missing content entry: `support.md` or `support.mdx` in `src/content/pages/`"
   );
 }
 
-const { Content } = await render(about);
+const { Content } = await render(support);
 ---
 
 <Layout
-  title={`${about.data.title} | ${config.site.title}`}
-  description={about.data.description}
-  ogImage={about.data.ogImage}
-  canonicalURL={about.data.canonicalURL}
+  title={`${support.data.title} | ${config.site.title}`}
+  description={support.data.description}
+  ogImage={support.data.ogImage}
+  canonicalURL={support.data.canonicalURL}
 >
-  <FloatingDecor variant="about" />
+  <FloatingDecor />
   <Header />
 
   <Breadcrumb />
 
-  <Main pageTitle={about.data.title} class="app-prose relative z-10">
+  <Main pageTitle={support.data.title} class="app-prose qr-page relative z-10">
     <Content />
   </Main>
 

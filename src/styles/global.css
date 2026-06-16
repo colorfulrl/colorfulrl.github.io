@@ -21,7 +21,7 @@
 }
 
 @utility max-w-app {
-  @apply max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl;
+  @apply max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl;
 }
 
 @utility app-layout {
@@ -41,10 +41,41 @@
   scroll-margin-block: 1rem;
 }
 
+@utility qr-page {
+  & img {
+    max-width: 240px;
+  }
+}
+
 @utility text-rainbow {
   background: var(--rainbow);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+@utility btn-shine {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 75%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.85s ease;
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    transform: translateX(130%);
+  }
 }

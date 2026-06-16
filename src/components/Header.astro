@@ -5,6 +5,7 @@ import IconUnderline from "@/assets/icons/IconUnderline.svg";
 import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
+import IconCoffee from "@/assets/icons/IconCoffee.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconX from "@/assets/icons/IconX.svg";
 import logoSrc from "@/assets/images/logo.png";
@@ -199,6 +200,22 @@ const isActive = (path: string) => {
             </li>
           )
         }
+        <li class="col-span-2 flex items-center justify-center sm:col-span-1">
+          <LinkButton
+            href={getRelativeLocaleUrl(locale, "support")}
+            class:list={[
+              "btn-shine focus-outline inline-flex! items-center! whitespace-nowrap from-accent-soft to-accent text-accent-foreground! gap-1.5 rounded-full bg-gradient-to-br px-3.5 py-1.5 text-sm leading-none font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_-2px_var(--accent)] transition-transform hover:-translate-y-0.5",
+              {
+                "ring-accent-foreground/60 ring-2 ring-offset-2":
+                  isActive("/support"),
+              },
+            ]}
+            title={t.nav.support}
+          >
+            <IconCoffee class="size-4.5 shrink-0 -translate-y-px" />
+            {t.nav.support}
+          </LinkButton>
+        </li>
         <li class="col-span-2 flex items-center justify-center sm:col-span-1">
           <LanguageSwitcher />
         </li>

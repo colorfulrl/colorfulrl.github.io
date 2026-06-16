@@ -11,6 +11,7 @@ export default {
     ebooks: "Ebook",
     categories: "Chủ đề",
     more: "Thêm",
+    support: "Buy me a coffee",
   },
   post: {
     publishedAt: "Đăng",
@@ -24,6 +25,9 @@ export default {
     editPage: "Sửa trang",
     previousPost: "Bài trước",
     nextPost: "Bài kế",
+    supportTitle: "Thích bài viết này?",
+    supportDesc: "Nếu bài viết có ích, bạn có thể ủng hộ mình để có thêm động lực viết tiếp.",
+    supportCta: "Buy me a coffee",
   },
   pagination: {
     prev: "Trước",
@@ -64,6 +68,9 @@ export default {
 
     categoriesTitle: "Chủ đề",
     categoriesDesc: "Mọi chủ đề được dùng để phân loại bài viết.",
+
+    supportTitle: "Ủng hộ blog",
+    supportDesc: "Cách ủng hộ mình duy trì và phát triển blog.",
   },
   ebooks: {
     viewLink: "Xem ebook",

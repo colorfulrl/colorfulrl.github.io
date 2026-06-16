@@ -22,7 +22,8 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const categoryPosts = getSortedPosts(
       posts.filter(
         ({ data }) => data.category && slugifyStr(data.category) === category
-      )
+      ),
+      "vi"
     );
 
     return paginate(categoryPosts, {
@@ -36,9 +37,6 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 const { page, categoryName } = Astro.props;
 
 const locale = Astro.currentLocale ?? config.site.lang;
-const filteredData = page.data.filter(
-  ({ data }) => !data.lang || data.lang === locale
-);
 const t = useTranslations(locale);
 ---
 
@@ -52,7 +50,7 @@ const t = useTranslations(locale);
     pageDesc={`${t.pages.categoryDesc} "${categoryName}".`}
   >
     <ul>
-      {filteredData.map(data => <Card {...data} />)}
+      {page.data.map(data => <Card {...data} />)}
     </ul>
   </Main>
 

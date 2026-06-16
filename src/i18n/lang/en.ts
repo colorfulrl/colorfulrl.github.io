@@ -11,6 +11,7 @@ export default {
     ebooks: "Ebooks",
     categories: "Categories",
     more: "More",
+    support: "Buy me a coffee",
   },
   post: {
     publishedAt: "Published at",
@@ -24,6 +25,9 @@ export default {
     editPage: "Edit page",
     previousPost: "Previous Post",
     nextPost: "Next Post",
+    supportTitle: "Enjoyed this post?",
+    supportDesc: "If you found it useful, you can support me to keep writing more.",
+    supportCta: "Buy me a coffee",
   },
   pagination: {
     prev: "Prev",
@@ -64,6 +68,9 @@ export default {
 
     categoriesTitle: "Categories",
     categoriesDesc: "All the categories used to classify articles.",
+
+    supportTitle: "Support the blog",
+    supportDesc: "Ways you can support me in keeping this blog running.",
   },
   ebooks: {
     viewLink: "View ebook",

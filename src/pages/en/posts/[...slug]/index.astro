@@ -11,6 +11,7 @@ import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
 import EditPost from "../../../posts/[...slug]/_components/EditPost.astro";
 import ShareLinks from "../../../posts/[...slug]/_components/ShareLinks.astro";
+import SupportCTA from "../../../posts/[...slug]/_components/SupportCTA.astro";
 import BackButton from "../../../posts/[...slug]/_components/BackButton.astro";
 import BackToTopButton from "../../../posts/[...slug]/_components/BackToTopButton.astro";
 import AdjacentPostNav from "../../../posts/[...slug]/_components/AdjacentPostNav.astro";
@@ -159,6 +160,8 @@ const ogImage = ogImageUrl
     </ul>
 
     <ShareLinks />
+
+    <SupportCTA />
 
     <hr class="my-8 border-dashed" />
 

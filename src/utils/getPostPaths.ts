@@ -10,9 +10,22 @@ function getPostPathSegments(filePath: string | undefined): string[] {
       .split("/")
       .filter(path => path !== "")
       .filter(path => !path.startsWith("_"))
-      .slice(0, -1)
+      .slice(1, -1)
       .map(segment => slugifyStr(segment)) ?? []
   );
+}
+
+/**
+ * Derives a post's locale from its leading folder (`posts/vi/...`,
+ * `posts/en/...`) — the source of truth for locale now that posts no
+ * longer carry a `lang` frontmatter field.
+ */
+export function getPostLocale(filePath: string | undefined): string {
+  const firstSegment = filePath
+    ?.replace(BLOG_PATH, "")
+    .split("/")
+    .filter(path => path !== "")[0];
+  return firstSegment ?? config.site.lang;
 }
 
 function getIdSlug(id: string): string {
