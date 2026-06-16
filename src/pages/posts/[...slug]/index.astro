@@ -13,6 +13,8 @@ import EditPost from "./_components/EditPost.astro";
 import ShareLinks from "./_components/ShareLinks.astro";
 import SupportCTA from "./_components/SupportCTA.astro";
 import StarRating from "./_components/StarRating.astro";
+import ViewCount from "./_components/ViewCount.astro";
+import RatingBadge from "./_components/RatingBadge.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
@@ -128,6 +130,8 @@ const ogImage = ogImageUrl
 
     <div class="my-2 flex items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      <ViewCount slug={ratingSlug} />
+      <RatingBadge slug={ratingSlug} />
       <span
         aria-hidden="true"
         class:list={[

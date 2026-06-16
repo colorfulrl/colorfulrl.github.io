@@ -32,6 +32,7 @@ export default {
     ratingStarLabel: "{{value}} sao",
     ratingEmpty: "Chưa có đánh giá",
     ratingSummary: "{{avg}}/5 · {{count}} lượt đánh giá",
+    viewCount: "· {{count}} lượt xem",
   },
   pagination: {
     prev: "Trước",

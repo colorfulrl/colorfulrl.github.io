@@ -30,6 +30,7 @@ export interface UIStrings {
     ratingStarLabel: string;
     ratingEmpty: string;
     ratingSummary: string;
+    viewCount: string;
   };
   pagination: {
     prev: string;

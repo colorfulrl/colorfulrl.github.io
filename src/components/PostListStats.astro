@@ -1,0 +1,71 @@
+---
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "astro:env/client";
+---
+
+<script
+  data-astro-rerun
+  define:vars={{
+    supabaseUrl: PUBLIC_SUPABASE_URL,
+    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
+  }}
+>
+  async function initPostListStats() {
+    if (!supabaseUrl || !supabaseKey) return;
+
+    const cards = [...document.querySelectorAll("[data-post-stats-slug]")];
+    if (cards.length === 0) return;
+
+    const slugs = cards.map(el => el.dataset.postStatsSlug);
+    const headers = {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+    };
+
+    const slugsFilter = `(${slugs.map(s => encodeURIComponent(s)).join(",")})`;
+
+    const [viewsRes, ratingsRes] = await Promise.all([
+      fetch(
+        `${supabaseUrl}/rest/v1/post_views?slug=in.${slugsFilter}&select=slug,view_count`,
+        { headers }
+      ),
+      fetch(
+        `${supabaseUrl}/rest/v1/post_ratings?slug=in.${slugsFilter}&select=slug,value`,
+        { headers }
+      ),
+    ]);
+
+    if (!viewsRes.ok || !ratingsRes.ok) return;
+
+    const views = await viewsRes.json();
+    const ratings = await ratingsRes.json();
+
+    const viewMap = Object.fromEntries(views.map(r => [r.slug, r.view_count]));
+
+    const ratingGroups = {};
+    for (const row of ratings) {
+      (ratingGroups[row.slug] ??= []).push(row.value);
+    }
+
+    for (const card of cards) {
+      const slug = card.dataset.postStatsSlug;
+
+      const viewEl = card.querySelector("[data-view-stat]");
+      if (viewEl && viewMap[slug] != null) {
+        viewEl.textContent = (viewEl.dataset.template ?? "· {{count}}")
+          .replace("{{count}}", Number(viewMap[slug]).toLocaleString());
+      }
+
+      const ratingEl = card.querySelector("[data-rating-stat]");
+      const vals = ratingGroups[slug];
+      if (ratingEl && vals?.length > 0) {
+        const avg = vals.reduce((s, v) => s + v, 0) / vals.length;
+        ratingEl.textContent = `· ★ ${avg.toFixed(1)}`;
+      }
+    }
+  }
+
+  initPostListStats();
+</script>

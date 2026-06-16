@@ -13,6 +13,8 @@ import EditPost from "../../../posts/[...slug]/_components/EditPost.astro";
 import ShareLinks from "../../../posts/[...slug]/_components/ShareLinks.astro";
 import SupportCTA from "../../../posts/[...slug]/_components/SupportCTA.astro";
 import StarRating from "../../../posts/[...slug]/_components/StarRating.astro";
+import ViewCount from "../../../posts/[...slug]/_components/ViewCount.astro";
+import RatingBadge from "../../../posts/[...slug]/_components/RatingBadge.astro";
 import BackButton from "../../../posts/[...slug]/_components/BackButton.astro";
 import BackToTopButton from "../../../posts/[...slug]/_components/BackToTopButton.astro";
 import AdjacentPostNav from "../../../posts/[...slug]/_components/AdjacentPostNav.astro";
@@ -128,6 +130,8 @@ const ogImage = ogImageUrl
 
     <div class="my-2 flex items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      <ViewCount slug={ratingSlug} />
+      <RatingBadge slug={ratingSlug} />
       <span
         aria-hidden="true"
         class:list={[

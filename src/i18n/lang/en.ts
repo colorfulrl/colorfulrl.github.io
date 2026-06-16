@@ -32,6 +32,7 @@ export default {
     ratingStarLabel: "{{value}} star",
     ratingEmpty: "No ratings yet",
     ratingSummary: "{{avg}}/5 · {{count}} ratings",
+    viewCount: "· {{count}} views",
   },
   pagination: {
     prev: "Prev",

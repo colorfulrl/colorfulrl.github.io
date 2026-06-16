@@ -1,7 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { getPostUrl } from "@/utils/getPostPaths";
+import { getPostUrl, getPostSlug } from "@/utils/getPostPaths";
 import { slugifyStr } from "@/utils/slugify";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
 import Datetime from "./Datetime.astro";
 
 type Props = {
@@ -11,9 +13,14 @@ type Props = {
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
 const { title, description, ...props } = data;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const postSlug = getPostSlug(id, filePath).replace(/^\//, "");
 ---
 
-<li class="my-6">
+<li class="my-6" data-post-stats-slug={postSlug}>
   <a
     href={getPostUrl(id, filePath, Astro.currentLocale)}
     class:list={[
@@ -26,6 +33,14 @@ const { title, description, ...props } = data;
       {title}
     </Heading>
   </a>
-  <Datetime {...props} />
+  <div class="flex flex-wrap items-center gap-x-1">
+    <Datetime {...props} />
+    <span
+      data-view-stat
+      data-template={t.post.viewCount}
+      class="text-muted-foreground text-sm"
+    ></span>
+    <span data-rating-stat class="text-muted-foreground text-sm"></span>
+  </div>
   <p>{description}</p>
 </li>

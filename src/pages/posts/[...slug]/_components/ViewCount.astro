@@ -1,0 +1,72 @@
+---
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "astro:env/client";
+
+type Props = {
+  slug: string;
+};
+
+const { slug } = Astro.props;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+---
+
+<span
+  data-view-slug={slug}
+  data-template={t.post.viewCount}
+  class="text-muted-foreground text-sm"
+></span>
+
+<script
+  data-astro-rerun
+  define:vars={{
+    supabaseUrl: PUBLIC_SUPABASE_URL,
+    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
+  }}
+>
+  async function initViewCount() {
+    const el = document.querySelector("[data-view-slug]");
+    if (!el || !supabaseUrl || !supabaseKey) return;
+
+    const slug = el.dataset.viewSlug;
+    const sessionKey = `view-counted:${slug}`;
+    const headers = {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+      "Content-Type": "application/json",
+    };
+
+    let count;
+
+    if (sessionStorage.getItem(sessionKey)) {
+      // Session đã đếm — chỉ đọc, không increment thêm
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/post_views?slug=eq.${encodeURIComponent(slug)}&select=view_count`,
+        { headers }
+      );
+      if (!res.ok) return;
+      const rows = await res.json();
+      count = rows[0]?.view_count ?? 0;
+    } else {
+      // Session mới — gọi RPC để increment atomic
+      const res = await fetch(`${supabaseUrl}/rest/v1/rpc/increment_view`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ p_slug: slug }),
+      });
+      if (!res.ok) return;
+      count = await res.json();
+      sessionStorage.setItem(sessionKey, "1");
+    }
+
+    el.textContent = (el.dataset.template ?? "{{count}}")
+      .replace("{{count}}", Number(count).toLocaleString("vi-VN"));
+  }
+
+  initViewCount();
+</script>

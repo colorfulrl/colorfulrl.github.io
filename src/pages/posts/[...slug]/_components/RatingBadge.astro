@@ -1,0 +1,46 @@
+---
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "astro:env/client";
+
+type Props = {
+  slug: string;
+};
+
+const { slug } = Astro.props;
+---
+
+<span data-rating-badge-slug={slug} class="text-muted-foreground text-sm"></span>
+
+<script
+  data-astro-rerun
+  define:vars={{
+    supabaseUrl: PUBLIC_SUPABASE_URL,
+    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
+  }}
+>
+  async function initRatingBadge() {
+    const el = document.querySelector("[data-rating-badge-slug]");
+    if (!el || !supabaseUrl || !supabaseKey) return;
+
+    const slug = el.dataset.ratingBadgeSlug;
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/post_ratings?slug=eq.${encodeURIComponent(slug)}&select=value`,
+      {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      }
+    );
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (rows.length === 0) return;
+
+    const avg = rows.reduce((sum, r) => sum + r.value, 0) / rows.length;
+    el.textContent = `· ★ ${avg.toFixed(1)}`;
+  }
+
+  initRatingBadge();
+</script>
