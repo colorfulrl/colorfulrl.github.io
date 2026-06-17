@@ -1,0 +1,15 @@
+---
+title: "Cognitive Analytics and Reinforcement Learning: Theories, Techniques and Applications"
+author: "Elakkiya R., Subramaniyaswamy V."
+description: "Khám phá giao điểm giữa phân tích nhận thức và RL, với ứng dụng trong y tế, thành phố thông minh, cờ vua và nhiều lĩnh vực khác. Phù hợp cho cả nghiên cứu viên lẫn người thực hành AI."
+descriptionEn: "COGNITIVE ANALYTICS AND REINFORCEMENT LEARNING The combination of cognitive analytics and reinforcement learning is a transformational force in the field of modern technological breakthroughs, reshaping the decision-making, problem-solving, and innovation landscape; this book offers an examination of the profound overlap between these two fields and illuminates its significant consequences for business, academia, and research. Cognitive analytics and reinforcement learning are pivotal branches of artificial intelligence. They have garnered increased attention in the research field and industry domain on how humans perceive, interpret, and respond to information. Cognitive science allows us to understand data, mimic human cognitive processes, and make informed decisions to identify patterns and adapt to dynamic situations. The process enhances the capabilities of various applications. Readers will uncover the latest advancements in AI and machine learning, gaining valuable insights into how these technologies are revolutionizing various industries, including transforming healthcare by enabling smarter diagnosis and treatment decisions, enhancing the efficiency of smart cities through dynamic decision control, optimizing debt collection strategies, predicting optimal moves in complex scenarios like chess, and much more. With a focus on bridging the gap between theory and practice, this book serves as an invaluable resource for researchers and industry professionals seeking to leverage cognitive analytics and reinforcement learning to drive innovation and solve complex problems. The book’s real strength lies in bridging the gap between theoretical knowledge and practical implementation. It offers a rich tapestry of use cases and examples. Whether you are a student looking to gain a deeper understanding of these cutting-edge technologies, an AI practitioner seeking innovative solutions for your projects, or an industry leader interested in the strategic applications of AI, this book offers a treasure trove of insights and knowledge to help you navigate the complex and exciting world of cognitive analytics and reinforcement learning. Audience The book caters to a diverse audience that spans academic researchers, AI practitioners, data scientists, industry leaders, tech enthusiasts, and educators who associate with artificial intelligence, data analytics, and cognitive sciences."
+# Đặt file ảnh bìa (ví dụ cover.jpg hoặc cover.png) vào CHUNG thư mục với
+# file index.md này, rồi tham chiếu đường dẫn tương đối ở dưới. Bỏ comment
+# dòng `cover:` khi đã có file ảnh.
+cover: ./bia.jpg
+# link: ""
+restricted: true
+category: "rl-and-cognitive-analytics"
+order: 29
+draft: false
+---

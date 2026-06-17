@@ -9,6 +9,7 @@ export default {
     archives: "Archives",
     search: "Search",
     ebooks: "Ebooks",
+    resources: "Resources",
     categories: "Categories",
     more: "More",
     support: "Buy me a coffee",
@@ -76,6 +77,9 @@ export default {
 
     supportTitle: "Support the blog",
     supportDesc: "Ways you can support me in keeping this blog running.",
+
+    resourcesTitle: "Resources",
+    resourcesDesc: "Articles, videos, repos and courses worth reading.",
   },
   ebooks: {
     viewLink: "View ebook",
@@ -84,6 +88,9 @@ export default {
     contactToGet: "Contact to get this book",
     restrictedNote: "This book can't be shared publicly due to copyright, please reach out privately.",
     requestSubject: "Book request",
+    categories: "Categories",
+    readMore: "Read more",
+    readLess: "Read less",
   },
   a11y: {
     skipToContent: "Skip to content",

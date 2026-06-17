@@ -58,10 +58,28 @@ const ebooks = defineCollection({
       // để nhận sách" (mailto tới social "mail" trong astro-paper.config.ts).
       // `link` lúc này có thể để trống hoặc dùng làm ghi chú riêng, không hiện ra ngoài.
       restricted: z.boolean().optional(),
+      category: z.string().optional(),
       order: z.number().optional(),
       draft: z.boolean().optional(),
       lang: z.string().optional(),
     }),
 });
 
-export const collections = { posts, pages, ebooks };
+export const RESOURCES_PATH = "src/content/resources";
+
+const resources = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${RESOURCES_PATH}` }),
+  schema: z.object({
+    title: z.string(),
+    url: z.string(),
+    type: z.string(),
+    source: z.string().optional(),
+    description: z.string().optional(),
+    descriptionEn: z.string().optional(),
+    date: z.coerce.date().optional(),
+    order: z.number().optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
+export const collections = { posts, pages, ebooks, resources };

@@ -7,6 +7,7 @@ export interface UIStrings {
     archives: string;
     search: string;
     ebooks: string;
+    resources: string;
     categories: string;
     more: string;
     support: string;
@@ -74,6 +75,9 @@ export interface UIStrings {
 
     supportTitle: string;
     supportDesc: string;
+
+    resourcesTitle: string;
+    resourcesDesc: string;
   };
   ebooks: {
     viewLink: string;
@@ -82,6 +86,9 @@ export interface UIStrings {
     contactToGet: string;
     restrictedNote: string;
     requestSubject: string;
+    categories: string;
+    readMore: string;
+    readLess: string;
   };
   a11y: {
     skipToContent: string;

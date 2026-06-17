@@ -1,0 +1,11 @@
+---
+title: "Reinforcement Learning Lecture Series — David Silver"
+url: "https://www.youtube.com/playlist?list=PLqYmG7hTraZDM-OYHWgPebj2MfCFzFObQ"
+type: "video"
+source: "YouTube · DeepMind"
+description: "Chuỗi 10 bài giảng kinh điển của David Silver (tác giả AlphaGo) về RL nền tảng: MDP, Dynamic Programming, Monte Carlo, TD Learning, Policy Gradient đến AlphaGo. Tài liệu học lý thuyết tốt nhất hiện có."
+descriptionEn: "10 classic lectures by David Silver (co-creator of AlphaGo) covering RL foundations: MDPs, Dynamic Programming, Monte Carlo, TD Learning, Policy Gradients through AlphaGo. The best theoretical foundation series available."
+date: "2018-01-01"
+order: 1
+draft: false
+---

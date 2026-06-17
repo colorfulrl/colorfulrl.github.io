@@ -9,6 +9,7 @@ export default {
     archives: "Lưu trữ",
     search: "Tìm kiếm",
     ebooks: "Ebook",
+    resources: "Tài nguyên",
     categories: "Chủ đề",
     more: "Thêm",
     support: "Buy me a coffee",
@@ -76,6 +77,9 @@ export default {
 
     supportTitle: "Ủng hộ blog",
     supportDesc: "Cách ủng hộ mình duy trì và phát triển blog.",
+
+    resourcesTitle: "Tài nguyên",
+    resourcesDesc: "Bài viết, video, repo và khóa học mình thấy đáng đọc.",
   },
   ebooks: {
     viewLink: "Xem ebook",
@@ -84,6 +88,9 @@ export default {
     contactToGet: "Liên hệ để nhận sách",
     restrictedNote: "Sách này không thể chia sẻ công khai do bản quyền, vui lòng liên hệ riêng.",
     requestSubject: "Xin sách",
+    categories: "Chủ đề",
+    readMore: "Xem thêm",
+    readLess: "Thu gọn",
   },
   a11y: {
     skipToContent: "Bỏ qua tới nội dung",

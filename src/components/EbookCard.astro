@@ -42,9 +42,27 @@ const contactHref = mailUrl
   <div class="flex flex-1 flex-col gap-2 p-4">
     <h2 class="font-display text-lg font-semibold tracking-tight">{title}</h2>
     {author && <p class="text-muted-foreground text-sm">{t.ebooks.by} {author}</p>}
-    {localizedDescription && (
-      <p class="text-sm leading-relaxed">{localizedDescription}</p>
-    )}
+    {
+      localizedDescription && (
+        <div>
+          <p
+            data-ebook-desc
+            class="line-clamp-3 text-sm leading-relaxed"
+          >
+            {localizedDescription}
+          </p>
+          <button
+            data-ebook-toggle
+            data-more={t.ebooks.readMore}
+            data-less={t.ebooks.readLess}
+            hidden
+            class="text-accent mt-1 text-xs hover:underline focus:outline-none"
+          >
+            {t.ebooks.readMore}
+          </button>
+        </div>
+      )
+    }
     <div class="mt-auto pt-2">
       {
         restricted ? (
@@ -85,3 +103,32 @@ const contactHref = mailUrl
     }
   </div>
 </li>
+
+<script>
+  function initEbookToggles() {
+    document
+      .querySelectorAll<HTMLButtonElement>("[data-ebook-toggle]")
+      .forEach(btn => {
+        // Remove previous listener by replacing with a fresh clone
+        const fresh = btn.cloneNode(true) as HTMLButtonElement;
+        btn.replaceWith(fresh);
+
+        const desc = fresh.previousElementSibling as HTMLElement | null;
+        if (!desc) return;
+
+        // Only show toggle when text is actually clamped
+        if (desc.scrollHeight <= desc.clientHeight) return;
+        fresh.hidden = false;
+
+        fresh.addEventListener("click", () => {
+          const expanding = desc.classList.contains("line-clamp-3");
+          desc.classList.toggle("line-clamp-3", !expanding);
+          fresh.textContent = expanding
+            ? fresh.dataset.less!
+            : fresh.dataset.more!;
+        });
+      });
+  }
+
+  document.addEventListener("astro:page-load", initEbookToggles);
+</script>

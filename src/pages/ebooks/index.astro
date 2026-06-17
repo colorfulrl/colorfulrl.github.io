@@ -7,6 +7,7 @@ import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import EbookCard from "@/components/EbookCard.astro";
 import { getSortedEbooks } from "@/utils/getSortedEbooks";
+import { EBOOK_CATEGORY_LABELS } from "@/data/ebookCategories";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
@@ -15,6 +16,31 @@ const t = useTranslations(locale);
 
 const ebooks = await getCollection("ebooks");
 const sortedEbooks = getSortedEbooks(ebooks, locale);
+
+// Derive unique categories in the order they first appear (by ebook sort order)
+const seenCats = new Set<string>();
+const orderedCategories: string[] = [];
+for (const ebook of sortedEbooks) {
+  const cat = ebook.data.category;
+  if (cat && !seenCats.has(cat)) {
+    seenCats.add(cat);
+    orderedCategories.push(cat);
+  }
+}
+
+// Group ebooks by category
+const grouped = new Map<string, typeof sortedEbooks>();
+for (const cat of orderedCategories) grouped.set(cat, []);
+for (const ebook of sortedEbooks) {
+  const cat = ebook.data.category;
+  if (cat && grouped.has(cat)) grouped.get(cat)!.push(ebook);
+}
+
+function getCategoryLabel(slug: string) {
+  const entry = EBOOK_CATEGORY_LABELS[slug];
+  if (!entry) return slug;
+  return locale === "en" ? entry.en : entry.vi;
+}
 ---
 
 <Layout title={`${t.pages.ebooksTitle} | ${config.site.title}`}>
@@ -24,16 +50,41 @@ const sortedEbooks = getSortedEbooks(ebooks, locale);
 
   <Main pageTitle={t.pages.ebooksTitle} pageDesc={t.pages.ebooksDesc}>
     {
-      sortedEbooks.length > 0 ? (
-        <ul class="flex flex-col gap-4">
-          {sortedEbooks.map(ebook => (
-            <EbookCard {...ebook} />
-          ))}
-        </ul>
+      sortedEbooks.length === 0 ? (
+        <p class="text-muted-foreground italic">{t.ebooks.comingSoon}</p>
       ) : (
-        <p class="text-muted-foreground italic">
-          {t.ebooks.comingSoon}
-        </p>
+        <>
+          <nav aria-label={t.ebooks.categories} class="mb-10">
+            <p class="text-muted-foreground mb-2 text-sm font-medium uppercase tracking-wide">
+              {t.ebooks.categories}
+            </p>
+            <ul class="flex flex-col gap-1">
+              {orderedCategories.map(cat => (
+                <li>
+                  <a
+                    href={`#${cat}`}
+                    class="text-accent decoration-dashed underline-offset-4 hover:underline"
+                  >
+                    {getCategoryLabel(cat)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {orderedCategories.map(cat => (
+            <section id={cat} class="mb-12 scroll-mt-20">
+              <h2 class="font-display text-accent mb-4 text-xl font-semibold tracking-tight">
+                {getCategoryLabel(cat)}
+              </h2>
+              <ul class="flex flex-col gap-4">
+                {grouped.get(cat)!.map(ebook => (
+                  <EbookCard {...ebook} />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </>
       )
     }
   </Main>
