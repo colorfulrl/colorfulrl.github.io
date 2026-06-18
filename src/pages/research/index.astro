@@ -87,7 +87,8 @@ const graphJson = JSON.stringify(graphData);
 
     const raw = container.dataset.graph;
     if (!raw) return;
-    const { nodes, edges } = JSON.parse(raw) as { nodes: cytoscape.ElementDefinition[]; edges: cytoscape.ElementDefinition[] };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { nodes, edges } = JSON.parse(raw);
 
     const style = getComputedStyle(document.documentElement);
     const accent = style.getPropertyValue("--color-accent").trim() || "#6366f1";
