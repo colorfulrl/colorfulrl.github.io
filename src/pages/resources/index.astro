@@ -73,6 +73,44 @@ function getTypeLabel(type: string) {
         <p class="text-muted-foreground italic">Coming soon…</p>
       ) : (
         <>
+          <!-- Search bar -->
+          <div
+            id="res-search-wrap"
+            class="mb-8"
+            data-show-more="Xem thêm"
+            data-show-less="Thu gọn"
+            data-count-label="kết quả"
+            data-no-results="Không tìm thấy kết quả nào."
+          >
+            <div class="relative flex items-center">
+              <svg class="text-muted-foreground pointer-events-none absolute left-3.5 size-4 shrink-0"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input
+                id="res-search"
+                type="text"
+                placeholder="Tìm kiếm tài nguyên..."
+                autocomplete="off"
+                class="border-border bg-surface/50 focus:border-accent w-full rounded-lg border py-2.5 pl-10 pr-24 text-sm outline-none transition-colors focus:ring-1 focus:ring-accent/20"
+              />
+              <span id="res-search-count"
+                class="text-muted-foreground pointer-events-none absolute right-10 hidden text-xs tabular-nums">
+              </span>
+              <button id="res-search-clear"
+                class="text-muted-foreground hover:text-foreground absolute right-3 hidden rounded p-1 transition-colors"
+                aria-label="Xóa tìm kiếm" style="display:none">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="size-4">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
           <nav aria-label={t.pages.resourcesTitle} class="mb-10">
             <ul class="flex flex-wrap gap-2">
               {activeTypes.map(type => {
@@ -102,7 +140,7 @@ function getTypeLabel(type: string) {
             const Icon = TYPE_ICONS[type];
             const meta = RESOURCE_TYPES[type];
             return (
-              <section id={type} class="mb-12 scroll-mt-20">
+              <section id={type} class="mb-12 scroll-mt-20" data-resource-section>
                 <div class="mb-4 flex items-center gap-2">
                   {Icon && (
                     <span
@@ -134,3 +172,143 @@ function getTypeLabel(type: string) {
 
   <Footer />
 </Layout>
+
+<script>
+  const INITIAL_SHOW = 6;
+
+  interface SectionState {
+    el: HTMLElement;
+    items: HTMLElement[];
+    btn: HTMLButtonElement | null;
+    expanded: boolean;
+  }
+
+  function initResources() {
+    // Clean up any buttons injected by a previous init (SPA navigation)
+    document.querySelectorAll(".res-show-more").forEach(el => el.remove());
+
+    const wrap = document.getElementById("res-search-wrap");
+    if (!wrap) return;
+    const showMoreLabel = wrap.dataset.showMore ?? "Show more";
+    const showLessLabel = wrap.dataset.showLess ?? "Show less";
+    const countLabel    = wrap.dataset.countLabel ?? "results";
+    const noResults     = wrap.dataset.noResults ?? "No results found.";
+
+    // Build per-section state
+    const sections: SectionState[] = [];
+    document.querySelectorAll<HTMLElement>("[data-resource-section]").forEach(section => {
+      const ul = section.querySelector("ul");
+      if (!ul) return;
+      const items = [...ul.querySelectorAll<HTMLElement>(":scope > li")];
+
+      let btn: HTMLButtonElement | null = null;
+      if (items.length > INITIAL_SHOW) {
+        items.slice(INITIAL_SHOW).forEach(li => (li.style.display = "none"));
+
+        btn = document.createElement("button");
+        btn.className =
+          "res-show-more mt-5 flex items-center gap-1.5 text-sm text-accent decoration-dashed underline-offset-4 hover:underline";
+        updateBtnText(btn, items.length, false, showMoreLabel, showLessLabel);
+        ul.after(btn);
+      }
+
+      const state: SectionState = { el: section, items, btn, expanded: false };
+      sections.push(state);
+
+      btn?.addEventListener("click", () => {
+        state.expanded = !state.expanded;
+        items.forEach((li, i) => {
+          if (i >= INITIAL_SHOW) li.style.display = state.expanded ? "" : "none";
+        });
+        updateBtnText(btn!, items.length, state.expanded, showMoreLabel, showLessLabel);
+      });
+    });
+
+    // Search
+    const input  = document.getElementById("res-search") as HTMLInputElement | null;
+    const clearBtn = document.getElementById("res-search-clear") as HTMLButtonElement | null;
+    const countEl  = document.getElementById("res-search-count");
+
+    function applySearch(query: string) {
+      const q = query.toLowerCase();
+      let total = 0;
+
+      sections.forEach(({ el, items, btn, expanded }) => {
+        if (!q) {
+          // Restore original show-more state
+          items.forEach((li, i) => {
+            li.style.display = i >= INITIAL_SHOW && !expanded ? "none" : "";
+          });
+          el.style.display = "";
+          if (btn) btn.style.display = "";
+        } else {
+          // Filter: show only matches, ignore INITIAL_SHOW limit
+          if (btn) btn.style.display = "none";
+          let sectionCount = 0;
+          items.forEach(li => {
+            const match = (li.dataset.search ?? "").includes(q);
+            li.style.display = match ? "" : "none";
+            if (match) sectionCount++;
+          });
+          el.style.display = sectionCount === 0 ? "none" : "";
+          total += sectionCount;
+        }
+      });
+
+      // Update UI
+      if (clearBtn) clearBtn.style.display = q ? "" : "none";
+      if (countEl) {
+        if (q) {
+          countEl.textContent = `${total} ${countLabel}`;
+          countEl.classList.remove("hidden");
+          countEl.className =
+            total === 0
+              ? "text-red-500 pointer-events-none absolute right-10 text-xs tabular-nums"
+              : "text-muted-foreground pointer-events-none absolute right-10 text-xs tabular-nums";
+        } else {
+          countEl.classList.add("hidden");
+        }
+      }
+    }
+
+    input?.addEventListener("input", e =>
+      applySearch((e.target as HTMLInputElement).value.trim())
+    );
+    input?.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        (e.target as HTMLInputElement).value = "";
+        applySearch("");
+        (e.target as HTMLInputElement).blur();
+      }
+    });
+    clearBtn?.addEventListener("click", () => {
+      if (input) { input.value = ""; applySearch(""); input.focus(); }
+    });
+  }
+
+  function updateBtnText(
+    btn: HTMLButtonElement,
+    total: number,
+    expanded: boolean,
+    showMore: string,
+    showLess: string,
+  ) {
+    const remaining = total - INITIAL_SHOW;
+    if (expanded) {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="size-3.5 opacity-70"><path d="m18 15-6-6-6 6"/></svg>
+        <span>${showLess}</span>`;
+    } else {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="size-3.5 opacity-70"><path d="m6 9 6 6 6-6"/></svg>
+        <span>${showMore} (${remaining})</span>`;
+    }
+  }
+
+  document.addEventListener("astro:page-load", initResources);
+  if (document.readyState !== "loading") initResources();
+</script>

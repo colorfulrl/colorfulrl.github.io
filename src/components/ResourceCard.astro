@@ -30,7 +30,10 @@ const formattedDate = date
   : null;
 ---
 
-<li class="border-border bg-surface group/card flex h-full flex-col overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-lg">
+<li
+  class="border-border bg-surface group/card flex h-full flex-col overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-lg"
+  data-search={[title, source, description, descriptionEn].filter(Boolean).join(" ").toLowerCase()}
+>
   <div class="bg-muted w-full shrink-0 overflow-hidden" style="aspect-ratio: 16/9;">
     {thumbnail && (
       <img
