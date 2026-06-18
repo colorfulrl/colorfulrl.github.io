@@ -54,6 +54,14 @@ export const RESOURCE_TYPES: Record<
     badgeBg: "bg-emerald-100 dark:bg-emerald-900/30",
     badgeText: "text-emerald-700 dark:text-emerald-400",
   },
+  platform: {
+    vi: "Nền tảng",
+    en: "Platform",
+    iconBg: "bg-orange-100 dark:bg-orange-900/30",
+    iconColor: "text-orange-600 dark:text-orange-400",
+    badgeBg: "bg-orange-100 dark:bg-orange-900/30",
+    badgeText: "text-orange-700 dark:text-orange-400",
+  },
 };
 
-export const RESOURCE_TYPE_ORDER = ["article", "video", "repo", "course", "tool"] as const;
+export const RESOURCE_TYPE_ORDER = ["article", "video", "repo", "course", "tool", "platform"] as const;
