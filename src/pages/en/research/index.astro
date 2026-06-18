@@ -24,12 +24,7 @@ const graphData = {
     },
   })),
   edges: GRAPH_EDGES.map((e, i) => ({
-    data: {
-      id: `e${i}`,
-      source: e.source,
-      target: e.target,
-      label: e.label,
-    },
+    data: { id: `e${i}`, source: e.source, target: e.target, label: e.label },
   })),
 };
 
@@ -40,34 +35,100 @@ const graphJson = JSON.stringify(graphData);
   <Header />
 
   <main id="main-content" class="app-layout flex flex-col" style="height: calc(100svh - 4rem);">
-    <div class="border-border bg-background/80 flex flex-wrap items-center justify-between gap-3 border-b py-2 backdrop-blur-sm">
-      <div class="flex flex-wrap items-center gap-4 text-sm">
-        <span class="font-medium">{t.nav.research}</span>
-        <span class="flex items-center gap-1.5">
-          <span class="bg-accent size-3 rounded-full"></span>
-          <span class="text-muted-foreground">Topic</span>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="bg-sky-400 size-3 rounded-full"></span>
-          <span class="text-muted-foreground">Concept</span>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="border-border bg-surface size-3 rounded-full border-2"></span>
-          <span class="text-muted-foreground">Paper</span>
-        </span>
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="cy-zoom-in" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom in">+</button>
-        <button id="cy-zoom-out" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom out">−</button>
-        <button id="cy-reset" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm">Reset</button>
+
+    <!-- Toolbar -->
+    <div class="border-border bg-background/80 border-b py-2 backdrop-blur-sm">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+
+        <!-- Type filter buttons -->
+        <div class="flex items-center gap-0.5">
+          <span class="text-foreground mr-2 text-sm font-medium">{t.nav.research}</span>
+          <button data-type-btn="topic"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-accent size-2.5 shrink-0 rounded-full"></span>
+            <span class="text-muted-foreground">Topic</span>
+          </button>
+          <button data-type-btn="concept"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-sky-400 size-2.5 shrink-0 rounded-full"></span>
+            <span class="text-muted-foreground">Concept</span>
+          </button>
+          <button data-type-btn="paper"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="border-border bg-surface size-2.5 shrink-0 rounded-full border-2"></span>
+            <span class="text-muted-foreground">Paper</span>
+          </button>
+        </div>
+
+        <!-- Separator -->
+        <div class="bg-border hidden h-4 w-px sm:block" aria-hidden="true"></div>
+
+        <!-- Search -->
+        <div class="relative flex min-w-0 flex-1 items-center sm:min-w-52">
+          <svg class="text-muted-foreground pointer-events-none absolute left-2.5 size-3.5"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input
+            id="cy-search"
+            type="text"
+            placeholder="Search nodes..."
+            autocomplete="off"
+            class="border-border bg-surface/50 focus:border-accent w-full rounded-md border py-1 pl-8 pr-16 text-xs outline-none transition-colors focus:ring-1 focus:ring-accent/20"
+          />
+          <span id="cy-search-count"
+            class="pointer-events-none absolute right-7 hidden text-xs tabular-nums">
+          </span>
+          <button id="cy-search-clear"
+            class="text-muted-foreground hover:text-foreground absolute right-1.5 hidden rounded p-0.5 transition-colors"
+            aria-label="Clear search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+              class="size-3.5">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Zoom controls -->
+        <div class="ml-auto flex shrink-0 items-center gap-1">
+          <button id="cy-zoom-in" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom in">+</button>
+          <button id="cy-zoom-out" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom out">−</button>
+          <button id="cy-reset" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm">Reset</button>
+        </div>
       </div>
     </div>
 
-    <div id="cy" class="flex-1 w-full" data-graph={graphJson}></div>
+    <!-- Graph canvas -->
+    <div class="relative flex-1 overflow-hidden">
+      <div id="cy" class="absolute inset-0" data-graph={graphJson}></div>
 
-    <div id="cy-tooltip" class="border-border bg-background pointer-events-none absolute z-20 hidden max-w-64 rounded-lg border p-3 shadow-lg">
-      <div class="flex items-center gap-2">
-        <span id="cy-tooltip-badge" class="rounded px-1.5 py-0.5 text-xs font-medium"></span>
+      <!-- Focus mode indicator pill -->
+      <div id="cy-focus-bar"
+        class="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center"
+        style="display:none">
+        <div class="bg-background/90 border-border pointer-events-auto inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs shadow-lg backdrop-blur-sm">
+          <span class="bg-accent size-2 animate-pulse rounded-full"></span>
+          <span class="text-muted-foreground">Focus:</span>
+          <span id="cy-focus-label" class="text-foreground max-w-[8rem] truncate font-medium"></span>
+          <span class="text-border mx-0.5">·</span>
+          <span class="text-muted-foreground">Click again to open</span>
+          <span class="text-border mx-0.5">·</span>
+          <button id="cy-exit-focus"
+            class="text-muted-foreground hover:text-accent font-medium transition-colors">
+            Esc
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tooltip (fixed so it escapes any positioned ancestor) -->
+    <div id="cy-tooltip"
+      class="border-border bg-background pointer-events-none fixed z-30 hidden max-w-64 rounded-lg border p-3 shadow-lg">
+      <div class="flex items-start gap-2">
+        <span id="cy-tooltip-badge" class="mt-0.5 shrink-0 rounded px-1.5 py-0.5 text-xs font-medium"></span>
         <p id="cy-tooltip-title" class="font-display font-semibold leading-snug"></p>
       </div>
       <p id="cy-tooltip-desc" class="text-muted-foreground mt-1.5 text-xs leading-relaxed"></p>
@@ -90,13 +151,13 @@ const graphJson = JSON.stringify(graphData);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { nodes, edges } = JSON.parse(raw);
 
-    const style = getComputedStyle(document.documentElement);
-    const accent = style.getPropertyValue("--color-accent").trim() || "#6366f1";
-    const foreground = style.getPropertyValue("--color-foreground").trim() || "#1a1a1a";
-    const border = style.getPropertyValue("--color-border").trim() || "#e5e7eb";
-    const surface = style.getPropertyValue("--color-surface").trim() || "#ffffff";
-    const muted = style.getPropertyValue("--color-muted-foreground").trim() || "#6b7280";
-    const background = style.getPropertyValue("--color-background").trim() || "#ffffff";
+    const css = getComputedStyle(document.documentElement);
+    const accent     = css.getPropertyValue("--color-accent").trim()            || "#6366f1";
+    const foreground = css.getPropertyValue("--color-foreground").trim()        || "#1a1a1a";
+    const border     = css.getPropertyValue("--color-border").trim()            || "#e5e7eb";
+    const surface    = css.getPropertyValue("--color-surface").trim()           || "#ffffff";
+    const muted      = css.getPropertyValue("--color-muted-foreground").trim()  || "#6b7280";
+    const background = css.getPropertyValue("--color-background").trim()        || "#ffffff";
 
     const cy = cytoscape({
       container,
@@ -104,88 +165,270 @@ const graphJson = JSON.stringify(graphData);
       style: [
         {
           selector: 'node[type="topic"]',
-          style: { "background-color": accent, "label": "data(label)", "color": background, "text-valign": "center", "text-halign": "center", "font-size": "11px", "font-weight": "bold", "width": 72, "height": 72, "text-wrap": "wrap", "text-max-width": "60px" },
+          style: { "background-color": accent, label: "data(label)", color: background, "text-valign": "center", "text-halign": "center", "font-size": "11px", "font-weight": "bold", width: 72, height: 72, "text-wrap": "wrap", "text-max-width": "60px" },
         },
         {
           selector: 'node[type="concept"]',
-          style: { "background-color": "#38bdf8", "label": "data(label)", "color": "#0c4a6e", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, "width": 54, "height": 54, "text-wrap": "wrap", "text-max-width": "48px" },
+          style: { "background-color": "#38bdf8", label: "data(label)", color: "#0c4a6e", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, width: 54, height: 54, "text-wrap": "wrap", "text-max-width": "48px" },
         },
         {
           selector: 'node[type="paper"]',
-          style: { "background-color": surface, "border-color": border, "border-width": 2, "label": "data(label)", "color": foreground, "text-valign": "center", "text-halign": "center", "font-size": "9px", "width": 44, "height": 44, "text-wrap": "wrap", "text-max-width": "38px" },
+          style: { "background-color": surface, "border-color": border, "border-width": 2, label: "data(label)", color: foreground, "text-valign": "center", "text-halign": "center", "font-size": "9px", width: 44, height: 44, "text-wrap": "wrap", "text-max-width": "38px" },
         },
-        {
-          selector: 'node[type="paper"][?slug]',
-          style: { "border-color": accent, "border-width": 2 },
-        },
-        {
-          selector: "node:selected",
-          style: { "border-color": accent, "border-width": 3, "overlay-color": accent, "overlay-opacity": 0.1, "overlay-padding": 4 },
-        },
+        { selector: 'node[type="paper"][?slug]', style: { "border-color": accent, "border-width": 2 } },
+        { selector: "node:selected", style: { "border-color": accent, "border-width": 3, "overlay-color": accent, "overlay-opacity": 0.1, "overlay-padding": 4 } },
         {
           selector: "edge",
-          style: { "width": 1.5, "line-color": border, "target-arrow-color": border, "target-arrow-shape": "triangle", "curve-style": "bezier", "label": "data(label)", "font-size": "8px", "color": muted, "text-background-color": background, "text-background-opacity": 0.8, "text-background-padding": "2px" },
+          style: { width: 1.5, "line-color": border, "target-arrow-color": border, "target-arrow-shape": "triangle", "curve-style": "bezier", label: "data(label)", "font-size": "8px", color: muted, "text-background-color": background, "text-background-opacity": 0.8, "text-background-padding": "2px" },
         },
-        { selector: ".dimmed", style: { "opacity": 0.2 } },
+        { selector: ".dimmed", style: { opacity: 0.12 } },
       ],
       layout: {
-        name: "cose",
-        animate: true,
-        animationDuration: 600,
+        name: "cose", animate: true, animationDuration: 600,
         nodeDimensionsIncludeLabels: true,
-        nodeRepulsion: () => 8000,
-        edgeElasticity: () => 100,
-        idealEdgeLength: () => 100,
-        gravity: 0.3,
-        numIter: 1000,
-        fit: true,
-        padding: 48,
+        nodeRepulsion: () => 8000, edgeElasticity: () => 100,
+        idealEdgeLength: () => 100, gravity: 0.3,
+        numIter: 1000, fit: true, padding: 48,
       },
-      minZoom: 0.3,
-      maxZoom: 3,
-      wheelSensitivity: 0.3,
+      minZoom: 0.3, maxZoom: 3, wheelSensitivity: 0.3,
     });
 
     container._cy = cy;
 
+    // ── State ─────────────────────────────────────────────────────────────────
+    const visibleTypes = new Set(["topic", "concept", "paper"]);
+    let focusedNodeId: string | null = null;
+    let searchMatches: ReturnType<typeof cy.nodes> | null = null;
+    let searchMatchIndex = 0;
+
+    // ── Visual state engine ───────────────────────────────────────────────────
+    function applyDimming() {
+      cy.elements(":visible").removeClass("dimmed");
+
+      if (searchMatches) {
+        cy.nodes(":visible").addClass("dimmed");
+        cy.edges(":visible").addClass("dimmed");
+        searchMatches.removeClass("dimmed");
+        searchMatches.connectedEdges(":visible").removeClass("dimmed");
+      } else if (focusedNodeId) {
+        const focused = cy.getElementById(focusedNodeId);
+        if (!focused.empty() && !focused.hidden()) {
+          cy.elements(":visible").addClass("dimmed");
+          focused.removeClass("dimmed");
+          focused.neighborhood(":visible").removeClass("dimmed");
+        }
+      }
+    }
+
+    function refreshEdges() {
+      cy.edges().each(edge => {
+        if (!edge.source().hidden() && !edge.target().hidden()) edge.show();
+        else edge.hide();
+      });
+    }
+
+    // ── Type filter ───────────────────────────────────────────────────────────
+    function toggleType(type: string) {
+      const nowVisible = !visibleTypes.has(type);
+      if (nowVisible) {
+        visibleTypes.add(type);
+        cy.nodes(`[type="${type}"]`).show();
+        refreshEdges();
+      } else {
+        visibleTypes.delete(type);
+        cy.nodes(`[type="${type}"]`).hide();
+        if (focusedNodeId && cy.getElementById(focusedNodeId).hidden()) exitFocus(false);
+      }
+
+      const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
+      if (searchInput?.value) handleSearch(searchInput.value.trim());
+      else applyDimming();
+
+      document.querySelectorAll<HTMLElement>("[data-type-btn]").forEach(btn => {
+        const t = btn.getAttribute("data-type-btn")!;
+        btn.classList.toggle("opacity-40", !visibleTypes.has(t));
+      });
+    }
+
+    // ── Search ────────────────────────────────────────────────────────────────
+    function handleSearch(query: string) {
+      if (!query) {
+        searchMatches = null;
+        searchMatchIndex = 0;
+        applyDimming();
+        updateSearchUI();
+        return;
+      }
+      if (focusedNodeId) exitFocus(false);
+
+      const q = query.toLowerCase();
+      searchMatches = cy.nodes(":visible").filter(n =>
+        (n.data("label") as string).toLowerCase().includes(q)
+      );
+      searchMatchIndex = 0;
+      applyDimming();
+      updateSearchUI();
+      if (searchMatches.length > 0) panTo(searchMatches[0]);
+    }
+
+    function cycleMatch(dir: number) {
+      if (!searchMatches || searchMatches.length === 0) return;
+      searchMatchIndex = (searchMatchIndex + dir + searchMatches.length) % searchMatches.length;
+      panTo(searchMatches[searchMatchIndex]);
+      updateSearchUI();
+    }
+
+    function panTo(node: cytoscape.NodeSingular) {
+      cy.animate({ center: { eles: node }, zoom: Math.max(cy.zoom(), 1.4) }, { duration: 350 });
+    }
+
+    function updateSearchUI() {
+      const countEl = document.getElementById("cy-search-count");
+      const clearEl = document.getElementById("cy-search-clear");
+      if (!countEl || !clearEl) return;
+
+      if (!searchMatches) {
+        countEl.classList.add("hidden");
+        clearEl.classList.add("hidden");
+        return;
+      }
+
+      clearEl.classList.remove("hidden");
+      countEl.classList.remove("hidden");
+
+      if (searchMatches.length === 0) {
+        countEl.textContent = "0";
+        countEl.className = "pointer-events-none absolute right-7 text-xs tabular-nums text-muted-foreground";
+      } else {
+        const txt = searchMatches.length > 1 ? `${searchMatchIndex + 1}/${searchMatches.length}` : "1";
+        countEl.textContent = txt;
+        countEl.className = "pointer-events-none absolute right-7 text-xs tabular-nums text-accent font-medium";
+      }
+    }
+
+    // ── Focus mode ────────────────────────────────────────────────────────────
+    const focusBar   = document.getElementById("cy-focus-bar") as HTMLElement | null;
+    const focusLabel = document.getElementById("cy-focus-label");
+
+    function enterFocus(node: cytoscape.NodeSingular) {
+      searchMatches = null;
+      searchMatchIndex = 0;
+      const si = document.getElementById("cy-search") as HTMLInputElement | null;
+      if (si) si.value = "";
+      updateSearchUI();
+
+      focusedNodeId = node.id();
+      if (focusLabel) focusLabel.textContent = node.data("label");
+      if (focusBar) focusBar.style.display = "flex";
+      applyDimming();
+    }
+
+    function exitFocus(andApply = true) {
+      focusedNodeId = null;
+      if (focusBar) focusBar.style.display = "none";
+      if (andApply) applyDimming();
+    }
+
+    // ── Tooltip ───────────────────────────────────────────────────────────────
     const tooltip = document.getElementById("cy-tooltip")!;
-    const ttTitle = document.getElementById("cy-tooltip-title")!;
-    const ttDesc = document.getElementById("cy-tooltip-desc")!;
-    const ttBadge = document.getElementById("cy-tooltip-badge")!;
-    const ttHint = document.getElementById("cy-tooltip-hint")!;
+    const ttTitle  = document.getElementById("cy-tooltip-title")!;
+    const ttDesc   = document.getElementById("cy-tooltip-desc")!;
+    const ttBadge  = document.getElementById("cy-tooltip-badge")!;
+    const ttHint   = document.getElementById("cy-tooltip-hint")!;
+
     const TYPE_LABEL: Record<string, string> = { topic: "Topic", concept: "Concept", paper: "Paper" };
-    const TYPE_BADGE_CLASS: Record<string, string> = {
-      topic: "bg-accent/20 text-accent",
+    const TYPE_BADGE: Record<string, string> = {
+      topic:   "bg-accent/20 text-accent",
       concept: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
-      paper: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
+      paper:   "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
     };
 
     cy.on("mouseover", "node", evt => {
       const node = evt.target;
       const { label, description, type, slug } = node.data();
-      const pos = node.renderedPosition();
+      const pos  = node.renderedPosition();
       const rect = container.getBoundingClientRect();
+
+      container.style.cursor = "pointer";
       ttTitle.textContent = label;
-      ttDesc.textContent = description;
+      ttDesc.textContent  = description ?? "";
       ttBadge.textContent = TYPE_LABEL[type] ?? type;
-      ttBadge.className = `rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_BADGE_CLASS[type] ?? ""}`;
+      ttBadge.className   = `rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_BADGE[type] ?? ""}`;
       ttHint.classList.toggle("hidden", !slug);
-      let x = rect.left + pos.x + 16;
-      let y = rect.top + pos.y - 8;
+
       tooltip.classList.remove("hidden");
+      let x = rect.left + pos.x + 16;
+      let y = rect.top  + pos.y - 8;
       tooltip.style.left = `${x}px`;
-      tooltip.style.top = `${y}px`;
+      tooltip.style.top  = `${y}px`;
       const tr = tooltip.getBoundingClientRect();
-      if (tr.right > window.innerWidth - 8) tooltip.style.left = `${x - tr.width - 32}px`;
-      if (tr.bottom > window.innerHeight - 8) tooltip.style.top = `${y - tr.height}px`;
-      cy.elements().addClass("dimmed");
+      if (tr.right  > window.innerWidth  - 8) tooltip.style.left = `${x - tr.width  - 32}px`;
+      if (tr.bottom > window.innerHeight - 8) tooltip.style.top  = `${y - tr.height     }px`;
+
+      cy.elements(":visible").addClass("dimmed");
       node.removeClass("dimmed");
-      node.neighborhood().removeClass("dimmed");
+      node.neighborhood(":visible").removeClass("dimmed");
     });
-    cy.on("mouseout", "node", () => { tooltip.classList.add("hidden"); cy.elements().removeClass("dimmed"); });
-    cy.on("tap", "node", evt => { const href = evt.target.data("href"); if (href) window.location.href = href; });
-    cy.on("mouseover", 'node[?slug]', () => { container.style.cursor = "pointer"; });
-    cy.on("mouseout", 'node[?slug]', () => { container.style.cursor = "default"; });
+
+    cy.on("mouseout", "node", () => {
+      container.style.cursor = "default";
+      tooltip.classList.add("hidden");
+      applyDimming();
+    });
+
+    // ── Node click: focus → open → exit ──────────────────────────────────────
+    cy.on("tap", "node", evt => {
+      const node = evt.target;
+      const href = node.data("href") as string | null;
+
+      if (searchMatches) {
+        if (href) window.location.href = href;
+        return;
+      }
+
+      if (focusedNodeId === node.id()) {
+        if (href) window.location.href = href;
+        else exitFocus();
+      } else {
+        enterFocus(node);
+      }
+    });
+
+    cy.on("tap", evt => { if (evt.target === cy) exitFocus(); });
+
+    // ── Toolbar wiring ────────────────────────────────────────────────────────
+    document.querySelectorAll<HTMLElement>("[data-type-btn]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const type = btn.getAttribute("data-type-btn");
+        if (type) toggleType(type);
+      });
+    });
+
+    const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
+    searchInput?.addEventListener("input", e =>
+      handleSearch((e.target as HTMLInputElement).value.trim())
+    );
+    searchInput?.addEventListener("keydown", e => {
+      if      (e.key === "Enter"    )                           cycleMatch(1);
+      else if (e.key === "ArrowDown") { e.preventDefault();    cycleMatch(1); }
+      else if (e.key === "ArrowUp"  ) { e.preventDefault();    cycleMatch(-1); }
+      else if (e.key === "Escape"   ) {
+        (e.target as HTMLInputElement).value = "";
+        handleSearch("");
+        (e.target as HTMLInputElement).blur();
+      }
+    });
+
+    document.getElementById("cy-search-clear")?.addEventListener("click", () => {
+      if (searchInput) { searchInput.value = ""; handleSearch(""); searchInput.focus(); }
+    });
+
+    document.getElementById("cy-exit-focus")?.addEventListener("click", () => exitFocus());
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && focusedNodeId && document.activeElement?.id !== "cy-search")
+        exitFocus();
+    });
 
     document.getElementById("cy-zoom-in")?.addEventListener("click", () => {
       cy.zoom({ level: cy.zoom() * 1.2, renderedPosition: { x: container.clientWidth / 2, y: container.clientHeight / 2 } });
