@@ -63,33 +63,40 @@ const graphJson = JSON.stringify(graphData);
         <!-- Separator -->
         <div class="bg-border hidden h-4 w-px sm:block" aria-hidden="true"></div>
 
-        <!-- Search -->
-        <div class="relative flex min-w-0 flex-1 items-center sm:min-w-52">
-          <svg class="text-muted-foreground pointer-events-none absolute left-2.5 size-3.5"
-            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-          </svg>
-          <input
-            id="cy-search"
-            type="text"
-            placeholder="Search nodes..."
-            autocomplete="off"
-            class="border-border bg-surface/50 focus:border-accent w-full rounded-md border py-1 pl-8 pr-16 text-xs outline-none transition-colors focus:ring-1 focus:ring-accent/20"
-          />
-          <span id="cy-search-count"
-            class="pointer-events-none absolute right-7 hidden text-xs tabular-nums">
-          </span>
-          <button id="cy-search-clear"
-            class="text-muted-foreground hover:text-foreground absolute right-1.5 hidden rounded p-0.5 transition-colors"
-            aria-label="Clear search">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-              class="size-3.5">
-              <path d="M18 6 6 18M6 6l12 12"/>
+        <!-- Search with dropdown -->
+        <div class="relative min-w-0 flex-1 sm:min-w-52">
+          <div class="flex items-center">
+            <svg class="text-muted-foreground pointer-events-none absolute left-2.5 size-3.5"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
             </svg>
-          </button>
+            <input
+              id="cy-search"
+              type="text"
+              placeholder="Search nodes, concepts, papers..."
+              autocomplete="off"
+              class="border-border bg-surface/50 focus:border-accent w-full rounded-md border py-1 pl-8 pr-16 text-xs outline-none transition-colors focus:ring-1 focus:ring-accent/20"
+            />
+            <span id="cy-search-count"
+              class="pointer-events-none absolute right-7 hidden text-xs tabular-nums">
+            </span>
+            <button id="cy-search-clear"
+              class="text-muted-foreground hover:text-foreground absolute right-1.5 hidden rounded p-0.5 transition-colors"
+              aria-label="Clear search">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                class="size-3.5">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dropdown results (B) -->
+          <div id="cy-search-dropdown"
+            class="border-border bg-background absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-72 overflow-y-auto rounded-lg border shadow-xl">
+          </div>
         </div>
 
         <!-- Zoom controls -->
@@ -101,11 +108,47 @@ const graphJson = JSON.stringify(graphData);
       </div>
     </div>
 
-    <!-- Graph canvas -->
-    <div class="relative flex-1 flex flex-col overflow-hidden">
+    <!-- Graph canvas + panels -->
+    <div
+      id="cy-graph-wrap"
+      class="relative flex-1 flex overflow-hidden"
+      data-connects-to="Connects to"
+      data-connected-from="Connected from"
+      data-no-rels="No relationships"
+      data-no-desc="No description"
+      data-open-page="Open page →"
+      data-no-results="No results"
+    >
       <div id="cy" class="flex-1 w-full" data-graph={graphJson}></div>
 
-      <!-- Focus mode indicator pill -->
+      <!-- Relationship panel (D) — slides in from right -->
+      <aside
+        id="cy-rel-panel"
+        class="border-border bg-background/97 absolute right-0 top-0 bottom-0 z-10 w-64 translate-x-full overflow-y-auto border-l shadow-xl backdrop-blur-sm transition-transform duration-200"
+        aria-label="Node relationships"
+      >
+        <!-- Panel header -->
+        <div class="border-border flex items-start justify-between border-b px-3 py-2.5">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span id="cy-panel-badge" class="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium"></span>
+              <h3 id="cy-panel-title" class="font-display min-w-0 truncate text-sm font-semibold leading-snug"></h3>
+            </div>
+            <p id="cy-panel-desc" class="text-muted-foreground mt-1 line-clamp-2 text-xs leading-relaxed"></p>
+          </div>
+          <button id="cy-panel-close"
+            class="text-muted-foreground hover:text-foreground ml-2 mt-0.5 shrink-0 rounded p-0.5 transition-colors"
+            aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="size-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <!-- Panel body (JS-populated) -->
+        <div id="cy-panel-body" class="p-3 text-sm"></div>
+      </aside>
+
+      <!-- Focus mode indicator pill (simplified) -->
       <div id="cy-focus-bar"
         class="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center"
         style="display:none">
@@ -113,8 +156,6 @@ const graphJson = JSON.stringify(graphData);
           <span class="bg-accent size-2 animate-pulse rounded-full"></span>
           <span class="text-muted-foreground">Focus:</span>
           <span id="cy-focus-label" class="text-foreground max-w-[8rem] truncate font-medium"></span>
-          <span class="text-border mx-0.5">·</span>
-          <span class="text-muted-foreground">Click again to open</span>
           <span class="text-border mx-0.5">·</span>
           <button id="cy-exit-focus"
             class="text-muted-foreground hover:text-accent font-medium transition-colors">
@@ -141,6 +182,8 @@ const graphJson = JSON.stringify(graphData);
 
 <script>
   import cytoscape from "cytoscape";
+  import Fuse from "fuse.js";
+  import type { FuseResult } from "fuse.js";
 
   function initGraph() {
     const container = document.getElementById("cy") as (HTMLElement & { _cy?: unknown }) | null;
@@ -182,6 +225,7 @@ const graphJson = JSON.stringify(graphData);
           style: { width: 1.5, "line-color": border, "target-arrow-color": border, "target-arrow-shape": "triangle", "curve-style": "bezier", label: "data(label)", "font-size": "8px", color: muted, "text-background-color": background, "text-background-opacity": 0.8, "text-background-padding": "2px" },
         },
         { selector: ".dimmed", style: { opacity: 0.12 } },
+        { selector: ".drop-highlighted", style: { "border-color": accent, "border-width": 3 } },
       ],
       layout: {
         name: "cose", animate: true, animationDuration: 600,
@@ -195,11 +239,57 @@ const graphJson = JSON.stringify(graphData);
 
     container._cy = cy;
 
+    // ── Locale strings from data attributes ───────────────────────────────────
+    const wrap = document.getElementById("cy-graph-wrap");
+    const L = {
+      connectsTo:    wrap?.dataset.connectsTo    ?? "Connects to",
+      connectedFrom: wrap?.dataset.connectedFrom ?? "Connected from",
+      noRels:        wrap?.dataset.noRels        ?? "No relationships",
+      noDesc:        wrap?.dataset.noDesc        ?? "No description",
+      openPage:      wrap?.dataset.openPage      ?? "Open page →",
+      noResults:     wrap?.dataset.noResults     ?? "No results",
+    };
+
     // ── State ─────────────────────────────────────────────────────────────────
     const visibleTypes = new Set(["topic", "concept", "paper"]);
     let focusedNodeId: string | null = null;
     let searchMatches: ReturnType<typeof cy.nodes> | null = null;
-    let searchMatchIndex = 0;
+    let dropdownHighlight = -1;
+
+    // ── Fuse.js index (A + C) ─────────────────────────────────────────────────
+    interface NodeDoc {
+      id: string;
+      label: string;
+      type: string;
+      description: string;
+      edgeContext: string;
+    }
+
+    function buildFuseIndex() {
+      const docs: NodeDoc[] = (cy.nodes().map(node => ({
+        id:          node.id(),
+        label:       (node.data("label") as string) ?? "",
+        type:        (node.data("type")  as string) ?? "",
+        description: (node.data("description") as string) ?? "",
+        edgeContext: node.connectedEdges()
+          .map(e => e.data("label") as string)
+          .filter(Boolean)
+          .join(" "),
+      })) as unknown as NodeDoc[]);
+
+      return new Fuse<NodeDoc>(docs, {
+        keys: [
+          { name: "label",       weight: 3 },
+          { name: "description", weight: 2 },
+          { name: "edgeContext", weight: 1 },
+        ],
+        threshold: 0.38,
+        includeScore: true,
+        minMatchCharLength: 1,
+      });
+    }
+
+    let fuse = buildFuseIndex();
 
     // ── Visual state engine ───────────────────────────────────────────────────
     function applyDimming() {
@@ -222,8 +312,10 @@ const graphJson = JSON.stringify(graphData);
 
     function refreshEdges() {
       cy.edges().each(edge => {
-        if (!edge.source().hidden() && !edge.target().hidden()) edge.show();
-        else edge.hide();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (!edge.source().hidden() && !edge.target().hidden()) (edge as any).show();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        else (edge as any).hide();
       });
     }
 
@@ -232,13 +324,17 @@ const graphJson = JSON.stringify(graphData);
       const nowVisible = !visibleTypes.has(type);
       if (nowVisible) {
         visibleTypes.add(type);
-        cy.nodes(`[type="${type}"]`).show();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cy.nodes(`[type="${type}"]`) as any).show();
         refreshEdges();
       } else {
         visibleTypes.delete(type);
-        cy.nodes(`[type="${type}"]`).hide();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cy.nodes(`[type="${type}"]`) as any).hide();
         if (focusedNodeId && cy.getElementById(focusedNodeId).hidden()) exitFocus(false);
       }
+
+      fuse = buildFuseIndex();
 
       const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
       if (searchInput?.value) handleSearch(searchInput.value.trim());
@@ -250,32 +346,114 @@ const graphJson = JSON.stringify(graphData);
       });
     }
 
-    // ── Search ────────────────────────────────────────────────────────────────
+    // ── Dropdown (B) ──────────────────────────────────────────────────────────
+    const dropdown = document.getElementById("cy-search-dropdown")!;
+
+    const TYPE_BADGE: Record<string, string> = {
+      topic:   "bg-accent/20 text-accent",
+      concept: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
+      paper:   "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
+    };
+
+    function showDropdown(results: FuseResult<NodeDoc>[]) {
+      if (!dropdown) return;
+      if (results.length === 0) {
+        dropdown.innerHTML = `<p class="px-4 py-3 text-xs text-muted-foreground">${L.noResults}</p>`;
+        dropdown.classList.remove("hidden");
+        return;
+      }
+
+      dropdown.innerHTML = results.slice(0, 8).map((r, i) => {
+        const { id, label, type, description } = r.item;
+        const badge = TYPE_BADGE[type] ?? "bg-zinc-100 text-zinc-600";
+        const desc = description
+          ? `<p class="mt-0.5 truncate text-xs text-muted-foreground">${description.slice(0, 72)}${description.length > 72 ? "…" : ""}</p>`
+          : "";
+        return `<button
+          class="dd-item w-full px-3 py-2 text-left transition-colors hover:bg-surface flex items-start gap-2.5"
+          data-node-id="${id}"
+          data-dd-index="${i}"
+        >
+          <span class="mt-0.5 shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${badge}">${type}</span>
+          <div class="min-w-0">
+            <p class="truncate text-xs font-medium leading-snug">${label}</p>
+            ${desc}
+          </div>
+        </button>`;
+      }).join("");
+
+      dropdown.classList.remove("hidden");
+      dropdownHighlight = -1;
+      highlightDropdownItem(-1);
+
+      dropdown.querySelectorAll<HTMLButtonElement>(".dd-item").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const nodeId = btn.dataset.nodeId!;
+          selectDropdownNode(nodeId);
+        });
+      });
+    }
+
+    function closeDropdown() {
+      dropdown?.classList.add("hidden");
+      dropdownHighlight = -1;
+    }
+
+    function highlightDropdownItem(idx: number) {
+      dropdown?.querySelectorAll<HTMLElement>(".dd-item").forEach((btn, i) => {
+        btn.classList.toggle("bg-surface", i === idx);
+      });
+    }
+
+    function navigateDropdown(dir: number) {
+      const items = dropdown?.querySelectorAll(".dd-item");
+      if (!items || items.length === 0) return;
+      dropdownHighlight = Math.max(-1, Math.min(items.length - 1, dropdownHighlight + dir));
+      highlightDropdownItem(dropdownHighlight);
+      if (dropdownHighlight >= 0) {
+        const btn = items[dropdownHighlight] as HTMLButtonElement;
+        const node = cy.getElementById(btn.dataset.nodeId!);
+        if (!node.empty()) panTo(node);
+      }
+    }
+
+    function selectDropdownNode(nodeId: string) {
+      closeDropdown();
+      const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
+      if (searchInput) searchInput.value = "";
+      searchMatches = null;
+      updateSearchUI();
+      const node = cy.getElementById(nodeId);
+      if (!node.empty()) {
+        enterFocus(node);
+        panTo(node);
+      }
+    }
+
+    document.addEventListener("click", e => {
+      const target = e.target as Node;
+      const searchWrap = document.getElementById("cy-search")?.closest(".relative");
+      if (searchWrap && !searchWrap.contains(target)) closeDropdown();
+    });
+
+    // ── Search (A + C) ────────────────────────────────────────────────────────
     function handleSearch(query: string) {
       if (!query) {
         searchMatches = null;
-        searchMatchIndex = 0;
+        closeDropdown();
         applyDimming();
         updateSearchUI();
         return;
       }
       if (focusedNodeId) exitFocus(false);
 
-      const q = query.toLowerCase();
-      searchMatches = cy.nodes(":visible").filter(n =>
-        (n.data("label") as string).toLowerCase().includes(q)
-      );
-      searchMatchIndex = 0;
+      const results = fuse.search(query);
+      const matchedIds = new Set(results.slice(0, 30).map(r => r.item.id));
+
+      searchMatches = cy.nodes(":visible").filter(n => matchedIds.has(n.id()));
       applyDimming();
       updateSearchUI();
-      if (searchMatches.length > 0) panTo(searchMatches[0]);
-    }
-
-    function cycleMatch(dir: number) {
-      if (!searchMatches || searchMatches.length === 0) return;
-      searchMatchIndex = (searchMatchIndex + dir + searchMatches.length) % searchMatches.length;
-      panTo(searchMatches[searchMatchIndex]);
-      updateSearchUI();
+      showDropdown(results);
     }
 
     function panTo(node: cytoscape.NodeSingular) {
@@ -300,10 +478,104 @@ const graphJson = JSON.stringify(graphData);
         countEl.textContent = "0";
         countEl.className = "pointer-events-none absolute right-7 text-xs tabular-nums text-muted-foreground";
       } else {
-        const txt = searchMatches.length > 1 ? `${searchMatchIndex + 1}/${searchMatches.length}` : "1";
-        countEl.textContent = txt;
+        countEl.textContent = String(searchMatches.length);
         countEl.className = "pointer-events-none absolute right-7 text-xs tabular-nums text-accent font-medium";
       }
+    }
+
+    // ── Relationship panel (D) ────────────────────────────────────────────────
+    const relPanel    = document.getElementById("cy-rel-panel")!;
+    const panelTitle  = document.getElementById("cy-panel-title")!;
+    const panelBadge  = document.getElementById("cy-panel-badge")!;
+    const panelDesc   = document.getElementById("cy-panel-desc")!;
+    const panelBody   = document.getElementById("cy-panel-body")!;
+
+    function showRelPanel(node: cytoscape.NodeSingular) {
+      const { label, type, description, href } = node.data() as {
+        label: string; type: string; description?: string; href?: string;
+      };
+
+      panelTitle.textContent = label;
+      panelBadge.textContent = type;
+      panelBadge.className = `shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_BADGE[type] ?? "bg-zinc-100 text-zinc-600"}`;
+      panelDesc.textContent = description || L.noDesc;
+
+      interface RelItem { edgeLabel: string; nodeLabel: string; nodeId: string }
+      const outgoing: RelItem[] = [];
+      const incoming: RelItem[] = [];
+
+      node.connectedEdges().each(edge => {
+        if (edge.source().id() === node.id()) {
+          outgoing.push({
+            edgeLabel: (edge.data("label") as string) || "→",
+            nodeLabel: edge.target().data("label") as string,
+            nodeId:    edge.target().id(),
+          });
+        } else {
+          incoming.push({
+            edgeLabel: (edge.data("label") as string) || "←",
+            nodeLabel: edge.source().data("label") as string,
+            nodeId:    edge.source().id(),
+          });
+        }
+      });
+
+      let html = "";
+
+      if (outgoing.length === 0 && incoming.length === 0) {
+        html = `<p class="text-muted-foreground text-xs italic">${L.noRels}</p>`;
+      } else {
+        if (outgoing.length > 0) {
+          html += `<p class="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-wider">${L.connectsTo}</p>`;
+          html += outgoing.map(r => relItem(r.nodeId, r.nodeLabel, r.edgeLabel, "→")).join("");
+        }
+        if (incoming.length > 0) {
+          if (outgoing.length > 0) html += `<div class="my-3 border-t border-border"></div>`;
+          html += `<p class="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-wider">${L.connectedFrom}</p>`;
+          html += incoming.map(r => relItem(r.nodeId, r.nodeLabel, r.edgeLabel, "←")).join("");
+        }
+      }
+
+      if (href) {
+        html += `<div class="mt-4 border-t border-border pt-3">
+          <a href="${href}"
+            class="text-accent flex items-center gap-1 text-xs hover:underline">
+            ${L.openPage}
+          </a>
+        </div>`;
+      }
+
+      panelBody.innerHTML = html;
+
+      panelBody.querySelectorAll<HTMLButtonElement>(".rel-node-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const nid = btn.dataset.nodeId!;
+          const targetNode = cy.getElementById(nid);
+          if (!targetNode.empty()) {
+            enterFocus(targetNode);
+            panTo(targetNode);
+          }
+        });
+      });
+
+      relPanel.classList.remove("translate-x-full");
+    }
+
+    function relItem(nodeId: string, nodeLabel: string, edgeLabel: string, arrow: string) {
+      const typeOfNode = cy.getElementById(nodeId).data("type") as string;
+      const badge = TYPE_BADGE[typeOfNode] ?? "bg-zinc-100 text-zinc-600";
+      return `<button class="rel-node-btn mb-1.5 flex w-full items-start gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-surface"
+          data-node-id="${nodeId}">
+          <span class="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${badge}">${arrow}</span>
+          <div class="min-w-0">
+            <p class="truncate text-xs font-medium leading-snug">${nodeLabel}</p>
+            <p class="text-muted-foreground mt-0.5 text-xs italic">${edgeLabel}</p>
+          </div>
+        </button>`;
+    }
+
+    function hideRelPanel() {
+      relPanel.classList.add("translate-x-full");
     }
 
     // ── Focus mode ────────────────────────────────────────────────────────────
@@ -312,20 +584,22 @@ const graphJson = JSON.stringify(graphData);
 
     function enterFocus(node: cytoscape.NodeSingular) {
       searchMatches = null;
-      searchMatchIndex = 0;
       const si = document.getElementById("cy-search") as HTMLInputElement | null;
       if (si) si.value = "";
+      closeDropdown();
       updateSearchUI();
 
       focusedNodeId = node.id();
       if (focusLabel) focusLabel.textContent = node.data("label");
       if (focusBar) focusBar.style.display = "flex";
       applyDimming();
+      showRelPanel(node);
     }
 
     function exitFocus(andApply = true) {
       focusedNodeId = null;
       if (focusBar) focusBar.style.display = "none";
+      hideRelPanel();
       if (andApply) applyDimming();
     }
 
@@ -337,11 +611,6 @@ const graphJson = JSON.stringify(graphData);
     const ttHint   = document.getElementById("cy-tooltip-hint")!;
 
     const TYPE_LABEL: Record<string, string> = { topic: "Topic", concept: "Concept", paper: "Paper" };
-    const TYPE_BADGE: Record<string, string> = {
-      topic:   "bg-accent/20 text-accent",
-      concept: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
-      paper:   "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
-    };
 
     cy.on("mouseover", "node", evt => {
       const node = evt.target;
@@ -376,15 +645,10 @@ const graphJson = JSON.stringify(graphData);
       applyDimming();
     });
 
-    // ── Node click: focus → open → exit ──────────────────────────────────────
+    // ── Node click ────────────────────────────────────────────────────────────
     cy.on("tap", "node", evt => {
       const node = evt.target;
       const href = node.data("href") as string | null;
-
-      if (searchMatches) {
-        if (href) window.location.href = href;
-        return;
-      }
 
       if (focusedNodeId === node.id()) {
         if (href) window.location.href = href;
@@ -409,10 +673,24 @@ const graphJson = JSON.stringify(graphData);
       handleSearch((e.target as HTMLInputElement).value.trim())
     );
     searchInput?.addEventListener("keydown", e => {
-      if      (e.key === "Enter"    )                           cycleMatch(1);
-      else if (e.key === "ArrowDown") { e.preventDefault();    cycleMatch(1); }
-      else if (e.key === "ArrowUp"  ) { e.preventDefault();    cycleMatch(-1); }
-      else if (e.key === "Escape"   ) {
+      const ddVisible = !dropdown?.classList.contains("hidden");
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (ddVisible) navigateDropdown(1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (ddVisible) navigateDropdown(-1);
+      } else if (e.key === "Enter") {
+        if (ddVisible && dropdownHighlight >= 0) {
+          const items = dropdown?.querySelectorAll<HTMLButtonElement>(".dd-item");
+          if (items?.[dropdownHighlight]) {
+            selectDropdownNode(items[dropdownHighlight].dataset.nodeId!);
+          }
+        } else if (ddVisible) {
+          const first = dropdown?.querySelector<HTMLButtonElement>(".dd-item");
+          if (first) selectDropdownNode(first.dataset.nodeId!);
+        }
+      } else if (e.key === "Escape") {
         (e.target as HTMLInputElement).value = "";
         handleSearch("");
         (e.target as HTMLInputElement).blur();
@@ -424,6 +702,7 @@ const graphJson = JSON.stringify(graphData);
     });
 
     document.getElementById("cy-exit-focus")?.addEventListener("click", () => exitFocus());
+    document.getElementById("cy-panel-close")?.addEventListener("click", () => exitFocus());
 
     document.addEventListener("keydown", e => {
       if (e.key === "Escape" && focusedNodeId && document.activeElement?.id !== "cy-search")

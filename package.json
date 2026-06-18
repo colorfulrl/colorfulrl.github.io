@@ -27,6 +27,7 @@
     "astro": "^6.3.3",
     "cytoscape": "^3.34.0",
     "dayjs": "^1.11.20",
+    "fuse.js": "^7.4.2",
     "katex": "^0.16.11",
     "lodash.kebabcase": "^4.1.1",
     "rehype-katex": "^7.0.1",
