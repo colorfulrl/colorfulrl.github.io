@@ -1,0 +1,200 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { GRAPH_NODES, GRAPH_EDGES } from "@/data/researchGraph";
+import { useTranslations } from "@/i18n";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import config from "@/config";
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const graphData = {
+  nodes: GRAPH_NODES.map(n => ({
+    data: {
+      id: n.id,
+      label: n.label,
+      type: n.type,
+      description: n.description,
+      slug: n.slug ?? null,
+      href: n.slug
+        ? getRelativeLocaleUrl(locale, `research/${n.slug}`)
+        : null,
+    },
+  })),
+  edges: GRAPH_EDGES.map((e, i) => ({
+    data: {
+      id: `e${i}`,
+      source: e.source,
+      target: e.target,
+      label: e.label,
+    },
+  })),
+};
+
+const graphJson = JSON.stringify(graphData);
+---
+
+<Layout title={`${t.nav.research} | ${config.site.title}`}>
+  <Header />
+
+  <main id="main-content" class="flex flex-col" style="height: calc(100svh - 4rem);">
+    <div class="border-border bg-background/80 flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2 backdrop-blur-sm">
+      <div class="flex flex-wrap items-center gap-4 text-sm">
+        <span class="font-medium">{t.nav.research}</span>
+        <span class="flex items-center gap-1.5">
+          <span class="bg-accent size-3 rounded-full"></span>
+          <span class="text-muted-foreground">Topic</span>
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="bg-sky-400 size-3 rounded-full"></span>
+          <span class="text-muted-foreground">Concept</span>
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="border-border bg-surface size-3 rounded-full border-2"></span>
+          <span class="text-muted-foreground">Paper</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="cy-zoom-in" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom in">+</button>
+        <button id="cy-zoom-out" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom out">−</button>
+        <button id="cy-reset" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm">Reset</button>
+      </div>
+    </div>
+
+    <div id="cy" class="flex-1 w-full" data-graph={graphJson}></div>
+
+    <div id="cy-tooltip" class="border-border bg-background pointer-events-none absolute z-20 hidden max-w-64 rounded-lg border p-3 shadow-lg">
+      <div class="flex items-center gap-2">
+        <span id="cy-tooltip-badge" class="rounded px-1.5 py-0.5 text-xs font-medium"></span>
+        <p id="cy-tooltip-title" class="font-display font-semibold leading-snug"></p>
+      </div>
+      <p id="cy-tooltip-desc" class="text-muted-foreground mt-1.5 text-xs leading-relaxed"></p>
+      <p id="cy-tooltip-hint" class="text-accent mt-2 hidden text-xs">Nhấn để xem chi tiết →</p>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import cytoscape from "cytoscape";
+
+  function initGraph() {
+    const container = document.getElementById("cy") as (HTMLElement & { _cy?: unknown }) | null;
+    if (!container || container._cy) return;
+
+    const raw = container.dataset.graph;
+    if (!raw) return;
+    const { nodes, edges } = JSON.parse(raw) as { nodes: cytoscape.ElementDefinition[]; edges: cytoscape.ElementDefinition[] };
+
+    const style = getComputedStyle(document.documentElement);
+    const accent = style.getPropertyValue("--color-accent").trim() || "#6366f1";
+    const foreground = style.getPropertyValue("--color-foreground").trim() || "#1a1a1a";
+    const border = style.getPropertyValue("--color-border").trim() || "#e5e7eb";
+    const surface = style.getPropertyValue("--color-surface").trim() || "#ffffff";
+    const muted = style.getPropertyValue("--color-muted-foreground").trim() || "#6b7280";
+    const background = style.getPropertyValue("--color-background").trim() || "#ffffff";
+
+    const cy = cytoscape({
+      container,
+      elements: { nodes, edges },
+      style: [
+        {
+          selector: 'node[type="topic"]',
+          style: { "background-color": accent, "label": "data(label)", "color": background, "text-valign": "center", "text-halign": "center", "font-size": "11px", "font-weight": "bold", "width": 72, "height": 72, "text-wrap": "wrap", "text-max-width": "60px" },
+        },
+        {
+          selector: 'node[type="concept"]',
+          style: { "background-color": "#38bdf8", "label": "data(label)", "color": "#0c4a6e", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, "width": 54, "height": 54, "text-wrap": "wrap", "text-max-width": "48px" },
+        },
+        {
+          selector: 'node[type="paper"]',
+          style: { "background-color": surface, "border-color": border, "border-width": 2, "label": "data(label)", "color": foreground, "text-valign": "center", "text-halign": "center", "font-size": "9px", "width": 44, "height": 44, "text-wrap": "wrap", "text-max-width": "38px" },
+        },
+        {
+          selector: 'node[type="paper"][?slug]',
+          style: { "border-color": accent, "border-width": 2 },
+        },
+        {
+          selector: "node:selected",
+          style: { "border-color": accent, "border-width": 3, "overlay-color": accent, "overlay-opacity": 0.1, "overlay-padding": 4 },
+        },
+        {
+          selector: "edge",
+          style: { "width": 1.5, "line-color": border, "target-arrow-color": border, "target-arrow-shape": "triangle", "curve-style": "bezier", "label": "data(label)", "font-size": "8px", "color": muted, "text-background-color": background, "text-background-opacity": 0.8, "text-background-padding": "2px" },
+        },
+        { selector: ".dimmed", style: { "opacity": 0.2 } },
+      ],
+      layout: {
+        name: "cose",
+        animate: true,
+        animationDuration: 600,
+        nodeDimensionsIncludeLabels: true,
+        nodeRepulsion: () => 8000,
+        edgeElasticity: () => 100,
+        idealEdgeLength: () => 100,
+        gravity: 0.3,
+        numIter: 1000,
+        fit: true,
+        padding: 48,
+      },
+      minZoom: 0.3,
+      maxZoom: 3,
+      wheelSensitivity: 0.3,
+    });
+
+    container._cy = cy;
+
+    const tooltip = document.getElementById("cy-tooltip")!;
+    const ttTitle = document.getElementById("cy-tooltip-title")!;
+    const ttDesc = document.getElementById("cy-tooltip-desc")!;
+    const ttBadge = document.getElementById("cy-tooltip-badge")!;
+    const ttHint = document.getElementById("cy-tooltip-hint")!;
+    const TYPE_LABEL: Record<string, string> = { topic: "Topic", concept: "Concept", paper: "Paper" };
+    const TYPE_BADGE_CLASS: Record<string, string> = {
+      topic: "bg-accent/20 text-accent",
+      concept: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
+      paper: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
+    };
+
+    cy.on("mouseover", "node", evt => {
+      const node = evt.target;
+      const { label, description, type, slug } = node.data();
+      const pos = node.renderedPosition();
+      const rect = container.getBoundingClientRect();
+      ttTitle.textContent = label;
+      ttDesc.textContent = description;
+      ttBadge.textContent = TYPE_LABEL[type] ?? type;
+      ttBadge.className = `rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_BADGE_CLASS[type] ?? ""}`;
+      ttHint.classList.toggle("hidden", !slug);
+      let x = rect.left + pos.x + 16;
+      let y = rect.top + pos.y - 8;
+      tooltip.classList.remove("hidden");
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+      const tr = tooltip.getBoundingClientRect();
+      if (tr.right > window.innerWidth - 8) tooltip.style.left = `${x - tr.width - 32}px`;
+      if (tr.bottom > window.innerHeight - 8) tooltip.style.top = `${y - tr.height}px`;
+      cy.elements().addClass("dimmed");
+      node.removeClass("dimmed");
+      node.neighborhood().removeClass("dimmed");
+    });
+    cy.on("mouseout", "node", () => { tooltip.classList.add("hidden"); cy.elements().removeClass("dimmed"); });
+    cy.on("tap", "node", evt => { const href = evt.target.data("href"); if (href) window.location.href = href; });
+    cy.on("mouseover", 'node[?slug]', () => { container.style.cursor = "pointer"; });
+    cy.on("mouseout", 'node[?slug]', () => { container.style.cursor = "default"; });
+
+    document.getElementById("cy-zoom-in")?.addEventListener("click", () => {
+      cy.zoom({ level: cy.zoom() * 1.2, renderedPosition: { x: container.clientWidth / 2, y: container.clientHeight / 2 } });
+    });
+    document.getElementById("cy-zoom-out")?.addEventListener("click", () => {
+      cy.zoom({ level: cy.zoom() / 1.2, renderedPosition: { x: container.clientWidth / 2, y: container.clientHeight / 2 } });
+    });
+    document.getElementById("cy-reset")?.addEventListener("click", () => { cy.fit(undefined, 48); });
+  }
+
+  document.addEventListener("astro:page-load", initGraph);
+  if (document.readyState !== "loading") initGraph();
+</script>

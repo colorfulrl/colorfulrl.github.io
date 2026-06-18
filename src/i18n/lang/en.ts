@@ -10,6 +10,7 @@ export default {
     search: "Search",
     ebooks: "Ebooks",
     resources: "Resources",
+    research: "Research",
     categories: "Categories",
     more: "More",
     support: "Buy me a coffee",
@@ -80,6 +81,9 @@ export default {
 
     resourcesTitle: "Resources",
     resourcesDesc: "Articles, videos, repos and courses worth reading.",
+
+    researchTitle: "Research Map",
+    researchDesc: "RL knowledge graph: topics, concepts and key papers.",
   },
   ebooks: {
     viewLink: "View ebook",

@@ -1,0 +1,115 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { GRAPH_NODES, GRAPH_EDGES } from "@/data/researchGraph";
+import { useTranslations } from "@/i18n";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import config from "@/config";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("research", e => !e.data.draft);
+  return entries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { title, authors, year, venue, arxiv, abstract } = entry.data;
+const { Content } = await render(entry);
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const node = GRAPH_NODES.find(n => n.slug === entry.id);
+const relatedIds = GRAPH_EDGES
+  .filter(e => e.source === entry.id || e.target === entry.id)
+  .flatMap(e => [e.source, e.target])
+  .filter(id => id !== entry.id);
+const relatedNodes = GRAPH_NODES.filter(
+  n => relatedIds.includes(n.id) && n.slug
+);
+---
+
+<Layout title={`${title} | ${config.site.title}`}>
+  <Header />
+
+  <main id="main-content" class="app-layout py-10">
+    <a
+      href={getRelativeLocaleUrl(locale, "research")}
+      class="text-muted-foreground hover:text-accent mb-6 inline-flex items-center gap-1 text-sm"
+    >
+      ← {t.nav.research}
+    </a>
+
+    <div class="max-w-2xl">
+      <div class="mb-2 flex flex-wrap items-center gap-2">
+        {node && (
+          <span class="bg-accent/10 text-accent rounded px-2 py-0.5 text-xs font-medium capitalize">
+            {node.type}
+          </span>
+        )}
+        {venue && (
+          <span class="text-muted-foreground text-sm">{venue}</span>
+        )}
+        {year && (
+          <span class="text-muted-foreground text-sm">· {year}</span>
+        )}
+      </div>
+
+      <h1 class="font-display text-accent text-3xl font-semibold tracking-tight sm:text-4xl">
+        {title}
+      </h1>
+
+      {authors && authors.length > 0 && (
+        <p class="text-muted-foreground mt-3 text-sm">
+          {authors.join(", ")}
+        </p>
+      )}
+
+      {arxiv && (
+        <a
+          href={arxiv}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-accent mt-4 inline-flex items-center gap-1 text-sm decoration-dashed underline-offset-4 hover:underline"
+        >
+          Paper ↗
+        </a>
+      )}
+
+      {abstract && (
+        <div class="mt-6">
+          <h2 class="mb-2 text-sm font-medium uppercase tracking-wide opacity-60">Abstract</h2>
+          <p class="text-sm leading-relaxed">{abstract}</p>
+        </div>
+      )}
+
+      <article class="app-prose mt-8">
+        <Content />
+      </article>
+
+      {relatedNodes.length > 0 && (
+        <div class="mt-10">
+          <h2 class="mb-3 text-sm font-medium uppercase tracking-wide opacity-60">
+            Related
+          </h2>
+          <div class="flex flex-wrap gap-2">
+            {relatedNodes.map(n => (
+              <a
+                href={getRelativeLocaleUrl(locale, `research/${n.slug}`)}
+                class="border-border hover:border-accent rounded-full border px-3 py-1 text-sm transition-colors"
+              >
+                {n.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

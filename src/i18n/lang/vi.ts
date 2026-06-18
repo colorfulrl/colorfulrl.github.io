@@ -10,6 +10,7 @@ export default {
     search: "Tìm kiếm",
     ebooks: "Ebook",
     resources: "Tài nguyên",
+    research: "Nghiên cứu",
     categories: "Chủ đề",
     more: "Thêm",
     support: "Buy me a coffee",
@@ -80,6 +81,9 @@ export default {
 
     resourcesTitle: "Tài nguyên",
     resourcesDesc: "Bài viết, video, repo và khóa học mình thấy đáng đọc.",
+
+    researchTitle: "Bản đồ nghiên cứu",
+    researchDesc: "Đồ thị tri thức RL: chủ đề, khái niệm và bài báo quan trọng.",
   },
   ebooks: {
     viewLink: "Xem ebook",

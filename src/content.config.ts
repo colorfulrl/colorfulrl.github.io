@@ -82,4 +82,19 @@ const resources = defineCollection({
   }),
 });
 
-export const collections = { posts, pages, ebooks, resources };
+export const RESEARCH_PATH = "src/content/research";
+
+const research = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${RESEARCH_PATH}` }),
+  schema: z.object({
+    title: z.string(),
+    authors: z.array(z.string()).optional(),
+    year: z.number().optional(),
+    venue: z.string().optional(),
+    abstract: z.string().optional(),
+    arxiv: z.string().optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
+export const collections = { posts, pages, ebooks, resources, research };

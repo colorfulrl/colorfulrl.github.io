@@ -8,6 +8,7 @@ export interface UIStrings {
     search: string;
     ebooks: string;
     resources: string;
+    research: string;
     categories: string;
     more: string;
     support: string;
@@ -78,6 +79,9 @@ export interface UIStrings {
 
     resourcesTitle: string;
     resourcesDesc: string;
+
+    researchTitle: string;
+    researchDesc: string;
   };
   ebooks: {
     viewLink: string;
