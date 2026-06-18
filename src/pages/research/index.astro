@@ -46,92 +46,93 @@ const graphJson = JSON.stringify(graphData);
 
     <!-- Toolbar -->
     <div class="border-border bg-background/80 relative z-20 border-b py-2 backdrop-blur-sm">
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div class="flex flex-col gap-y-1.5">
 
-        <!-- Type filter buttons (rainbow: R O Y G C I V) -->
-        <div class="flex flex-wrap items-center gap-0.5">
-          <span class="text-foreground mr-2 text-sm font-medium">{t.nav.research}</span>
+        <!-- Row 1: Type filter buttons — scrollable, never wraps -->
+        <div class="flex items-center gap-0.5 overflow-x-auto" style="scrollbar-width:none">
+          <span class="text-foreground mr-2 shrink-0 text-sm font-medium">{t.nav.research}</span>
           <button data-type-btn="topic"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-red-500 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-red-500 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Topic</span>
           </button>
           <button data-type-btn="approach"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-orange-500 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-orange-500 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Approach</span>
           </button>
           <button data-type-btn="concept"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-amber-400 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-amber-400 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Concept</span>
           </button>
           <button data-type-btn="architecture"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-emerald-500 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-emerald-500 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Arch</span>
           </button>
           <button data-type-btn="algorithm"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-cyan-500 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-cyan-500 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Algo</span>
           </button>
           <button data-type-btn="paper"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-indigo-500 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-indigo-500 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Paper</span>
           </button>
           <button data-type-btn="benchmark"
-            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-violet-500 size-2.5 shrink-0 rounded-full"></span>
+            class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-violet-500 size-2.5 rounded-full"></span>
             <span class="text-muted-foreground">Bench</span>
           </button>
         </div>
 
-        <!-- Separator -->
-        <div class="bg-border hidden h-4 w-px sm:block" aria-hidden="true"></div>
+        <!-- Row 2: Search + Zoom — always single row -->
+        <div class="flex items-center gap-2">
 
-        <!-- Search with dropdown (relative wrapper for dropdown positioning) -->
-        <div class="relative min-w-0 flex-1 sm:min-w-52">
-          <div class="flex items-center">
-            <svg class="text-muted-foreground pointer-events-none absolute left-2.5 size-3.5"
-              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              aria-hidden="true">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-            </svg>
-            <input
-              id="cy-search"
-              type="text"
-              placeholder="Tìm node, khái niệm, paper..."
-              autocomplete="off"
-              class="border-border bg-surface/50 focus:border-accent w-full rounded-md border py-1 pl-8 pr-16 text-xs outline-none transition-colors focus:ring-1 focus:ring-accent/20"
-            />
-            <span id="cy-search-count"
-              class="pointer-events-none absolute right-7 hidden text-xs tabular-nums">
-            </span>
-            <button id="cy-search-clear"
-              class="text-muted-foreground hover:text-foreground absolute right-1.5 hidden rounded p-0.5 transition-colors"
-              aria-label="Xóa tìm kiếm">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                class="size-3.5">
-                <path d="M18 6 6 18M6 6l12 12"/>
+          <!-- Search with dropdown (relative wrapper for dropdown positioning) -->
+          <div class="relative min-w-0 flex-1">
+            <div class="flex items-center">
+              <svg class="text-muted-foreground pointer-events-none absolute left-2.5 size-3.5"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
               </svg>
-            </button>
+              <input
+                id="cy-search"
+                type="text"
+                placeholder="Tìm node, khái niệm, paper..."
+                autocomplete="off"
+                class="border-border bg-surface/50 focus:border-accent w-full rounded-md border py-1 pl-8 pr-16 text-xs outline-none transition-colors focus:ring-1 focus:ring-accent/20"
+              />
+              <span id="cy-search-count"
+                class="pointer-events-none absolute right-7 hidden text-xs tabular-nums">
+              </span>
+              <button id="cy-search-clear"
+                class="text-muted-foreground hover:text-foreground absolute right-1.5 hidden rounded p-0.5 transition-colors"
+                aria-label="Xóa tìm kiếm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="size-3.5">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Dropdown results (B) -->
+            <div id="cy-search-dropdown"
+              class="border-border bg-background absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-72 overflow-y-auto rounded-lg border shadow-xl">
+            </div>
           </div>
 
-          <!-- Dropdown results (B) -->
-          <div id="cy-search-dropdown"
-            class="border-border bg-background absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-72 overflow-y-auto rounded-lg border shadow-xl">
+          <!-- Zoom controls -->
+          <div class="flex shrink-0 items-center gap-1">
+            <button id="cy-zoom-in" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom in">+</button>
+            <button id="cy-zoom-out" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom out">−</button>
+            <button id="cy-reset" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm">Reset</button>
           </div>
-        </div>
-
-        <!-- Zoom controls -->
-        <div class="ml-auto flex shrink-0 items-center gap-1">
-          <button id="cy-zoom-in" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom in">+</button>
-          <button id="cy-zoom-out" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm" aria-label="Zoom out">−</button>
-          <button id="cy-reset" class="border-border hover:bg-surface rounded border px-2 py-0.5 text-sm">Reset</button>
         </div>
       </div>
     </div>
