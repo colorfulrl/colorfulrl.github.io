@@ -49,8 +49,8 @@ const ebooks = defineCollection({
       // hiện khi xem ở /en/ebooks; nếu không có thì fallback dùng description.
       description: z.string().optional(),
       descriptionEn: z.string().optional(),
-      // Đặt file ảnh bìa (vd. cover.jpg) cùng thư mục với index.md, rồi tham chiếu ở đây.
-      cover: image().optional(),
+      // Đặt file ảnh bìa (vd. cover.jpg) cùng thư mục với index.md, hoặc dùng URL ngoài.
+      cover: image().or(z.string()).optional(),
       // Để trống lúc mới thêm sách, điền link sau khi có.
       link: z.string().optional(),
       // Đặt true nếu sách KHÔNG thể chia sẻ link công khai (rủi ro bị nhà xuất
@@ -76,6 +76,7 @@ const resources = defineCollection({
     source: z.string().optional(),
     description: z.string().optional(),
     descriptionEn: z.string().optional(),
+    thumbnail: z.string().optional(),
     date: z.coerce.date().optional(),
     order: z.number().optional(),
     draft: z.boolean().optional(),

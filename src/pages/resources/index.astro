@@ -117,7 +117,7 @@ function getTypeLabel(type: string) {
                     {getTypeLabel(type)}
                   </h2>
                 </div>
-                <ul class="flex flex-col gap-3">
+                <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {grouped.get(type)!.map(resource => (
                     <ResourceCard {...resource} />
                   ))}

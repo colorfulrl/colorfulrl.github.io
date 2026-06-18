@@ -55,15 +55,15 @@ function getCategoryLabel(slug: string) {
       ) : (
         <>
           <nav aria-label={t.ebooks.categories} class="mb-10">
-            <p class="text-muted-foreground mb-2 text-sm font-medium uppercase tracking-wide">
+            <p class="text-muted-foreground mb-3 text-sm font-medium uppercase tracking-wide">
               {t.ebooks.categories}
             </p>
-            <ul class="flex flex-col gap-1">
+            <ul class="flex flex-wrap gap-2">
               {orderedCategories.map(cat => (
                 <li>
                   <a
                     href={`#${cat}`}
-                    class="text-accent decoration-dashed underline-offset-4 hover:underline"
+                    class="border-border hover:border-accent hover:text-accent inline-block rounded-full border px-3 py-1 text-sm transition-colors"
                   >
                     {getCategoryLabel(cat)}
                   </a>
@@ -77,7 +77,7 @@ function getCategoryLabel(slug: string) {
               <h2 class="font-display text-accent mb-4 text-xl font-semibold tracking-tight">
                 {getCategoryLabel(cat)}
               </h2>
-              <ul class="flex flex-col gap-4">
+              <ul class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {grouped.get(cat)!.map(ebook => (
                   <EbookCard {...ebook} />
                 ))}

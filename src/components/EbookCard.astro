@@ -22,15 +22,23 @@ const contactHref = mailUrl
   : undefined;
 ---
 
-<li class="border-border bg-surface flex flex-row overflow-hidden rounded-lg border">
-  <div class="bg-muted aspect-[2/3] w-24 shrink-0 overflow-hidden sm:w-32">
+<li class="border-border bg-surface group flex h-full flex-row overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-lg">
+  <!-- Cover: portrait ratio, fixed width -->
+  <div class="bg-muted w-44 shrink-0 self-stretch overflow-hidden sm:w-56">
     {
-      cover ? (
+      typeof cover === "string" ? (
+        <img
+          src={cover}
+          alt={title}
+          loading="lazy"
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : cover ? (
         <Image
           src={cover}
           alt={title}
           width={400}
-          class="h-full w-full object-cover"
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
       ) : (
         <div class="text-muted-foreground flex h-full w-full items-center justify-center p-2 text-center text-xs italic">
@@ -39,8 +47,10 @@ const contactHref = mailUrl
       )
     }
   </div>
+
+  <!-- Content -->
   <div class="flex flex-1 flex-col gap-2 p-4">
-    <h2 class="font-display text-lg font-semibold tracking-tight">{title}</h2>
+    <h2 class="font-display line-clamp-2 text-base font-semibold leading-snug tracking-tight sm:text-lg">{title}</h2>
     {author && <p class="text-muted-foreground text-sm">{t.ebooks.by} {author}</p>}
     {
       localizedDescription && (
@@ -109,14 +119,12 @@ const contactHref = mailUrl
     document
       .querySelectorAll<HTMLButtonElement>("[data-ebook-toggle]")
       .forEach(btn => {
-        // Remove previous listener by replacing with a fresh clone
         const fresh = btn.cloneNode(true) as HTMLButtonElement;
         btn.replaceWith(fresh);
 
         const desc = fresh.previousElementSibling as HTMLElement | null;
         if (!desc) return;
 
-        // Only show toggle when text is actually clamped
         if (desc.scrollHeight <= desc.clientHeight) return;
         fresh.hidden = false;
 
