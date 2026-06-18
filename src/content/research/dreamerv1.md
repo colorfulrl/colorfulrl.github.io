@@ -13,4 +13,6 @@ graphEdges:
     label: extends
   - target: actor-critic
     label: uses
+  - target: dm-control
+    label: evaluated on
 ---

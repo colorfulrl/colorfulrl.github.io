@@ -48,23 +48,43 @@ const graphJson = JSON.stringify(graphData);
     <div class="border-border bg-background/80 relative z-20 border-b py-2 backdrop-blur-sm">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 
-        <!-- Type filter buttons -->
-        <div class="flex items-center gap-0.5">
+        <!-- Type filter buttons (rainbow: R O Y G C I V) -->
+        <div class="flex flex-wrap items-center gap-0.5">
           <span class="text-foreground mr-2 text-sm font-medium">{t.nav.research}</span>
           <button data-type-btn="topic"
             class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-accent size-2.5 shrink-0 rounded-full"></span>
+            <span class="bg-red-500 size-2.5 shrink-0 rounded-full"></span>
             <span class="text-muted-foreground">Topic</span>
+          </button>
+          <button data-type-btn="approach"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-orange-500 size-2.5 shrink-0 rounded-full"></span>
+            <span class="text-muted-foreground">Approach</span>
           </button>
           <button data-type-btn="concept"
             class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="bg-sky-400 size-2.5 shrink-0 rounded-full"></span>
+            <span class="bg-amber-400 size-2.5 shrink-0 rounded-full"></span>
             <span class="text-muted-foreground">Concept</span>
+          </button>
+          <button data-type-btn="architecture"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-emerald-500 size-2.5 shrink-0 rounded-full"></span>
+            <span class="text-muted-foreground">Arch</span>
+          </button>
+          <button data-type-btn="algorithm"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-cyan-500 size-2.5 shrink-0 rounded-full"></span>
+            <span class="text-muted-foreground">Algo</span>
           </button>
           <button data-type-btn="paper"
             class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
-            <span class="border-border bg-surface size-2.5 shrink-0 rounded-full border-2"></span>
+            <span class="bg-indigo-500 size-2.5 shrink-0 rounded-full"></span>
             <span class="text-muted-foreground">Paper</span>
+          </button>
+          <button data-type-btn="benchmark"
+            class="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
+            <span class="bg-violet-500 size-2.5 shrink-0 rounded-full"></span>
+            <span class="text-muted-foreground">Bench</span>
           </button>
         </div>
 
@@ -224,19 +244,36 @@ const graphJson = JSON.stringify(graphData);
       container,
       elements: { nodes, edges },
       style: [
+        // ── Rainbow node types (R O Y G C I V) ─────────────────────────
         {
           selector: 'node[type="topic"]',
-          style: { "background-color": accent, label: "data(label)", color: background, "text-valign": "center", "text-halign": "center", "font-size": "11px", "font-weight": "bold", width: 72, height: 72, "text-wrap": "wrap", "text-max-width": "60px" },
+          style: { "background-color": "#ef4444", label: "data(label)", color: "#fff", "text-valign": "center", "text-halign": "center", "font-size": "11px", "font-weight": "bold", width: 72, height: 72, "text-wrap": "wrap", "text-max-width": "60px" },
+        },
+        {
+          selector: 'node[type="approach"]',
+          style: { "background-color": "#f97316", label: "data(label)", color: "#fff", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, width: 60, height: 60, "text-wrap": "wrap", "text-max-width": "52px" },
         },
         {
           selector: 'node[type="concept"]',
-          style: { "background-color": "#38bdf8", label: "data(label)", color: "#0c4a6e", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, width: 54, height: 54, "text-wrap": "wrap", "text-max-width": "48px" },
+          style: { "background-color": "#f59e0b", label: "data(label)", color: "#451a03", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, width: 54, height: 54, "text-wrap": "wrap", "text-max-width": "46px" },
+        },
+        {
+          selector: 'node[type="architecture"]',
+          style: { "background-color": "#10b981", label: "data(label)", color: "#fff", "text-valign": "center", "text-halign": "center", "font-size": "10px", "font-weight": 600, width: 50, height: 50, "text-wrap": "wrap", "text-max-width": "42px" },
+        },
+        {
+          selector: 'node[type="algorithm"]',
+          style: { "background-color": "#06b6d4", label: "data(label)", color: "#fff", "text-valign": "center", "text-halign": "center", "font-size": "9px", "font-weight": 600, width: 44, height: 44, "text-wrap": "wrap", "text-max-width": "38px" },
         },
         {
           selector: 'node[type="paper"]',
           style: { "background-color": surface, "border-color": border, "border-width": 2, label: "data(label)", color: foreground, "text-valign": "center", "text-halign": "center", "font-size": "9px", width: 44, height: 44, "text-wrap": "wrap", "text-max-width": "38px" },
         },
-        { selector: 'node[type="paper"][?slug]', style: { "border-color": accent, "border-width": 2 } },
+        {
+          selector: 'node[type="benchmark"]',
+          style: { "background-color": "#8b5cf6", label: "data(label)", color: "#fff", "text-valign": "center", "text-halign": "center", "font-size": "9px", "font-weight": 600, width: 40, height: 40, "text-wrap": "wrap", "text-max-width": "34px" },
+        },
+        { selector: 'node[type="paper"][?slug]', style: { "border-color": "#6366f1", "border-width": 2 } },
         { selector: "node:selected", style: { "border-color": accent, "border-width": 3, "overlay-color": accent, "overlay-opacity": 0.1, "overlay-padding": 4 } },
         {
           selector: "edge",
@@ -269,7 +306,7 @@ const graphJson = JSON.stringify(graphData);
     };
 
     // ── State ─────────────────────────────────────────────────────────────────
-    const visibleTypes = new Set(["topic", "concept", "paper"]);
+    const visibleTypes = new Set(["topic", "approach", "concept", "architecture", "algorithm", "paper", "benchmark"]);
     let focusedNodeId: string | null = null;
     let searchMatches: ReturnType<typeof cy.nodes> | null = null;
     let dropdownHighlight = -1;
@@ -368,9 +405,13 @@ const graphJson = JSON.stringify(graphData);
     const dropdown = document.getElementById("cy-search-dropdown")!;
 
     const TYPE_BADGE: Record<string, string> = {
-      topic:   "bg-accent/20 text-accent",
-      concept: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
-      paper:   "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
+      topic:        "bg-red-100    text-red-700    dark:bg-red-900/30    dark:text-red-400",
+      approach:     "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+      concept:      "bg-amber-100  text-amber-700  dark:bg-amber-900/30  dark:text-amber-400",
+      architecture: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+      algorithm:    "bg-cyan-100   text-cyan-700   dark:bg-cyan-900/30   dark:text-cyan-400",
+      paper:        "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
+      benchmark:    "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
     };
 
     function showDropdown(results: FuseResult<NodeDoc>[]) {
@@ -628,7 +669,11 @@ const graphJson = JSON.stringify(graphData);
     const ttBadge  = document.getElementById("cy-tooltip-badge")!;
     const ttHint   = document.getElementById("cy-tooltip-hint")!;
 
-    const TYPE_LABEL: Record<string, string> = { topic: "Topic", concept: "Concept", paper: "Paper" };
+    const TYPE_LABEL: Record<string, string> = {
+      topic: "Topic", approach: "Approach", concept: "Concept",
+      architecture: "Architecture", algorithm: "Algorithm",
+      paper: "Paper", benchmark: "Benchmark",
+    };
 
     cy.on("mouseover", "node", evt => {
       const node = evt.target;

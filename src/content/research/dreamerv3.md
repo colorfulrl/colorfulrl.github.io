@@ -11,4 +11,6 @@ graphDescription: "Hafner et al. (2023). One hyperparameter set across all domai
 graphEdges:
   - target: dreamerv1
     label: extends
+  - target: dm-control
+    label: evaluated on
 ---

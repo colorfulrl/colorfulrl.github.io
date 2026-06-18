@@ -11,4 +11,6 @@ graphDescription: "Mnih et al. (2015). Applies deep learning to Q-learning with 
 graphEdges:
   - target: value-based
     label: based on
+  - target: atari
+    label: evaluated on
 ---

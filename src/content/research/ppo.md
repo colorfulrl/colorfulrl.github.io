@@ -11,4 +11,6 @@ graphDescription: "Schulman et al. (2017). Clipped surrogate objective for stabl
 graphEdges:
   - target: policy-gradient
     label: based on
+  - target: atari
+    label: evaluated on
 ---

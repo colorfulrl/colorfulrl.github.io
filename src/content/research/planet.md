@@ -13,4 +13,8 @@ graphEdges:
     label: inspired by
   - target: rssm
     label: uses
+  - target: cem
+    label: uses
+  - target: dm-control
+    label: evaluated on
 ---
