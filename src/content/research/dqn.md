@@ -6,4 +6,9 @@ venue: "Nature 2015"
 arxiv: "https://www.nature.com/articles/nature14236"
 abstract: "DQN combines deep convolutional networks with Q-learning using two key innovations: experience replay and a periodically updated target network. The agent achieves human-level performance on 49 Atari games from raw pixels alone."
 draft: false
+graphLabel: "DQN"
+graphDescription: "Mnih et al. (2015). Applies deep learning to Q-learning with experience replay and target networks, achieving human-level Atari play."
+graphEdges:
+  - target: value-based
+    label: based on
 ---

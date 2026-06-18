@@ -95,6 +95,15 @@ const research = defineCollection({
     abstract: z.string().optional(),
     arxiv: z.string().optional(),
     draft: z.boolean().optional(),
+    // ── Graph fields ──────────────────────────────────────────────────────
+    // Short label shown on the graph node (defaults to title if omitted).
+    graphLabel: z.string().optional(),
+    // 1–2 sentence blurb for tooltip / relationship panel.
+    graphDescription: z.string().optional(),
+    // Outgoing edges declared by this paper.
+    graphEdges: z
+      .array(z.object({ target: z.string(), label: z.string() }))
+      .optional(),
   }),
 });
 

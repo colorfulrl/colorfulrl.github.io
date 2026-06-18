@@ -2,7 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import { GRAPH_NODES, GRAPH_EDGES } from "@/data/researchGraph";
+import { getCollection } from "astro:content";
+import { buildResearchGraph } from "@/utils/buildResearchGraph";
 import { useTranslations } from "@/i18n";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import config from "@/config";
@@ -11,8 +12,11 @@ import { Content as ResearchIntro } from "./_intro.md";
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 
+const entries = await getCollection("research");
+const { nodes, edges } = buildResearchGraph(entries);
+
 const graphData = {
-  nodes: GRAPH_NODES.map(n => ({
+  nodes: nodes.map(n => ({
     data: {
       id: n.id,
       label: n.label,
@@ -24,7 +28,7 @@ const graphData = {
         : null,
     },
   })),
-  edges: GRAPH_EDGES.map((e, i) => ({
+  edges: edges.map((e, i) => ({
     data: { id: `e${i}`, source: e.source, target: e.target, label: e.label },
   })),
 };
