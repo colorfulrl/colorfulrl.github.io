@@ -11,6 +11,8 @@ graphDescription: "Laskin et al. (2020). MoCo-style contrastive learning as auxi
 graphEdges:
   - target: model-free-rl
     label: based on
+  - target: contrastive-rl
+    label: uses
   - target: dm-control
     label: evaluated on
   - target: atari

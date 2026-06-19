@@ -247,6 +247,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Uncertainty about model parameters due to limited data — distinct from aleatoric (environment) randomness. Applied in two ways: as exploration bonus (VIME) and as model safety signal to detect OOD regions and prevent model exploitation (uncertainty-aware MBRL).",
   },
+  {
+    id: "goal-conditioned-rl",
+    type: "concept",
+    label: "Goal-Conditioned RL",
+    description:
+      "Policies and value functions conditioned on a goal state g, learning to reach arbitrary goals rather than maximize a single reward. Underpins hindsight relabeling (HER), recursive classification (C-Learning), and contrastive goal-reaching.",
+  },
+  {
+    id: "contrastive-rl",
+    type: "concept",
+    label: "Contrastive RL",
+    description:
+      "Uses contrastive (InfoNCE-style) objectives to learn representations whose inner products encode future-state reachability or similarity. Frames goal-conditioned RL as classification: C-Learning, Contrastive Learning as GCRL, and TD InfoNCE belong to this lineage; CURL applies it as a pixel auxiliary loss.",
+  },
 
   // ── New Architectures (G) ────────────────────────────────────────
   {
@@ -319,4 +333,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
 
   // model-based → epistemic uncertainty
   { source: "model-based-rl",       target: "epistemic-uncertainty", label: "considers" },
+
+  // goal-conditioned & contrastive RL lineage
+  { source: "rl",                   target: "goal-conditioned-rl",  label: "includes" },
+  { source: "goal-conditioned-rl",  target: "contrastive-rl",       label: "uses" },
 ];

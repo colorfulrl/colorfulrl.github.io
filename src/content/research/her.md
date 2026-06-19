@@ -11,6 +11,8 @@ graphDescription: "Andrychowicz et al. (2017). Relabels failed episodes with ach
 graphEdges:
   - target: experience-replay
     label: extends
+  - target: goal-conditioned-rl
+    label: addresses
   - target: exploration
     label: addresses
   - target: ddpg
