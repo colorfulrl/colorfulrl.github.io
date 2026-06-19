@@ -186,6 +186,10 @@ const graphJson = JSON.stringify(graphData);
           <span class="text-muted-foreground">Focus:</span>
           <span id="cy-focus-label" class="text-foreground max-w-[8rem] truncate font-medium"></span>
           <span class="text-border mx-0.5">·</span>
+          <span class="text-muted-foreground">Lân cận</span>
+          <button data-depth="1" class="text-accent rounded px-1 font-semibold transition-colors hover:text-accent">1</button>
+          <button data-depth="2" class="text-muted-foreground rounded px-1 transition-colors hover:text-accent">2</button>
+          <span class="text-border mx-0.5">·</span>
           <button id="cy-exit-focus"
             class="text-muted-foreground hover:text-accent font-medium transition-colors">
             Esc
@@ -315,9 +319,9 @@ const graphJson = JSON.stringify(graphData);
 
     container._cy = cy;
 
-    // Reveal once the layout has placed all nodes.
-    cy.one("layoutstop", () => { container.style.opacity = "1"; });
-    window.setTimeout(() => { container.style.opacity = "1"; }, 1500); // fallback
+    // Fade-in is triggered by applyInitialVisibility() once the backbone layout
+    // settles (called at the end of init). Fallback in case it never fires.
+    window.setTimeout(() => { container.style.opacity = "1"; }, 1500);
 
     // ── Locale strings from data attributes ───────────────────────────────────
     const wrap = document.getElementById("cy-graph-wrap");
@@ -331,8 +335,13 @@ const graphJson = JSON.stringify(graphData);
     };
 
     // ── State ─────────────────────────────────────────────────────────────────
-    const visibleTypes = new Set(["topic", "approach", "concept", "architecture", "algorithm", "paper", "benchmark"]);
+    const BACKBONE_TYPES = ["topic", "approach", "concept", "architecture", "algorithm"];
+    // Papers + benchmarks hidden by default — they're the bulk of the clutter.
+    // Revealed on demand (toggle, or when isolating a node's neighborhood).
+    const visibleTypes = new Set(BACKBONE_TYPES);
     let focusedNodeId: string | null = null;
+    let focusDepth = 1;                 // neighborhood hops shown when isolating
+    const homePositions: Record<string, { x: number; y: number }> = {};
     let searchMatches: ReturnType<typeof cy.nodes> | null = null;
     let dropdownHighlight = -1;
 
@@ -372,21 +381,14 @@ const graphJson = JSON.stringify(graphData);
     let fuse = buildFuseIndex();
 
     // ── Visual state engine ───────────────────────────────────────────────────
+    // Dimming is now only used for search highlighting; focus = isolation (hide).
     function applyDimming() {
       cy.elements(":visible").removeClass("dimmed");
-
       if (searchMatches) {
         cy.nodes(":visible").addClass("dimmed");
         cy.edges(":visible").addClass("dimmed");
         searchMatches.removeClass("dimmed");
         searchMatches.connectedEdges(":visible").removeClass("dimmed");
-      } else if (focusedNodeId) {
-        const focused = cy.getElementById(focusedNodeId);
-        if (!focused.empty() && !focused.hidden()) {
-          cy.elements(":visible").addClass("dimmed");
-          focused.removeClass("dimmed");
-          focused.neighborhood(":visible").removeClass("dimmed");
-        }
       }
     }
 
@@ -399,31 +401,99 @@ const graphJson = JSON.stringify(graphData);
       });
     }
 
-    // ── Type filter ───────────────────────────────────────────────────────────
-    function toggleType(type: string) {
-      const nowVisible = !visibleTypes.has(type);
-      if (nowVisible) {
-        visibleTypes.add(type);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (cy.nodes(`[type="${type}"]`) as any).show();
-        refreshEdges();
-      } else {
-        visibleTypes.delete(type);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (cy.nodes(`[type="${type}"]`) as any).hide();
-        if (focusedNodeId && cy.getElementById(focusedNodeId).hidden()) exitFocus(false);
-      }
+    // Run fcose on a subset of elements (used for backbone, isolation, toggles).
+    function runFcose(
+      eles: ReturnType<typeof cy.elements>,
+      opts: { randomize?: boolean; animate?: boolean; duration?: number; onStop?: () => void },
+    ) {
+      if (eles.length === 0) { opts.onStop?.(); return; }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const lay = (eles as any).layout({
+        name: "fcose",
+        quality: "default",
+        animate: opts.animate ?? true,
+        animationDuration: opts.duration ?? 450,
+        fit: true,
+        padding: 48,
+        nodeDimensionsIncludeLabels: true,
+        packComponents: true,
+        nodeRepulsion: 7000,
+        idealEdgeLength: 120,
+        edgeElasticity: 0.45,
+        numIter: 1000,
+        tile: true,
+        randomize: opts.randomize ?? false,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (opts.onStop) (lay as any).one("layoutstop", opts.onStop);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (lay as any).run();
+    }
 
-      fuse = buildFuseIndex();
+    function snapshotHome() {
+      cy.nodes().forEach(n => { homePositions[n.id()] = { ...n.position() }; });
+    }
+    function restoreHome() {
+      cy.batch(() => {
+        cy.nodes().forEach(n => {
+          const h = homePositions[n.id()];
+          if (h) n.position(h);
+        });
+      });
+    }
 
-      const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
-      if (searchInput?.value) handleSearch(searchInput.value.trim());
-      else applyDimming();
+    // Show/hide nodes according to the current visibleTypes set.
+    function applyVisibility() {
+      cy.batch(() => {
+        cy.nodes().forEach(n => {
+          const t = n.data("type") as string;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if (visibleTypes.has(t)) (n as any).show(); else (n as any).hide();
+        });
+      });
+      refreshEdges();
+    }
 
+    function updateTypeButtons() {
       document.querySelectorAll<HTMLElement>("[data-type-btn]").forEach(btn => {
         const t = btn.getAttribute("data-type-btn")!;
         btn.classList.toggle("opacity-40", !visibleTypes.has(t));
       });
+    }
+
+    // Initial decluttered view: backbone only, laid out, then fade in.
+    function applyInitialVisibility() {
+      applyVisibility();
+      updateTypeButtons();
+      runFcose(cy.elements(":visible"), {
+        randomize: true,
+        animate: false,
+        onStop: () => { snapshotHome(); container!.style.opacity = "1"; },
+      });
+    }
+
+    // ── Type filter ───────────────────────────────────────────────────────────
+    function toggleType(type: string) {
+      // Leave isolation cleanly (back to home positions) before re-filtering.
+      if (focusedNodeId) {
+        focusedNodeId = null;
+        if (focusBar) focusBar.style.display = "none";
+        hideRelPanel();
+        restoreHome();
+      }
+
+      if (visibleTypes.has(type)) visibleTypes.delete(type);
+      else visibleTypes.add(type);
+
+      applyVisibility();
+      fuse = buildFuseIndex();
+      updateTypeButtons();
+      runFcose(cy.elements(":visible"), {
+        randomize: false, animate: true, duration: 400, onStop: snapshotHome,
+      });
+
+      const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
+      if (searchInput?.value) handleSearch(searchInput.value.trim());
     }
 
     // ── Dropdown (B) ──────────────────────────────────────────────────────────
@@ -666,9 +736,31 @@ const graphJson = JSON.stringify(graphData);
       relPanel.classList.add("translate-x-full");
     }
 
-    // ── Focus mode ────────────────────────────────────────────────────────────
+    // ── Focus mode = neighborhood isolation ─────────────────────────────────────
     const focusBar   = document.getElementById("cy-focus-bar") as HTMLElement | null;
     const focusLabel = document.getElementById("cy-focus-label");
+
+    // Hide everything except the focused node's k-hop neighborhood, then
+    // re-layout just that subgraph so it spreads out and is readable.
+    function isolateNeighborhood(node: cytoscape.NodeSingular) {
+      let nodeSet = node.closedNeighborhood().nodes();
+      for (let i = 1; i < focusDepth; i++) {
+        nodeSet = nodeSet.union(nodeSet.closedNeighborhood().nodes());
+      }
+      const ids = new Set(nodeSet.map(n => n.id()));
+      const subEdges = nodeSet.connectedEdges()
+        .filter(e => ids.has(e.source().id()) && ids.has(e.target().id()));
+      const sub = nodeSet.union(subEdges);
+
+      cy.batch(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cy.elements() as any).hide();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (sub as any).show();
+      });
+      cy.elements(":visible").removeClass("dimmed");
+      runFcose(cy.elements(":visible"), { randomize: true, animate: true, duration: 450 });
+    }
 
     function enterFocus(node: cytoscape.NodeSingular) {
       searchMatches = null;
@@ -677,18 +769,46 @@ const graphJson = JSON.stringify(graphData);
       closeDropdown();
       updateSearchUI();
 
+      // Snapshot the current "home" layout the first time we enter isolation,
+      // so exiting can restore the backbone exactly.
+      if (!focusedNodeId) snapshotHome();
+
       focusedNodeId = node.id();
+      isolateNeighborhood(node);
+
       if (focusLabel) focusLabel.textContent = node.data("label");
       if (focusBar) focusBar.style.display = "flex";
-      applyDimming();
+      updateDepthButtons();
       showRelPanel(node);
     }
 
     function exitFocus(andApply = true) {
+      const wasIsolated = focusedNodeId !== null;
       focusedNodeId = null;
       if (focusBar) focusBar.style.display = "none";
       hideRelPanel();
-      if (andApply) applyDimming();
+
+      if (wasIsolated) {
+        restoreHome();
+        applyVisibility();
+        cy.elements(":visible").removeClass("dimmed");
+        cy.animate(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { fit: { eles: cy.elements(":visible"), padding: 48 } } as any,
+          { duration: 400 },
+        );
+      } else if (andApply) {
+        applyDimming();
+      }
+    }
+
+    function updateDepthButtons() {
+      document.querySelectorAll<HTMLElement>("[data-depth]").forEach(btn => {
+        const d = Number(btn.getAttribute("data-depth"));
+        btn.classList.toggle("text-accent", d === focusDepth);
+        btn.classList.toggle("font-semibold", d === focusDepth);
+        btn.classList.toggle("text-muted-foreground", d !== focusDepth);
+      });
     }
 
     // ── Tooltip ───────────────────────────────────────────────────────────────
@@ -760,6 +880,18 @@ const graphJson = JSON.stringify(graphData);
       });
     });
 
+    // Neighborhood depth (1 / 2 hop) — live-updates if currently isolating.
+    document.querySelectorAll<HTMLElement>("[data-depth]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        focusDepth = Number(btn.getAttribute("data-depth")) || 1;
+        updateDepthButtons();
+        if (focusedNodeId) {
+          const n = cy.getElementById(focusedNodeId);
+          if (!n.empty()) isolateNeighborhood(n);
+        }
+      });
+    });
+
     const searchInput = document.getElementById("cy-search") as HTMLInputElement | null;
     searchInput?.addEventListener("input", e =>
       handleSearch((e.target as HTMLInputElement).value.trim())
@@ -807,7 +939,21 @@ const graphJson = JSON.stringify(graphData);
     document.getElementById("cy-zoom-out")?.addEventListener("click", () => {
       cy.zoom({ level: cy.zoom() / 1.2, renderedPosition: { x: container.clientWidth / 2, y: container.clientHeight / 2 } });
     });
-    document.getElementById("cy-reset")?.addEventListener("click", () => { cy.fit(undefined, 48); });
+    document.getElementById("cy-reset")?.addEventListener("click", () => {
+      if (searchInput) searchInput.value = "";
+      searchMatches = null;
+      updateSearchUI();
+      closeDropdown();
+      focusedNodeId = null;
+      if (focusBar) focusBar.style.display = "none";
+      hideRelPanel();
+      visibleTypes.clear();
+      BACKBONE_TYPES.forEach(t => visibleTypes.add(t));
+      applyInitialVisibility();
+    });
+
+    // ── Initial render: backbone only, laid out, then fade in ───────────────────
+    applyInitialVisibility();
   }
 
   document.addEventListener("astro:page-load", initGraph);
