@@ -241,14 +241,28 @@ const domainDesc =
             color: "#fff",
             "text-valign": "center",
             "text-halign": "center",
-            "font-size": "11px",
-            "font-weight": 600,
+            "font-size": "12px",
+            "font-weight": 700,
             width: "label",
-            height: 34,
-            padding: "10px",
+            height: 44,
+            padding: "16px",
             "text-wrap": "wrap",
-            "text-max-width": "130px",
-            "border-width": 0,
+            "text-max-width": "140px",
+            "border-width": 1.5,
+            "border-color": "rgba(255,255,255,0.28)",
+            "transition-property": "overlay-opacity, border-color, border-width",
+            "transition-duration": "150ms",
+            "transition-timing-function": "ease-in-out-sine",
+          },
+        },
+        {
+          selector: "node.hovered",
+          style: {
+            "overlay-color": "#ffffff",
+            "overlay-opacity": 0.10,
+            "overlay-padding": 7,
+            "border-color": "rgba(255,255,255,0.55)",
+            "border-width": 2.5,
           },
         },
         { selector: "node.read", style: { "border-width": 3, "border-color": "#22c55e" } },
@@ -257,14 +271,15 @@ const domainDesc =
           selector: "edge",
           style: {
             width: 2,
-            "line-color": border,
-            "target-arrow-color": border,
+            "line-color": "rgba(255,255,255,0.28)",
+            "target-arrow-color": "rgba(255,255,255,0.28)",
             "target-arrow-shape": "triangle",
+            "arrow-scale": 1.3,
             "curve-style": "bezier",
           },
         },
         { selector: ".dimmed", style: { opacity: 0.15 } },
-        { selector: "edge.path", style: { "line-color": accent, "target-arrow-color": accent, width: 2.5 } },
+        { selector: "edge.path", style: { "line-color": accent, "target-arrow-color": accent, width: 3 } },
       ],
       layout: { name: "preset", fit: true, padding: 60 },
       minZoom: 0.3,
@@ -346,6 +361,7 @@ const domainDesc =
 
     cy.on("mouseover", "node", evt => {
       const node = evt.target;
+      node.addClass("hovered");
       container.style.cursor = "pointer";
       ttTitle.textContent = node.data("label");
       ttDesc.textContent  = node.data("description") ?? "";
@@ -361,7 +377,8 @@ const domainDesc =
         node.predecessors().union(node).removeClass("dimmed");
       }
     });
-    cy.on("mouseout", "node", () => {
+    cy.on("mouseout", "node", evt => {
+      evt.target.removeClass("hovered");
       container.style.cursor = "default";
       tooltip.classList.add("hidden");
       if (!focusedId) clearHighlight();
