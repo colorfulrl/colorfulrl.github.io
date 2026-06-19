@@ -151,6 +151,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Open-world survival game used as long-horizon planning benchmark. Dreamer v4 proposes the diamonds-from-offline-data challenge: obtaining diamonds without any environment interaction.",
   },
+  {
+    id: "crafter",
+    type: "benchmark",
+    label: "Crafter",
+    description:
+      "2D survival benchmark (Hafner, 2022) with 22 diverse achievements spanning resource gathering, crafting, and combat. Tests generalization across skills; used by DreamerV3, EMERALD, DyMoDreamer.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {

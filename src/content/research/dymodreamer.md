@@ -19,4 +19,6 @@ graphEdges:
     label: evaluated on
   - target: dm-control
     label: evaluated on
+  - target: crafter
+    label: evaluated on
 ---
