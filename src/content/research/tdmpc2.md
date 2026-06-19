@@ -18,5 +18,7 @@ graphEdges:
     label: evaluated on
   - target: dm-control
     label: evaluated on
+  - target: tdmpc
+    label: extends
 graphDescription: "Hansen et al. (2023). Implicit decoder-free world model + local trajectory optimization; scales to a 317M single generalist agent across 80 tasks and 4 domains."
 ---

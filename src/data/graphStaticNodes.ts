@@ -144,6 +144,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Datasets for Deep Data-Driven RL — offline RL benchmark with fixed datasets of varying quality (expert, medium, random) across locomotion and manipulation tasks.",
   },
+  {
+    id: "minecraft",
+    type: "benchmark",
+    label: "Minecraft",
+    description:
+      "Open-world survival game used as long-horizon planning benchmark. Dreamer v4 proposes the diamonds-from-offline-data challenge: obtaining diamonds without any environment interaction.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
@@ -226,6 +233,14 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "The problem of attributing delayed rewards to the specific past actions that caused them — addressed by eligibility traces, GAE, and hierarchical architectures.",
   },
 
+  {
+    id: "epistemic-uncertainty",
+    type: "concept",
+    label: "Epistemic Uncertainty",
+    description:
+      "Uncertainty about model parameters due to limited data — distinct from aleatoric (environment) randomness. Used in MBRL to detect out-of-distribution regions and prevent model exploitation.",
+  },
+
   // ── New Architectures (G) ────────────────────────────────────────
   {
     id: "transformer",
@@ -301,4 +316,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // model-based → planning algorithms
   { source: "model-based-rl",       target: "mcts",                 label: "uses" },
   { source: "model-based-rl",       target: "trajectory-optimization", label: "uses" },
+
+  // model-based → epistemic uncertainty
+  { source: "model-based-rl",       target: "epistemic-uncertainty", label: "considers" },
 ];
