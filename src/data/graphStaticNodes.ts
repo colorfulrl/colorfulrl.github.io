@@ -195,6 +195,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Augments the reward with an entropy term H(π), encouraging the policy to be as stochastic as possible while still maximising reward — foundation of SAC.",
   },
+  {
+    id: "imitation-learning",
+    type: "approach",
+    label: "Imitation Learning",
+    description:
+      "Learns behavior from expert demonstrations rather than a reward signal. Includes behavior cloning (supervised), DAgger (interactive), and inverse RL (reward inference) — sidesteps reward engineering when demonstrations are available.",
+  },
+  {
+    id: "inverse-rl",
+    type: "approach",
+    label: "Inverse RL",
+    description:
+      "Infers the reward function that best explains observed expert behavior, then optimizes it — instead of being given the reward. Family includes MaxEnt IRL, GAIL, and AIRL. Useful when rewards are hard to specify but demonstrations exist.",
+  },
 
   // ── New Concepts (Y) ────────────────────────────────────────────
   {
@@ -337,4 +351,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // goal-conditioned & contrastive RL lineage
   { source: "rl",                   target: "goal-conditioned-rl",  label: "includes" },
   { source: "goal-conditioned-rl",  target: "contrastive-rl",       label: "uses" },
+
+  // imitation learning & inverse RL
+  { source: "rl",                   target: "imitation-learning",   label: "includes" },
+  { source: "imitation-learning",   target: "inverse-rl",           label: "includes" },
 ];
