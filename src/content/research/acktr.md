@@ -11,6 +11,8 @@ graphDescription: "Wu et al. (2017). Natural policy gradient via K-FAC curvature
 graphEdges:
   - target: actor-critic
     label: extends
+  - target: natural-pg
+    label: extends
   - target: trust-region
     label: uses
   - target: policy-gradient

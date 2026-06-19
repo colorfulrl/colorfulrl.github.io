@@ -18,6 +18,8 @@ graphEdges:
     label: combines
   - target: c51
     label: combines
+  - target: noisy-nets
+    label: combines
   - target: distributional-rl
     label: based on
   - target: atari

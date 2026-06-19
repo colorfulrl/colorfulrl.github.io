@@ -10,6 +10,8 @@ graphLabel: "TRPO"
 graphEdges:
   - target: policy-gradient
     label: extends
+  - target: natural-pg
+    label: extends
   - target: trust-region
     label: introduces
   - target: mujoco
