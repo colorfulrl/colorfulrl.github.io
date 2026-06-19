@@ -130,6 +130,133 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "DeepMind Control Suite — continuous control tasks (pixels or proprioceptive state). Standard benchmark for model-based methods.",
   },
+  {
+    id: "mujoco",
+    type: "benchmark",
+    label: "MuJoCo",
+    description:
+      "MuJoCo physics simulator — standard continuous-control benchmark for policy gradient and actor-critic algorithms (DDPG, TD3, SAC, PPO…).",
+  },
+  {
+    id: "d4rl",
+    type: "benchmark",
+    label: "D4RL",
+    description:
+      "Datasets for Deep Data-Driven RL — offline RL benchmark with fixed datasets of varying quality (expert, medium, random) across locomotion and manipulation tasks.",
+  },
+
+  // ── New Approaches (O) ──────────────────────────────────────────
+  {
+    id: "distributional-rl",
+    type: "approach",
+    label: "Distributional RL",
+    description:
+      "Models the full distribution of returns Z(s,a) rather than just its expectation, enabling risk-sensitive policies and a richer training signal.",
+  },
+  {
+    id: "exploration",
+    type: "approach",
+    label: "Exploration",
+    description:
+      "Methods for visiting under-explored states: count-based bonuses, curiosity, random distillation, or explicit return-to-state strategies.",
+  },
+  {
+    id: "offline-rl",
+    type: "approach",
+    label: "Offline RL",
+    description:
+      "Learns effective policies from a fixed, pre-collected dataset without any further environment interaction — requires handling distributional shift.",
+  },
+  {
+    id: "hierarchical-rl",
+    type: "approach",
+    label: "Hierarchical RL",
+    description:
+      "Decomposes tasks into multiple levels of abstraction, with higher levels setting subgoals and lower levels executing them over extended time horizons.",
+  },
+  {
+    id: "maximum-entropy-rl",
+    type: "approach",
+    label: "MaxEnt RL",
+    description:
+      "Augments the reward with an entropy term H(π), encouraging the policy to be as stochastic as possible while still maximising reward — foundation of SAC.",
+  },
+
+  // ── New Concepts (Y) ────────────────────────────────────────────
+  {
+    id: "temporal-difference",
+    type: "concept",
+    label: "TD Learning",
+    description:
+      "Bootstraps value estimates from successive predictions rather than waiting for episode end — the unifying mechanism behind Q-learning, SARSA, and all value-based methods.",
+  },
+  {
+    id: "experience-replay",
+    type: "concept",
+    label: "Experience Replay",
+    description:
+      "Stores past (s,a,r,s') transitions in a buffer and re-samples them during training, breaking temporal correlations and improving data efficiency.",
+  },
+  {
+    id: "trust-region",
+    type: "concept",
+    label: "Trust Region",
+    description:
+      "Constrains policy updates so each step stays within a region where the surrogate objective is reliable — formalised as a KL bound in TRPO, simplified to clipping in PPO.",
+  },
+  {
+    id: "intrinsic-motivation",
+    type: "concept",
+    label: "Intrinsic Motivation",
+    description:
+      "Self-generated reward signals derived from novelty, prediction error, or information gain — enables exploration without extrinsic rewards.",
+  },
+  {
+    id: "temporal-abstraction",
+    type: "concept",
+    label: "Temporal Abstraction",
+    description:
+      "Acting over extended time horizons by composing primitive actions into options or skills, reducing the effective planning horizon.",
+  },
+  {
+    id: "credit-assignment",
+    type: "concept",
+    label: "Credit Assignment",
+    description:
+      "The problem of attributing delayed rewards to the specific past actions that caused them — addressed by eligibility traces, GAE, and hierarchical architectures.",
+  },
+
+  // ── New Architectures (G) ────────────────────────────────────────
+  {
+    id: "transformer",
+    type: "architecture",
+    label: "Transformer",
+    description:
+      "Self-attention based sequence model — adapted for RL in Decision Transformer (return-conditioned) and Trajectory Transformer (sequence modelling over states/actions).",
+  },
+
+  // ── New Algorithms (C) ──────────────────────────────────────────
+  {
+    id: "mcts",
+    type: "algorithm",
+    label: "MCTS",
+    description:
+      "Monte Carlo Tree Search — builds a search tree via repeated simulation (select → expand → rollout → backprop). Used by MuZero with a learned model.",
+  },
+  {
+    id: "trajectory-optimization",
+    type: "algorithm",
+    label: "Traj Opt",
+    description:
+      "Optimises a sequence of actions over a receding horizon using a learned model — decoder-free in TD-MPC, CEM-based in PlaNet.",
+  },
+  {
+    id: "dpg",
+    type: "algorithm",
+    label: "DPG",
+    description:
+      "Deterministic Policy Gradient — gradient of expected return w.r.t. a deterministic policy μ(s), extended to deep networks in DDPG and TD3.",
+  },
 ];
 
 // Edges between non-paper nodes.
@@ -148,4 +275,30 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "model-based-rl",       target: "world-models-concept", label: "includes" },
   { source: "world-models-concept", target: "latent-dynamics",      label: "uses" },
   { source: "latent-dynamics",      target: "rssm",                 label: "implements" },
+
+  // rl → new approaches
+  { source: "rl",                   target: "hierarchical-rl",      label: "includes" },
+  { source: "rl",                   target: "offline-rl",           label: "includes" },
+
+  // model-free branches
+  { source: "model-free-rl",        target: "distributional-rl",    label: "includes" },
+  { source: "model-free-rl",        target: "exploration",          label: "includes" },
+  { source: "model-free-rl",        target: "maximum-entropy-rl",   label: "includes" },
+
+  // value-based concepts
+  { source: "value-based",          target: "temporal-difference",  label: "uses" },
+  { source: "value-based",          target: "experience-replay",    label: "uses" },
+
+  // policy-gradient → trust region
+  { source: "policy-gradient",      target: "trust-region",         label: "uses" },
+
+  // hierarchical → temporal abstraction
+  { source: "hierarchical-rl",      target: "temporal-abstraction", label: "based on" },
+
+  // exploration → intrinsic motivation
+  { source: "exploration",          target: "intrinsic-motivation", label: "uses" },
+
+  // model-based → planning algorithms
+  { source: "model-based-rl",       target: "mcts",                 label: "uses" },
+  { source: "model-based-rl",       target: "trajectory-optimization", label: "uses" },
 ];

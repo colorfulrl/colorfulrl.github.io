@@ -11,7 +11,13 @@ graphDescription: "Hafner et al. (2020). Combines PlaNet's RSSM with actor-criti
 graphEdges:
   - target: planet
     label: extends
+  - target: model-based-rl
+    label: based on
+  - target: rssm
+    label: uses
   - target: actor-critic
+    label: uses
+  - target: latent-dynamics
     label: uses
   - target: dm-control
     label: evaluated on

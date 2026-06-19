@@ -11,6 +11,14 @@ graphDescription: "Haarnoja et al. (2018). Maximum entropy RL that auto-balances
 graphEdges:
   - target: actor-critic
     label: based on
+  - target: maximum-entropy-rl
+    label: implements
+  - target: policy-gradient
+    label: based on
+  - target: experience-replay
+    label: uses
+  - target: mujoco
+    label: evaluated on
   - target: dm-control
     label: evaluated on
 ---

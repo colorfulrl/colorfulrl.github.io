@@ -11,6 +11,10 @@ graphDescription: "Ha & Schmidhuber (2018). VAE + MDN-RNN + CMA-ES. First demons
 graphEdges:
   - target: world-models-concept
     label: instance of
+  - target: model-based-rl
+    label: based on
+  - target: latent-dynamics
+    label: uses
   - target: cma-es
     label: uses
 ---

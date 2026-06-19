@@ -11,9 +11,15 @@ graphDescription: "Hafner et al. (2019). Introduces RSSM and pure latent-space C
 graphEdges:
   - target: world-models-paper
     label: inspired by
+  - target: model-based-rl
+    label: based on
   - target: rssm
+    label: introduces
+  - target: latent-dynamics
     label: uses
   - target: cem
+    label: uses
+  - target: trajectory-optimization
     label: uses
   - target: dm-control
     label: evaluated on
