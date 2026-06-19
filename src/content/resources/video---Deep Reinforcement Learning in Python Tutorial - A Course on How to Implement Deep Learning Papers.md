@@ -1,0 +1,12 @@
+---
+title: "Deep Reinforcement Learning in Python Tutorial - A Course on How to Implement Deep Learning Papers"
+url: "https://www.youtube.com/watch?v=GJJc1t0rtSU"
+type: "video"
+source: "Youtube - freeCodeCamp.org"
+thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_lGRc-05M2OoE1ejQdxeFhyP7OkJg9h4Y-7CK_5je3QqFI=s160-c-k-c0x00ffffff-no-rj"
+description: "Trong bài hướng dẫn học sâu cấp độ trung cấp này, bạn sẽ học cách đi từ việc đọc một bài báo nghiên cứu về khuynh độ chiến lược tất định sâu (deep deterministic policy gradients) cho đến việc triển khai các khái niệm đó trong TensorFlow. Quy trình này có thể được áp dụng cho bất kỳ bài báo học sâu nào, không chỉ riêng học tăng cường sâu. Ở phần thứ hai, bạn sẽ học cách lập trình một tác tử DDPG (Deep Deterministic Policy Gradient) bằng Python và PyTorch để chinh phục môi trường đổ bộ mặt trăng liên tục (LunarLanderContinuous) — một bài toán học máy kinh điển. DDPG kết hợp những điểm ưu việt nhất của Học tăng cường sâu Q (Deep Q-Learning) và các phương pháp Actor-Critic vào một thuật toán có thể giải quyết các môi trường có không gian hành động liên tục. Chúng ta sẽ có một mạng actor (diễn viên) để học chiến lược tất định, kết hợp với một mạng critic (nhà phê bình) để học các hàm giá trị hành động. Chúng ta cũng sẽ sử dụng một bộ đệm trải nghiệm (replay buffer) để tối đa hóa hiệu quả sử dụng mẫu (sample efficiency), cùng với các mạng mục tiêu (target networks) để hỗ trợ quá trình hội tụ và tăng tính ổn định của thuật toán."
+descriptionEn: "In this intermediate deep learning tutorial, you will learn how to go from reading a paper on deep deterministic policy gradients to implementing the concepts in Tensorflow. This process can be applied to any deep learning paper, not just deep reinforcement learning. In the second part, you will learn how to code a deep deterministic policy gradient (DDPG) agent using Python and PyTorch, to beat the continuous lunar lander environment (a classic machine learning problem). DDPG combines the best of Deep Q Learning and Actor Critic Methods into an algorithm that can solve environments with continuous action spaces. We will have an actor network that learns the (deterministic) policy, coupled with a critic network to learn the action-value functions. We will make use of a replay buffer to maximize sample efficiency, as well as target networks to assist in algorithm convergence and stability."
+date: "2019-07-16"
+order: 2
+draft: false
+---

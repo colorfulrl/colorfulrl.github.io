@@ -221,7 +221,6 @@ const graphJson = JSON.stringify(graphData);
 
 <script>
   import cytoscape from "cytoscape";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   import fcose from "cytoscape-fcose";
   import Fuse from "fuse.js";
   import type { FuseResult } from "fuse.js";
@@ -237,6 +236,11 @@ const graphJson = JSON.stringify(graphData);
     if (!raw) return;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { nodes, edges } = JSON.parse(raw);
+
+    // Hide canvas until layout settles, then fade in — avoids the initial
+    // random-position flash and per-frame layout jank.
+    container.style.opacity = "0";
+    container.style.transition = "opacity 450ms ease";
 
     const css = getComputedStyle(document.documentElement);
     const accent     = css.getPropertyValue("--color-accent").trim()            || "#6366f1";
@@ -292,8 +296,7 @@ const graphJson = JSON.stringify(graphData);
       layout: {
         name: "fcose",
         quality: "default",       // "proof" = higher quality, slower
-        animate: true,
-        animationDuration: 500,
+        animate: false,           // place instantly; we fade #cy in to avoid jank
         fit: true,
         padding: 48,
         nodeDimensionsIncludeLabels: true,
@@ -302,14 +305,19 @@ const graphJson = JSON.stringify(graphData);
         nodeRepulsion: 7000,
         idealEdgeLength: 120,
         edgeElasticity: 0.45,
-        numIter: 2500,
+        numIter: 1000,
         tile: true,
         randomize: true,
       } as any,
       minZoom: 0.3, maxZoom: 3, wheelSensitivity: 0.3,
+      textureOnViewport: true,    // cached texture during pan/zoom = smoother
     });
 
     container._cy = cy;
+
+    // Reveal once the layout has placed all nodes.
+    cy.one("layoutstop", () => { container.style.opacity = "1"; });
+    window.setTimeout(() => { container.style.opacity = "1"; }, 1500); // fallback
 
     // ── Locale strings from data attributes ───────────────────────────────────
     const wrap = document.getElementById("cy-graph-wrap");

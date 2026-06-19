@@ -6,9 +6,9 @@ descriptionEn: "Reconfigurable intelligent surface (RIS) has emerged as a cuttin
 # Đặt file ảnh bìa (ví dụ cover.jpg hoặc cover.png) vào CHUNG thư mục với
 # file index.md này, rồi tham chiếu đường dẫn tương đối ở dưới. Bỏ comment
 # dòng `cover:` khi đã có file ảnh.
-# cover: ./bia.png
-link: ""
-restricted: false
+cover: ./bia.jpg
+# link: ""
+restricted: true
 category: "wireless-communications-and-networking"
 order: 33
 draft: false
