@@ -221,8 +221,13 @@ const graphJson = JSON.stringify(graphData);
 
 <script>
   import cytoscape from "cytoscape";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  import fcose from "cytoscape-fcose";
   import Fuse from "fuse.js";
   import type { FuseResult } from "fuse.js";
+
+  // Register fcose once at module level (O(n log n) vs cose's O(n²))
+  cytoscape.use(fcose as unknown as cytoscape.Ext);
 
   function initGraph() {
     const container = document.getElementById("cy") as (HTMLElement & { _cy?: unknown }) | null;
@@ -283,13 +288,24 @@ const graphJson = JSON.stringify(graphData);
         { selector: ".dimmed", style: { opacity: 0.12 } },
         { selector: ".drop-highlighted", style: { "border-color": accent, "border-width": 3 } },
       ],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       layout: {
-        name: "cose", animate: true, animationDuration: 600,
+        name: "fcose",
+        quality: "default",       // "proof" = higher quality, slower
+        animate: true,
+        animationDuration: 500,
+        fit: true,
+        padding: 48,
         nodeDimensionsIncludeLabels: true,
-        nodeRepulsion: () => 8000, edgeElasticity: () => 100,
-        idealEdgeLength: () => 100, gravity: 0.3,
-        numIter: 1000, fit: true, padding: 48,
-      },
+        uniformNodeDimensions: false,
+        packComponents: true,
+        nodeRepulsion: 7000,
+        idealEdgeLength: 120,
+        edgeElasticity: 0.45,
+        numIter: 2500,
+        tile: true,
+        randomize: true,
+      } as any,
       minZoom: 0.3, maxZoom: 3, wheelSensitivity: 0.3,
     });
 

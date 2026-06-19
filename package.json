@@ -26,6 +26,7 @@
     "@types/cytoscape": "^3.21.9",
     "astro": "^6.3.3",
     "cytoscape": "^3.34.0",
+    "cytoscape-fcose": "^2.2.0",
     "dayjs": "^1.11.20",
     "fuse.js": "^7.4.2",
     "katex": "^0.16.11",
