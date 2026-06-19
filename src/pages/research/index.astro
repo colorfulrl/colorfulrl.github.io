@@ -216,8 +216,8 @@ const graphJson = JSON.stringify(graphData);
 
   <!-- ── Curriculum section ───────────────────────────────────────────── -->
   {curricula.length > 0 && (
-    <section class="border-border border-t">
-      <div class="app-layout py-10">
+    <section class="app-layout">
+      <div class="border-border w-full border-t py-10">
         <h2 class="font-display text-2xl font-semibold tracking-tight">
           {locale === "en" ? "Learning Paths" : "Lộ trình học"}
         </h2>
@@ -250,8 +250,8 @@ const graphJson = JSON.stringify(graphData);
   )}
 
   <!-- ── Research notes ────────────────────────────────────────────────── -->
-  <div class="border-border border-t">
-    <div class="app-layout py-14">
+  <div class="app-layout">
+    <div class="border-border w-full border-t py-14">
       <article class="app-prose max-w-3xl prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)">
         <ResearchIntro />
       </article>
