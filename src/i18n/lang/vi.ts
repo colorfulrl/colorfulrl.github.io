@@ -11,6 +11,7 @@ export default {
     ebooks: "Ebook",
     resources: "Tài nguyên",
     research: "Nghiên cứu",
+    curriculum: "Lộ trình",
     categories: "Chủ đề",
     more: "Thêm",
     support: "Buy me a coffee",

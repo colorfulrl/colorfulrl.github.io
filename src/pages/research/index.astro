@@ -15,6 +15,9 @@ const t = useTranslations(locale);
 const entries = await getCollection("research");
 const { nodes, edges } = buildResearchGraph(entries);
 
+const curricula = (await getCollection("curriculum", e => !e.data.draft))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
 const graphData = {
   nodes: nodes.map(n => ({
     data: {
@@ -211,11 +214,48 @@ const graphJson = JSON.stringify(graphData);
   </div>
   <!-- ── /Graph section ─────────────────────────────────────────────── -->
 
-  <!-- ── Content section ────────────────────────────────────────────── -->
-  <div class="app-layout border-t border-border py-14">
-    <article class="app-prose max-w-3xl prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)">
-      <ResearchIntro />
-    </article>
+  <!-- ── Curriculum section ───────────────────────────────────────────── -->
+  {curricula.length > 0 && (
+    <section class="border-border border-t">
+      <div class="app-layout py-10">
+        <h2 class="font-display text-2xl font-semibold tracking-tight">
+          {locale === "en" ? "Learning Paths" : "Lộ trình học"}
+        </h2>
+        <p class="text-muted-foreground mt-2 max-w-2xl text-sm">
+          {locale === "en"
+            ? "Domain-specific reading paths: prerequisites → core → advanced."
+            : "Lộ trình đọc theo từng domain: nền tảng → cốt lõi → nâng cao."}
+        </p>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          {curricula.map(d => {
+            const paperCount = d.data.stages.reduce((n, s) => n + s.items.length, 0);
+            return (
+              <a href={getRelativeLocaleUrl(locale, `research/${d.id}`)}
+                class="border-border hover:border-accent group rounded-xl border p-5 transition-colors">
+                <h3 class="font-display group-hover:text-accent text-base font-semibold transition-colors">{d.data.domain}</h3>
+                <p class="text-muted-foreground mt-2 text-sm leading-relaxed line-clamp-3">
+                  {locale === "en" ? (d.data.descriptionEn ?? d.data.description) : d.data.description}
+                </p>
+                <div class="text-muted-foreground mt-3 flex items-center gap-3 text-xs">
+                  <span>{d.data.stages.length} {locale === "en" ? "stages" : "giai đoạn"}</span>
+                  <span>·</span>
+                  <span>{paperCount} {locale === "en" ? "papers" : "paper"}</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Research notes ────────────────────────────────────────────────── -->
+  <div class="border-border border-t">
+    <div class="app-layout py-14">
+      <article class="app-prose max-w-3xl prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)">
+        <ResearchIntro />
+      </article>
+    </div>
   </div>
 
   </main>
@@ -954,6 +994,15 @@ const graphJson = JSON.stringify(graphData);
 
     // ── Initial render: backbone only, laid out, then fade in ───────────────────
     applyInitialVisibility();
+
+    // Deep-link from Curriculum Map: /research?focus=<id> opens that node isolated.
+    const focusParam = new URLSearchParams(window.location.search).get("focus");
+    if (focusParam) {
+      window.setTimeout(() => {
+        const n = cy.getElementById(focusParam);
+        if (!n.empty()) enterFocus(n);
+      }, 500);
+    }
   }
 
   document.addEventListener("astro:page-load", initGraph);

@@ -11,6 +11,7 @@ export default {
     ebooks: "Ebooks",
     resources: "Resources",
     research: "Research",
+    curriculum: "Curriculum",
     categories: "Categories",
     more: "More",
     support: "Buy me a coffee",

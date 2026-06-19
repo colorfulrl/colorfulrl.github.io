@@ -104,7 +104,41 @@ const research = defineCollection({
     graphEdges: z
       .array(z.object({ target: z.string(), label: z.string() }))
       .optional(),
+    // Domain papers live only in a Curriculum Map, not the central Core-RL
+    // graph. Set true to keep the detail page (research/[slug]) but exclude
+    // the node + its edges from the central graph (avoids the sparse-star bloat).
+    graphExclude: z.boolean().optional(),
   }),
 });
 
-export const collections = { posts, pages, ebooks, resources, research };
+export const CURRICULUM_PATH = "src/content/curriculum";
+
+const curriculum = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${CURRICULUM_PATH}` }),
+  schema: z.object({
+    // Display name of the domain, e.g. "Embodied AI".
+    domain: z.string(),
+    description: z.string(),
+    descriptionEn: z.string().optional(),
+    order: z.number().optional(),
+    draft: z.boolean().optional(),
+    // Ordered reading stages (prerequisites → core → advanced → …).
+    // Each item references a research/ entry by id; `after` lists the
+    // research ids that should be read first (drawn as prerequisite arrows).
+    stages: z.array(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+        labelEn: z.string().optional(),
+        items: z.array(
+          z.object({
+            ref: z.string(),
+            after: z.array(z.string()).optional(),
+          }),
+        ),
+      }),
+    ),
+  }),
+});
+
+export const collections = { posts, pages, ebooks, resources, research, curriculum };

@@ -11,8 +11,13 @@ export type { GraphNode, GraphEdge };
 export function buildResearchGraph(
   entries: CollectionEntry<"research">[],
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
+  // Domain papers (graphExclude) keep their detail page but stay out of the
+  // central graph — they belong to a Curriculum Map instead.
+  const inGraph = (e: CollectionEntry<"research">) =>
+    !e.data.draft && !e.data.graphExclude;
+
   const paperNodes: GraphNode[] = entries
-    .filter(e => !e.data.draft)
+    .filter(inGraph)
     .map(entry => ({
       id:          entry.id,
       type:        "paper" as const,
@@ -22,7 +27,7 @@ export function buildResearchGraph(
     }));
 
   const paperEdges: GraphEdge[] = entries
-    .filter(e => !e.data.draft)
+    .filter(inGraph)
     .flatMap(entry =>
       (entry.data.graphEdges ?? []).map(edge => ({
         source: entry.id,

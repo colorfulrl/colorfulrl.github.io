@@ -9,6 +9,7 @@ export interface UIStrings {
     ebooks: string;
     resources: string;
     research: string;
+    curriculum: string;
     categories: string;
     more: string;
     support: string;
