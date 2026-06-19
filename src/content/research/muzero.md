@@ -16,5 +16,7 @@ graphEdges:
     label: uses
   - target: atari
     label: evaluated on
+  - target: alphazero
+    label: extends
 graphDescription: "Schrittwieser et al. (2019). Learns a latent dynamics model that predicts only planning-relevant quantities (reward, policy, value) — no reconstruction — enabling MCTS without known rules."
 ---

@@ -1,0 +1,16 @@
+---
+title: "Mastering the Game of Go without Human Knowledge"
+authors: ["David Silver", "Julian Schrittwieser", "Karen Simonyan", "Ioannis Antonoglou", "Aja Huang", "Arthur Guez", "Thomas Hubert", "Lucas Baker", "Matthew Lai", "Adrian Bolton", "Yutian Chen", "Timothy Lillicrap", "Fan Hui", "Laurent Sifre", "George van den Driessche", "Thore Graepel", "Demis Hassabis"]
+year: 2017
+venue: "Nature 550(7676)"
+arxiv: "https://ics.uci.edu/~dechter/courses/ics-295/winter-2018/papers/nature-go.pdf"
+abstract: "A long-standing goal of artificial intelligence is an algorithm that learns, tabula rasa, superhuman proficiency in challenging domains. Recently, AlphaGo became the first program to defeat a world champion in the game of Go. The tree search in AlphaGo evaluated positions and selected moves using deep neural networks. These neural networks were trained by supervised learning from human expert moves, and by reinforcement learning from self-play. Here we introduce an algorithm based solely on reinforcement learning, without human data, guidance or domain knowledge beyond game rules. AlphaGo becomes its own teacher: a neural network is trained to predict AlphaGo’s own move selections and also the winner of AlphaGo’s games. This neural network improves the strength of the tree search, resulting in higher quality move selection and stronger self-play in the next iteration. Starting tabula rasa, our new program AlphaGo Zero achieved superhuman performance, winning 100–0 against the previously published, champion-defeating AlphaGo."
+draft: true
+graphLabel: "AlphaGo Zero"
+graphDescription: "Silver et al. (2017). Tabula rasa self-play in Go — no human data, no handcrafted features. MCTS guided by a single neural network trained purely from self-generated games. Directly precedes AlphaZero."
+graphEdges:
+  - target: mcts
+    label: uses
+  - target: model-based-rl
+    label: related to
+---
