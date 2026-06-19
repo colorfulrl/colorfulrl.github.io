@@ -9,6 +9,8 @@ draft: false
 graphLabel: "NGU"
 graphDescription: "Badia et al. (2020). Two-level intrinsic reward: episodic k-NN memory (short-term) + RND (long-term). UVFA simultaneously trains a spectrum of explore→exploit policies. Precursor to Agent57."
 graphEdges:
+  - target: apex
+    label: uses
   - target: exploration
     label: based on
   - target: intrinsic-motivation
