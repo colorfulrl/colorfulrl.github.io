@@ -238,7 +238,7 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     type: "concept",
     label: "Epistemic Uncertainty",
     description:
-      "Uncertainty about model parameters due to limited data — distinct from aleatoric (environment) randomness. Used in MBRL to detect out-of-distribution regions and prevent model exploitation.",
+      "Uncertainty about model parameters due to limited data — distinct from aleatoric (environment) randomness. Applied in two ways: as exploration bonus (VIME) and as model safety signal to detect OOD regions and prevent model exploitation (uncertainty-aware MBRL).",
   },
 
   // ── New Architectures (G) ────────────────────────────────────────
@@ -264,13 +264,6 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     label: "Traj Opt",
     description:
       "Optimises a sequence of actions over a receding horizon using a learned model — decoder-free in TD-MPC, CEM-based in PlaNet.",
-  },
-  {
-    id: "dpg",
-    type: "algorithm",
-    label: "DPG",
-    description:
-      "Deterministic Policy Gradient — gradient of expected return w.r.t. a deterministic policy μ(s), extended to deep networks in DDPG and TD3.",
   },
 ];
 
