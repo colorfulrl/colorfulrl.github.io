@@ -27,21 +27,22 @@ const inGraphIds = new Set(
 );
 
 const STAGE_COLORS = ["#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#ef4444"];
-const COL = 260;
-const ROW = 120;
+const COL = 260; // horizontal gap between stage columns (fcose fixed anchors)
 
 interface CurrNode {
   id: string; label: string; description: string; color: string;
   inGraph: boolean; detailHref: string | null; graphHref: string | null;
-  stage: string; x: number; y: number;
+  stage: string;
 }
 
 const nodes: CurrNode[] = [];
 const rawEdges: { source: string; target: string }[] = [];
+// stageGroups[i] = node ids in stage i → fcose alignmentConstraint (one column each).
+const stageGroups: string[][] = [];
 
 entry.data.stages.forEach((stage, si) => {
-  const n = stage.items.length;
-  stage.items.forEach((item, ii) => {
+  const group: string[] = [];
+  stage.items.forEach(item => {
     const r = researchMap.get(item.ref);
     const label = r?.data.graphLabel ?? r?.data.title ?? item.ref;
     const description = r?.data.graphDescription ?? r?.data.abstract ?? "";
@@ -57,15 +58,22 @@ entry.data.stages.forEach((stage, si) => {
         ? `${getRelativeLocaleUrl(locale, "research")}?focus=${item.ref}`
         : null,
       stage: stage.id,
-      x: si * COL,
-      y: (ii - (n - 1) / 2) * ROW,
     });
+    group.push(item.ref);
     (item.after ?? []).forEach(a => rawEdges.push({ source: a, target: item.ref }));
   });
+  if (group.length) stageGroups.push(group);
 });
 
 const nodeIds = new Set(nodes.map(n => n.id));
 const edges = rawEdges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target));
+
+// Pin the first node of each stage at a fixed x (ordered left→right). Combined
+// with alignmentConstraint (stageGroups), this keeps stages as ordered columns
+// while fcose handles vertical spacing + the robust async layout/fit.
+const fixedNodeConstraint = stageGroups
+  .map((g, si) => ({ nodeId: g[0], position: { x: si * COL, y: 0 } }))
+  .filter(c => c.nodeId);
 
 const graphData = {
   nodes: nodes.map(n => ({
@@ -73,11 +81,11 @@ const graphData = {
       id: n.id, label: n.label, description: n.description, color: n.color,
       inGraph: n.inGraph, detailHref: n.detailHref, graphHref: n.graphHref, stage: n.stage,
     },
-    position: { x: n.x, y: n.y },
   })),
   edges: edges.map((e, i) => ({ data: { id: `e${i}`, source: e.source, target: e.target } })),
 };
 const graphJson = JSON.stringify(graphData);
+const constraintsJson = JSON.stringify({ stageGroups, fixedNodeConstraint });
 
 const stageLabels = entry.data.stages.map((s, i) => ({
   label: locale === "en" ? (s.labelEn ?? s.label) : s.label,
@@ -128,6 +136,7 @@ const domainDesc =
       <!-- Graph canvas + panel -->
       <div id="curr-wrap" class="relative flex flex-1 overflow-hidden">
         <div id="curr-cy" class="w-full flex-1" data-graph={graphJson}
+          data-constraints={constraintsJson}
           data-progress-key={`curriculum-read:${entry.id}`}
           data-l-detail={locale === "en" ? "Open details →" : "Mở chi tiết →"}
           data-l-graph={locale === "en" ? "View in main graph →" : "Xem trong graph chính →"}
@@ -183,13 +192,15 @@ const domainDesc =
     </div>
 
     <!-- Domain intro prose -->
-    <div class="app-layout border-t border-border py-14">
-      <div class="mx-auto max-w-3xl">
-        <h1 class="font-display text-accent text-3xl font-semibold tracking-tight">{entry.data.domain}</h1>
-        <p class="text-muted-foreground mt-3">{domainDesc}</p>
-        <article class="app-prose mt-6">
-          <Content />
-        </article>
+    <div class="app-layout">
+      <div class="border-border w-full border-t py-14">
+        <div class="mx-auto max-w-3xl">
+          <h1 class="font-display text-accent text-3xl font-semibold tracking-tight">{entry.data.domain}</h1>
+          <p class="text-muted-foreground mt-3">{domainDesc}</p>
+          <article class="app-prose mt-6">
+            <Content />
+          </article>
+        </div>
       </div>
     </div>
   </main>
@@ -199,6 +210,9 @@ const domainDesc =
 
 <script>
   import cytoscape from "cytoscape";
+  import fcose from "cytoscape-fcose";
+
+  cytoscape.use(fcose as unknown as cytoscape.Ext);
 
   function initCurriculum() {
     const container = document.getElementById("curr-cy") as (HTMLElement & { _cy?: unknown }) | null;
@@ -207,6 +221,8 @@ const domainDesc =
     if (!raw) return;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { nodes, edges } = JSON.parse(raw);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const constraints = JSON.parse(container.dataset.constraints ?? "{}");
     const progressKey = container.dataset.progressKey ?? "curriculum-read";
     const L = {
       detail:   container.dataset.lDetail   ?? "Mở chi tiết →",
@@ -214,10 +230,16 @@ const domainDesc =
       noDetail: container.dataset.lNodetail ?? "Chưa có trang chi tiết",
     };
 
+    // Hide canvas until layout settles, then fade in (same trick as the main
+    // graph — avoids the initial-position flash *and* the stale-canvas bug where
+    // a flex/svh container isn't sized yet at mount).
+    container.style.opacity = "0";
+    container.style.transition = "opacity 450ms ease";
+
     const css = getComputedStyle(document.documentElement);
-    const border     = css.getPropertyValue("--color-border").trim()           || "#e5e7eb";
     const muted      = css.getPropertyValue("--color-muted-foreground").trim()  || "#6b7280";
     const accent     = css.getPropertyValue("--color-accent").trim()            || "#6366f1";
+    const background = css.getPropertyValue("--color-background").trim()        || "#ffffffb6";
 
     function loadRead(): Set<string> {
       try { return new Set(JSON.parse(localStorage.getItem(progressKey) ?? "[]")); }
@@ -235,53 +257,71 @@ const domainDesc =
         {
           selector: "node",
           style: {
-            shape: "round-rectangle",
             "background-color": "data(color)",
             label: "data(label)",
             color: "#fff",
             "text-valign": "center",
             "text-halign": "center",
-            "font-size": "12px",
+            "font-size": "11px",
             "font-weight": 700,
-            width: "label",
-            height: 44,
-            padding: "16px",
+            width: 66,
+            height: 66,
             "text-wrap": "wrap",
-            "text-max-width": "140px",
-            "border-width": 1.5,
-            "border-color": "rgba(255,255,255,0.28)",
-            "transition-property": "overlay-opacity, border-color, border-width",
+            "text-max-width": "56px",
+            "border-width": 0,
+            "transition-property": "overlay-opacity, border-width, width, height",
             "transition-duration": "150ms",
             "transition-timing-function": "ease-in-out-sine",
-          },
+          } as any,
         },
         {
           selector: "node.hovered",
           style: {
             "overlay-color": "#ffffff",
-            "overlay-opacity": 0.10,
-            "overlay-padding": 7,
-            "border-color": "rgba(255,255,255,0.55)",
-            "border-width": 2.5,
-          },
+            "overlay-opacity": 0.12,
+            "overlay-padding": 6,
+            "border-width": 3,
+            "border-color": "#ffffff",
+            width: 74,
+            height: 74,
+          } as any,
         },
-        { selector: "node.read", style: { "border-width": 3, "border-color": "#22c55e" } },
-        { selector: "node:selected", style: { "border-width": 3, "border-color": accent } },
+        { selector: "node.read", style: { "border-width": 4, "border-color": "#22c55e" } },
+        { selector: "node:selected", style: { "border-width": 4, "border-color": accent } },
         {
           selector: "edge",
           style: {
-            width: 2,
-            "line-color": "rgba(255,255,255,0.28)",
-            "target-arrow-color": "rgba(255,255,255,0.28)",
+            width: 2.5,
+            "line-color": muted,
+            "target-arrow-color": muted,
             "target-arrow-shape": "triangle",
-            "arrow-scale": 1.3,
+            "arrow-scale": 1.4,
             "curve-style": "bezier",
+            opacity: 0.65,
           },
         },
-        { selector: ".dimmed", style: { opacity: 0.15 } },
-        { selector: "edge.path", style: { "line-color": accent, "target-arrow-color": accent, width: 3 } },
+        { selector: ".dimmed", style: { opacity: 0.12 } },
+        { selector: "edge.path", style: { "line-color": accent, "target-arrow-color": accent, width: 3.5, opacity: 1 } },
       ],
-      layout: { name: "preset", fit: true, padding: 60 },
+      // fcose = same proven engine as the main graph: async layout + fit on
+      // layoutstop, so the container is correctly sized by the time it fits.
+      // Constraints turn the force layout into ordered stage columns.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      layout: {
+        name: "fcose",
+        quality: "default",
+        animate: false,
+        fit: true,
+        padding: 60,
+        nodeDimensionsIncludeLabels: true,
+        nodeRepulsion: 6500,
+        idealEdgeLength: 150,
+        edgeElasticity: 0.45,
+        numIter: 1200,
+        randomize: true,
+        fixedNodeConstraint: constraints.fixedNodeConstraint ?? [],
+        alignmentConstraint: { vertical: constraints.stageGroups ?? [] },
+      } as any,
       minZoom: 0.3,
       maxZoom: 3,
       wheelSensitivity: 0.3,
@@ -295,6 +335,14 @@ const domainDesc =
     });
 
     let focusedId: string | null = null;
+
+    // Fit + fade in once the (async) layout settles; fallback timeout in case
+    // layoutstop never fires. A ResizeObserver re-fits on later container resizes.
+    const fitAll = () => { if (!focusedId) cy.fit(undefined, 50); };
+    cy.one("layoutstop", () => { fitAll(); container.style.opacity = "1"; });
+    window.setTimeout(() => { container.style.opacity = "1"; }, 1500);
+    const resizeObserver = new ResizeObserver(() => { cy.resize(); fitAll(); });
+    resizeObserver.observe(container);
 
     const panel      = document.getElementById("curr-panel")!;
     const panelStage = document.getElementById("curr-panel-stage")!;

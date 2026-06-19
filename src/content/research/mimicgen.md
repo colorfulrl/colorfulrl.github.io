@@ -4,7 +4,7 @@ authors: ["Ajay Mandlekar", "Soroush Nasiriany", "Bowen Wen", "Iretiayo Akinola"
 year: 2023
 venue: "CoRL 2023"
 arxiv: "https://arxiv.org/abs/2310.17596"
-abstract: "MimicGen turns a handful of human demonstrations into large synthetic datasets by adapting and stitching demonstration segments to new object poses and scene configurations. Policies trained on the generated data match those trained on far more human-collected demos."
+abstract: " Imitation learning from a large set of human demonstrations has proved to be an effective paradigm for building capable robot agents. However, the demonstrations can be extremely costly and time-consuming to collect. We introduce MimicGen, a system for automatically synthesizing large-scale, rich datasets from only a small number of human demonstrations by adapting them to new contexts. We use MimicGentogenerateover50Kdemonstrationsacross18tasks with diverse scene configurations, object instances, and robot arms from just ∼200 human demonstrations. We show that robot agents can be effectively trained on this generated dataset by imitation learning to achieve strong performance in long horizon and high-precision tasks, such as multi-part assembly and coffee preparation, across broad initial state distributions. We further demonstrate that the effectiveness and utility of MimicGen data compare favorably to collecting additional human demonstrations, making it a powerful and economical approach towards scaling up robot learning"
 draft: false
 graphExclude: true
 graphLabel: "MimicGen"
