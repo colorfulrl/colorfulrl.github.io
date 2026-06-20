@@ -33,9 +33,9 @@ const inGraphIds = new Set(allResearch.filter(r => !r.data.graphExclude).map(r =
 // Unified lookup: domain paper first, then research.
 function lookupPaper(ref: string) {
   const cp = curriculumPaperMap.get(ref);
-  if (cp) return { title: cp.data.title, graphLabel: cp.data.graphLabel, graphDescription: cp.data.graphDescription, abstract: cp.data.abstract, isCoreRL: false };
+  if (cp) return { title: cp.data.title, graphLabel: cp.data.graphLabel, graphDescription: cp.data.graphDescription, abstract: cp.data.abstract, arxiv: cp.data.arxiv ?? null, isCoreRL: false };
   const rp = researchMap.get(ref);
-  if (rp) return { title: rp.data.title, graphLabel: rp.data.graphLabel, graphDescription: rp.data.graphDescription, abstract: rp.data.abstract, isCoreRL: inGraphIds.has(ref) };
+  if (rp) return { title: rp.data.title, graphLabel: rp.data.graphLabel, graphDescription: rp.data.graphDescription, abstract: rp.data.abstract, arxiv: rp.data.arxiv ?? null, isCoreRL: inGraphIds.has(ref) };
   return null;
 }
 
@@ -44,7 +44,7 @@ const COL = 260;
 
 interface CurrNode {
   id: string; label: string; description: string; color: string;
-  detailHref: string | null; graphHref: string | null;
+  detailHref: string | null; graphHref: string | null; arxiv: string | null;
   stage: string;
 }
 
@@ -69,6 +69,7 @@ entry.data.stages.forEach((stage, si) => {
       color: STAGE_COLORS[si % STAGE_COLORS.length],
       detailHref: null,
       graphHref,
+      arxiv: p?.arxiv ?? null,
       stage: stage.id,
     });
     group.push(item.ref);
@@ -91,7 +92,7 @@ const graphData = {
   nodes: nodes.map(n => ({
     data: {
       id: n.id, label: n.label, description: n.description, color: n.color,
-      detailHref: n.detailHref, graphHref: n.graphHref, stage: n.stage,
+      detailHref: n.detailHref, graphHref: n.graphHref, arxiv: n.arxiv, stage: n.stage,
     },
   })),
   edges: edges.map((e, i) => ({ data: { id: `e${i}`, source: e.source, target: e.target } })),
@@ -152,6 +153,7 @@ const domainDesc =
           data-progress-key={`curriculum-read:${entry.id}`}
           data-l-detail={locale === "en" ? "Open details →" : "Mở chi tiết →"}
           data-l-graph={locale === "en" ? "View in main graph →" : "Xem trong graph chính →"}
+          data-l-arxiv={locale === "en" ? "Read paper (arXiv) →" : "Đọc paper (arXiv) →"}
           data-l-nodetail={locale === "en" ? "No detail page yet" : "Chưa có trang chi tiết"}></div>
 
         <!-- Detail panel -->
@@ -239,6 +241,7 @@ const domainDesc =
     const L = {
       detail:   container.dataset.lDetail   ?? "Mở chi tiết →",
       graph:    container.dataset.lGraph    ?? "Xem trong graph chính →",
+      arxiv:    container.dataset.lArxiv    ?? "Đọc paper (arXiv) →",
       noDetail: container.dataset.lNodetail ?? "Chưa có trang chi tiết",
     };
 
@@ -391,6 +394,9 @@ const domainDesc =
       let links = "";
       if (d.detailHref) {
         links += `<a href="${d.detailHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.detail}</a>`;
+      }
+      if (d.arxiv) {
+        links += `<a href="${d.arxiv}" target="_blank" rel="noopener" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.arxiv}</a>`;
       }
       if (d.graphHref) {
         links += `<a href="${d.graphHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.graph}</a>`;
