@@ -367,6 +367,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Exploration in the meta-RL setting whose purpose is to quickly identify the task — gathering the task-relevant information a separate exploitation policy then uses. Often decoupled from exploitation (DREAM) and driven by information gain / empowerment (MetaCURE).",
   },
   {
+    id: "successor-features",
+    type: "concept",
+    label: "Successor Features",
+    description:
+      "A value-function representation that decouples environment dynamics from rewards: ψ(s,a) is the expected discounted sum of future state-features, so Q = ψ · w for any reward weights w. Lets value transfer instantly when only the reward changes, and pairs with generalized policy improvement (GPI). Generalizes Dayan's successor representation.",
+  },
+  {
     id: "ctde",
     type: "concept",
     label: "CTDE",
@@ -457,6 +464,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // value-based concepts
   { source: "value-based",          target: "temporal-difference",  label: "uses" },
   { source: "value-based",          target: "experience-replay",    label: "uses" },
+  { source: "value-based",          target: "successor-features",   label: "uses" },
 
   // policy-gradient → trust region
   { source: "policy-gradient",      target: "trust-region",         label: "uses" },

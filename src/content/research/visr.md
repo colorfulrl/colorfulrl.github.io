@@ -13,6 +13,8 @@ graphEdges:
     label: based on
   - target: skill-discovery
     label: uses
+  - target: successor-features
+    label: uses
   - target: task-inference
     label: addresses
   - target: atari
