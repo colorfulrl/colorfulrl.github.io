@@ -158,6 +158,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "2D survival benchmark (Hafner, 2022) with 22 diverse achievements spanning resource gathering, crafting, and combat. Tests generalization across skills; used by DreamerV3, EMERALD, DyMoDreamer.",
   },
+  {
+    id: "smac",
+    type: "benchmark",
+    label: "SMAC",
+    description:
+      "StarCraft Multi-Agent Challenge — decentralized unit micromanagement scenarios on StarCraft II. The standard cooperative MARL benchmark; used by QMIX, COMA, MAPPO under partial observability.",
+  },
+  {
+    id: "safety-gym",
+    type: "benchmark",
+    label: "Safety Gym",
+    description:
+      "OpenAI benchmark suite of constrained robot navigation tasks (Ray et al., 2019) where the agent earns reward but must limit cost from entering hazards. Standard testbed for Safe RL / CMDP algorithms.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
@@ -215,6 +229,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     label: "RLHF",
     description:
       "Reinforcement Learning from Human Feedback — learns a reward model from human preference comparisons between trajectories/outputs, then optimizes a policy against it. Avoids hand-specified rewards; underpins preference-tuned LLMs (InstructGPT, ChatGPT) and earlier control tasks.",
+  },
+  {
+    id: "multi-agent-rl",
+    type: "approach",
+    label: "Multi-Agent RL",
+    description:
+      "Multiple agents learning simultaneously in a shared environment — cooperative, competitive, or mixed. Core challenges: non-stationarity (other agents' policies change), multi-agent credit assignment, and scaling with the number of agents.",
+  },
+  {
+    id: "safe-rl",
+    type: "approach",
+    label: "Safe RL",
+    description:
+      "Optimizes return while keeping expected cumulative costs within constraints — for settings where unsafe actions are unacceptable (robots, humans nearby). Typically formalized as a Constrained MDP and solved with Lagrangian, trust-region, or Lyapunov methods.",
   },
 
   // ── New Concepts (Y) ────────────────────────────────────────────
@@ -274,6 +302,27 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     label: "Goal-Conditioned RL",
     description:
       "Policies and value functions conditioned on a goal state g, learning to reach arbitrary goals rather than maximize a single reward. Underpins hindsight relabeling (HER), recursive classification (C-Learning), and contrastive goal-reaching.",
+  },
+  {
+    id: "ctde",
+    type: "concept",
+    label: "CTDE",
+    description:
+      "Centralized Training, Decentralized Execution — agents are trained with access to global state/other agents' info (e.g. a centralized critic), but execute using only local observations at test time. The dominant paradigm in cooperative MARL.",
+  },
+  {
+    id: "value-decomposition",
+    type: "concept",
+    label: "Value Decomposition",
+    description:
+      "Factorizes a team's joint action-value into per-agent utilities so decentralized greedy actions stay consistent with the centralized argmax. VDN sums them; QMIX uses a monotonic mixing network. A specific realization of CTDE for value-based MARL.",
+  },
+  {
+    id: "constrained-mdp",
+    type: "concept",
+    label: "Constrained MDP",
+    description:
+      "An MDP augmented with constraints on expected cumulative costs, separate from the reward. The standard formalism for Safe RL: maximize return subject to E[cost] ≤ threshold, solved via Lagrangian duality, trust regions, or Lyapunov functions.",
   },
   {
     id: "contrastive-rl",
@@ -366,4 +415,13 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // RLHF — learns a reward model from human preferences
   { source: "rl",                   target: "rlhf",                 label: "includes" },
   { source: "rlhf",                 target: "inverse-rl",           label: "related to" },
+
+  // Multi-agent RL
+  { source: "rl",                   target: "multi-agent-rl",       label: "includes" },
+  { source: "multi-agent-rl",       target: "ctde",                 label: "uses" },
+  { source: "ctde",                 target: "value-decomposition",  label: "includes" },
+
+  // Safe / Constrained RL
+  { source: "rl",                   target: "safe-rl",              label: "includes" },
+  { source: "safe-rl",              target: "constrained-mdp",      label: "based on" },
 ];
