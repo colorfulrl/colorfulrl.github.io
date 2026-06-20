@@ -209,6 +209,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Infers the reward function that best explains observed expert behavior, then optimizes it — instead of being given the reward. Family includes MaxEnt IRL, GAIL, and AIRL. Useful when rewards are hard to specify but demonstrations exist.",
   },
+  {
+    id: "rlhf",
+    type: "approach",
+    label: "RLHF",
+    description:
+      "Reinforcement Learning from Human Feedback — learns a reward model from human preference comparisons between trajectories/outputs, then optimizes a policy against it. Avoids hand-specified rewards; underpins preference-tuned LLMs (InstructGPT, ChatGPT) and earlier control tasks.",
+  },
 
   // ── New Concepts (Y) ────────────────────────────────────────────
   {
@@ -355,4 +362,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // imitation learning & inverse RL
   { source: "rl",                   target: "imitation-learning",   label: "includes" },
   { source: "imitation-learning",   target: "inverse-rl",           label: "includes" },
+
+  // RLHF — learns a reward model from human preferences
+  { source: "rl",                   target: "rlhf",                 label: "includes" },
+  { source: "rlhf",                 target: "inverse-rl",           label: "related to" },
 ];
