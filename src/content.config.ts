@@ -113,18 +113,15 @@ const research = defineCollection({
 
 export const CURRICULUM_PATH = "src/content/curriculum";
 
+// Domain index files: one per curriculum folder (*/index.md).
 const curriculum = defineCollection({
-  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${CURRICULUM_PATH}` }),
+  loader: glob({ pattern: "*/index.md", base: `./${CURRICULUM_PATH}` }),
   schema: z.object({
-    // Display name of the domain, e.g. "Embodied AI".
     domain: z.string(),
     description: z.string(),
     descriptionEn: z.string().optional(),
     order: z.number().optional(),
     draft: z.boolean().optional(),
-    // Ordered reading stages (prerequisites → core → advanced → …).
-    // Each item references a research/ entry by id; `after` lists the
-    // research ids that should be read first (drawn as prerequisite arrows).
     stages: z.array(
       z.object({
         id: z.string(),
@@ -141,4 +138,22 @@ const curriculum = defineCollection({
   }),
 });
 
-export const collections = { posts, pages, ebooks, resources, research, curriculum };
+// Domain-specific papers that live inside a curriculum folder, not in the
+// central Core-RL graph. id = "<domain>/papers/<slug>" (Astro uses the
+// path relative to the collection base as the id).
+const curriculumPaper = defineCollection({
+  loader: glob({ pattern: "*/papers/*.{md,mdx}", base: `./${CURRICULUM_PATH}` }),
+  schema: z.object({
+    title: z.string(),
+    authors: z.array(z.string()).optional(),
+    year: z.number().optional(),
+    venue: z.string().optional(),
+    arxiv: z.string().optional(),
+    abstract: z.string().optional(),
+    graphLabel: z.string().optional(),
+    graphDescription: z.string().optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
+export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper };

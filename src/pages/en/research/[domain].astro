@@ -3,60 +3,55 @@ import { getCollection, render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import { useTranslations } from "@/i18n";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import config from "@/config";
 
 export async function getStaticPaths() {
   const domains = await getCollection("curriculum", e => !e.data.draft);
-  const research = await getCollection("research");
   return domains.map(entry => ({
     params: { domain: entry.id },
-    props: { entry, research },
+    props: { entry },
   }));
 }
 
-const { entry, research } = Astro.props;
+const { entry } = Astro.props;
 const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
+
 const { Content } = await render(entry);
 
-const researchMap = new Map(research.map(r => [r.id, r]));
-const inGraphIds = new Set(
-  research.filter(r => !r.data.draft && !r.data.graphExclude).map(r => r.id),
+// Load papers that belong to this domain (id = "<domain>/papers/<slug>").
+const allCurriculumPapers = await getCollection("curriculumPaper", p => !p.data.draft);
+const domainPapers = allCurriculumPapers.filter(p => p.id.startsWith(`${entry.id}/papers/`));
+// Map slug → paper (e.g. "saycan" → entry)
+const paperMap = new Map(
+  domainPapers.map(p => [p.id.split("/").pop()!, p])
 );
 
 const STAGE_COLORS = ["#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#ef4444"];
-const COL = 260; // horizontal gap between stage columns (fcose fixed anchors)
+const COL = 260;
 
 interface CurrNode {
   id: string; label: string; description: string; color: string;
-  inGraph: boolean; detailHref: string | null; graphHref: string | null;
+  detailHref: string | null;
   stage: string;
 }
 
 const nodes: CurrNode[] = [];
 const rawEdges: { source: string; target: string }[] = [];
-// stageGroups[i] = node ids in stage i → fcose alignmentConstraint (one column each).
 const stageGroups: string[][] = [];
 
 entry.data.stages.forEach((stage, si) => {
   const group: string[] = [];
   stage.items.forEach(item => {
-    const r = researchMap.get(item.ref);
-    const label = r?.data.graphLabel ?? r?.data.title ?? item.ref;
-    const description = r?.data.graphDescription ?? r?.data.abstract ?? "";
-    const inGraph = inGraphIds.has(item.ref);
+    const p = paperMap.get(item.ref);
+    const label = p?.data.graphLabel ?? p?.data.title ?? item.ref;
+    const description = p?.data.graphDescription ?? p?.data.abstract ?? "";
     nodes.push({
       id: item.ref,
       label,
       description,
       color: STAGE_COLORS[si % STAGE_COLORS.length],
-      inGraph,
-      detailHref: r ? getRelativeLocaleUrl(locale, `research/${item.ref}`) : null,
-      graphHref: inGraph
-        ? `${getRelativeLocaleUrl(locale, "research")}?focus=${item.ref}`
-        : null,
+      detailHref: null, // detail pages for curriculum papers not yet implemented
       stage: stage.id,
     });
     group.push(item.ref);
@@ -79,7 +74,7 @@ const graphData = {
   nodes: nodes.map(n => ({
     data: {
       id: n.id, label: n.label, description: n.description, color: n.color,
-      inGraph: n.inGraph, detailHref: n.detailHref, graphHref: n.graphHref, stage: n.stage,
+      detailHref: n.detailHref, stage: n.stage,
     },
   })),
   edges: edges.map((e, i) => ({ data: { id: `e${i}`, source: e.source, target: e.target } })),
@@ -379,9 +374,6 @@ const domainDesc =
       let links = "";
       if (d.detailHref) {
         links += `<a href="${d.detailHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.detail}</a>`;
-      }
-      if (d.graphHref) {
-        links += `<a href="${d.graphHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.graph}</a>`;
       }
       panelLinks.innerHTML = links || `<span class="text-muted-foreground text-xs italic">${L.noDetail}</span>`;
 
