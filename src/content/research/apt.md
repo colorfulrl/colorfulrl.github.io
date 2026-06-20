@@ -15,6 +15,8 @@ graphEdges:
     label: uses
   - target: intrinsic-motivation
     label: uses
+  - target: state-entropy
+    label: uses
   - target: urlb
     label: evaluated on
   - target: atari

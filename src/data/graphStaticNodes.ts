@@ -186,6 +186,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Benchmark of 50 distinct simulated robotic-manipulation tasks on a Sawyer arm (Yu et al., 2019), with ML1/ML10/ML45 meta-RL splits and MT10/MT50 multi-task splits. The standard testbed for broad-distribution meta-RL and multi-task learning.",
   },
+  {
+    id: "minigrid",
+    type: "benchmark",
+    label: "MiniGrid",
+    description:
+      "Procedurally-generated gridworld navigation tasks with sparse rewards (Chevalier-Boisvert et al.) — each episode gives a fresh layout, so a state is rarely seen twice. The standard testbed for exploration in procedurally-generated environments (RIDE, BeBold, NovelD, RE3); often paired with NetHack/MiniHack.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
@@ -322,6 +329,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     label: "Curiosity-Driven",
     description:
       "Mechanism: intrinsic reward from the agent's prediction error about the consequences of its own actions, or information gain about the dynamics — unpredictable, novel transitions are rewarded. ICM, RND, VIME.",
+  },
+  {
+    id: "state-entropy",
+    type: "concept",
+    label: "State Entropy / Coverage",
+    description:
+      "Mechanism: explore to maximize the entropy (coverage) of the state-visitation distribution, or match that marginal to a uniform/target distribution — spread visitation as widely as possible rather than chase per-state novelty. State Marginal Matching, RE3, APT, Proto-RL.",
   },
   {
     id: "global-exploration",
@@ -506,6 +520,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // exploration sub-branches: mechanism (under intrinsic-motivation) vs timescale (under exploration)
   { source: "intrinsic-motivation", target: "count-based-exploration", label: "includes" },
   { source: "intrinsic-motivation", target: "curiosity-driven",        label: "includes" },
+  { source: "intrinsic-motivation", target: "state-entropy",           label: "includes" },
   { source: "exploration",          target: "global-exploration",      label: "includes" },
   { source: "exploration",          target: "episodic-exploration",    label: "includes" },
 
