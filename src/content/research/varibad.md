@@ -13,6 +13,10 @@ graphEdges:
     label: based on
   - target: task-inference
     label: uses
+  - target: belief-state
+    label: uses
+  - target: contextual-mdp
+    label: based on
   - target: exploration
     label: addresses
   - target: mujoco

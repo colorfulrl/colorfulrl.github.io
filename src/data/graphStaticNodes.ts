@@ -82,6 +82,27 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Modeling environment transitions in a compact latent space rather than raw pixels — more efficient and easier to learn.",
   },
+  {
+    id: "pomdp",
+    type: "concept",
+    label: "POMDP",
+    description:
+      "Partially Observable MDP — the agent sees only partial observations, not the true state (e.g. one Atari frame hides velocity). Solving it requires memory or inferring a belief over the hidden state. The formalism behind recurrent policies and world models.",
+  },
+  {
+    id: "belief-state",
+    type: "concept",
+    label: "Belief State",
+    description:
+      "The way to solve a POMDP: instead of the unknown true state, the agent maintains a posterior distribution (belief) over states, and acting on this belief is itself an MDP. RSSM's stochastic latent is a learned belief over state; VariBAD's posterior is a belief over the task.",
+  },
+  {
+    id: "contextual-mdp",
+    type: "concept",
+    label: "Contextual MDP",
+    description:
+      "A family of MDPs sharing structure but differing by a context variable c that sets the dynamics/reward. When c is hidden it must be inferred — this is exactly meta-RL (context = task) and procedurally-generated environments (context = level seed).",
+  },
 
   // ── Architectures (G) ───────────────────────────────────────────
   {
@@ -493,6 +514,14 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "model-based-rl",       target: "world-models-concept", label: "includes" },
   { source: "world-models-concept", target: "latent-dynamics",      label: "uses" },
   { source: "latent-dynamics",      target: "rssm",                 label: "implements" },
+
+  // MDP formalisms (problem-formulation axis)
+  { source: "rl",                   target: "pomdp",                label: "includes" },
+  { source: "rl",                   target: "contextual-mdp",       label: "includes" },
+  { source: "pomdp",                target: "belief-state",         label: "solved via" },
+  { source: "belief-state",         target: "rssm",                 label: "realized by" },
+  { source: "world-models-concept", target: "pomdp",                label: "addresses" },
+  { source: "meta-rl",              target: "contextual-mdp",       label: "based on" },
 
   // rl → new approaches
   { source: "rl",                   target: "hierarchical-rl",      label: "includes" },

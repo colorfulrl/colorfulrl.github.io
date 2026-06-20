@@ -13,6 +13,8 @@ graphEdges:
     label: based on
   - target: task-inference
     label: uses
+  - target: contextual-mdp
+    label: based on
   - target: maximum-entropy-rl
     label: uses
   - target: mujoco
