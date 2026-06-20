@@ -1,5 +1,5 @@
 ---
-domain: "Lái xe tự hành"
+domain: "Autonomous Driving"
 description: "Lộ trình từ học bắt chước hành vi lái tới các world model lái xe quy mô lớn. Giả định đã biết PPO/SAC và imitation learning từ Core-RL."
 descriptionEn: "A path from imitation of driving behavior to large-scale driving world models. Assumes PPO/SAC and imitation learning from Core-RL."
 order: 2
