@@ -347,6 +347,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Self-attention based sequence model — adapted for RL in Decision Transformer (return-conditioned) and Trajectory Transformer (sequence modelling over states/actions).",
   },
+  {
+    id: "diffusion-model",
+    type: "architecture",
+    label: "Diffusion Model",
+    description:
+      "Generative model that samples by iteratively denoising from noise, learning the score (gradient of log-density) of the data. In RL it represents highly-expressive, multimodal distributions over actions (Diffusion Policy, Diffusion-QL) or whole trajectories (Diffuser, Decision Diffuser), and serves as a pixel-space world model (DIAMOND).",
+  },
 
   // ── New Algorithms (C) ──────────────────────────────────────────
   {

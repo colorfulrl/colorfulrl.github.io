@@ -11,6 +11,8 @@ graphDescription: "Alonso et al. (2024). Diffusion model as world model — reta
 graphEdges:
   - target: model-based-rl
     label: based on
+  - target: diffusion-model
+    label: uses
   - target: latent-dynamics
     label: uses
   - target: atari
