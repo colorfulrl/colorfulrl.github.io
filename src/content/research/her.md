@@ -13,6 +13,8 @@ graphEdges:
     label: extends
   - target: goal-conditioned-rl
     label: addresses
+  - target: sparse-reward
+    label: addresses
   - target: exploration
     label: addresses
   - target: ddpg

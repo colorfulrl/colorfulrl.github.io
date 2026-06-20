@@ -400,6 +400,34 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "The problem of attributing delayed rewards to the specific past actions that caused them — addressed by eligibility traces, GAE, and hierarchical architectures.",
   },
+  {
+    id: "sparse-reward",
+    type: "concept",
+    label: "Sparse Reward",
+    description:
+      "A task property: reward is non-zero only rarely (e.g. only at success), staying silent for long stretches — the opposite end of the spectrum from dense, shaped reward. The root motivation for exploration, intrinsic motivation, hindsight relabeling, and reward shaping.",
+  },
+  {
+    id: "reward-shaping",
+    type: "concept",
+    label: "Reward Shaping",
+    description:
+      "A technique: add an auxiliary reward term to guide learning on sparse tasks. Potential-based shaping F = γΦ(s′) − Φ(s) is provably policy-invariant (Ng et al. 1999) — it speeds learning without changing the optimal policy, unlike naive shaping which can be hacked.",
+  },
+  {
+    id: "reward-hacking",
+    type: "concept",
+    label: "Reward Hacking",
+    description:
+      "A failure mode: the agent exploits gaps in a misspecified reward to score high proxy reward while failing the intended task (specification gaming). The core motivation for inferring rewards (inverse RL) or learning them from human feedback (RLHF) rather than hand-coding them.",
+  },
+  {
+    id: "non-markovian-reward",
+    type: "concept",
+    label: "Non-Markovian Reward",
+    description:
+      "Reward that depends on the history of states/actions, not just the current state — e.g. 'reach A then B'. Made Markovian by augmenting the state with an automaton (reward machine) or temporal-logic monitor, mirroring how belief state augments for partial observability.",
+  },
 
   {
     id: "epistemic-uncertainty",
@@ -579,6 +607,15 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "intrinsic-motivation", target: "state-entropy",           label: "includes" },
   { source: "exploration",          target: "global-exploration",      label: "includes" },
   { source: "exploration",          target: "episodic-exploration",    label: "includes" },
+
+  // reward design axis
+  { source: "exploration",          target: "sparse-reward",        label: "addresses" },
+  { source: "reward-shaping",       target: "sparse-reward",        label: "mitigates" },
+  { source: "reward-shaping",       target: "credit-assignment",    label: "eases" },
+  { source: "reward-hacking",       target: "inverse-rl",           label: "motivates" },
+  { source: "reward-hacking",       target: "rlhf",                 label: "motivates" },
+  { source: "non-markovian-reward", target: "temporal-abstraction", label: "structures" },
+  { source: "non-markovian-reward", target: "pomdp",                label: "related to" },
 
   // model-based → planning algorithms
   { source: "model-based-rl",       target: "mcts",                 label: "uses" },
