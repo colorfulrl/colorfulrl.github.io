@@ -11,6 +11,8 @@ graphDescription: "Ross, Gordon & Bagnell (2011). Dataset Aggregation — fixes 
 graphEdges:
   - target: imitation-learning
     label: based on
+  - target: behavior-cloning
+    label: addresses
   - target: credit-assignment
     label: addresses
 ---

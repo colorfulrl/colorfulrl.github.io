@@ -224,6 +224,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Infers the reward function that best explains observed expert behavior, then optimizes it — instead of being given the reward. Family includes MaxEnt IRL, GAIL, and AIRL. Useful when rewards are hard to specify but demonstrations exist.",
   },
   {
+    id: "behavior-cloning",
+    type: "approach",
+    label: "Behavior Cloning",
+    description:
+      "The most direct form of imitation learning: supervised regression/classification from observed states to expert actions, no environment interaction or reward. Simple but suffers from compounding error (covariate shift) off the expert distribution — the problem DAgger and energy-based variants address.",
+  },
+  {
     id: "rlhf",
     type: "approach",
     label: "RLHF",
@@ -411,6 +418,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // imitation learning & inverse RL
   { source: "rl",                   target: "imitation-learning",   label: "includes" },
   { source: "imitation-learning",   target: "inverse-rl",           label: "includes" },
+  { source: "imitation-learning",   target: "behavior-cloning",     label: "includes" },
 
   // RLHF — learns a reward model from human preferences
   { source: "rl",                   target: "rlhf",                 label: "includes" },
