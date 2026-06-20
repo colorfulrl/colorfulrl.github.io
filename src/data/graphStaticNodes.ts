@@ -536,6 +536,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Generative model that samples by iteratively denoising from noise, learning the score (gradient of log-density) of the data. In RL it represents highly-expressive, multimodal distributions over actions (Diffusion Policy, Diffusion-QL) or whole trajectories (Diffuser, Decision Diffuser), and serves as a pixel-space world model (DIAMOND).",
   },
+  {
+    id: "flow-matching",
+    type: "architecture",
+    label: "Flow Matching",
+    description:
+      "Generative technique that learns a continuous-time velocity field whose ODE deterministically transports a simple prior (Gaussian) to the data distribution. Unlike diffusion's stochastic denoising, the flow is deterministic and exactly reversible — a property RQL exploits to do off-policy RL. Used as an expressive, multimodal policy class for offline RL.",
+  },
 
   // ── New Algorithms (C) ──────────────────────────────────────────
   {
@@ -626,6 +633,9 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
 
   // scaling deep RL
   { source: "rl",                   target: "scaling-rl",           label: "includes" },
+
+  // generative-policy families
+  { source: "flow-matching",        target: "diffusion-model",      label: "related to" },
 
   // model-based → planning algorithms
   { source: "model-based-rl",       target: "mcts",                 label: "uses" },
