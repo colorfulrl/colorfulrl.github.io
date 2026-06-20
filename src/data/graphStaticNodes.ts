@@ -172,6 +172,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "OpenAI benchmark suite of constrained robot navigation tasks (Ray et al., 2019) where the agent earns reward but must limit cost from entering hazards. Standard testbed for Safe RL / CMDP algorithms.",
   },
+  {
+    id: "urlb",
+    type: "benchmark",
+    label: "URLB",
+    description:
+      "Unsupervised Reinforcement Learning Benchmark (Laskin et al., 2021) — two phases: reward-free pretraining, then downstream adaptation with extrinsic rewards. 12 continuous-control tasks over 3 DMControl domains; ships 8 unsupervised RL baselines for fair comparison.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
@@ -251,6 +258,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Optimizes return while keeping expected cumulative costs within constraints — for settings where unsafe actions are unacceptable (robots, humans nearby). Typically formalized as a Constrained MDP and solved with Lagrangian, trust-region, or Lyapunov methods.",
   },
+  {
+    id: "unsupervised-rl",
+    type: "approach",
+    label: "Unsupervised RL",
+    description:
+      "Reward-free pretraining followed by fast downstream adaptation: the agent explores and learns skills, representations, or a world model without any task reward, then finetunes when an extrinsic reward appears. Spans skill discovery (DIAYN, DADS), pure exploration (Plan2Explore, APT), and is measured by the URLB benchmark.",
+  },
 
   // ── New Concepts (Y) ────────────────────────────────────────────
   {
@@ -316,6 +330,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     label: "Sequence Modeling",
     description:
       "Casts RL/decision-making as modeling a sequence of (state, action, return) tokens — predict the next action like a language model predicts the next word, sidestepping value functions and dynamic programming. Realized with transformers (Decision/Trajectory Transformer) or diffusion over whole trajectories (Diffuser, Decision Diffuser).",
+  },
+  {
+    id: "skill-discovery",
+    type: "concept",
+    label: "Skill Discovery",
+    description:
+      "Learning a set of diverse, reusable skills with no reward — typically by maximizing the mutual information I(z; s) between a latent skill code z and the states it visits, so different z lead to distinguishable, predictable behaviors. The core mechanism of unsupervised skill-based RL (DIAYN, DADS).",
   },
   {
     id: "ctde",
@@ -449,4 +470,10 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // Safe / Constrained RL
   { source: "rl",                   target: "safe-rl",              label: "includes" },
   { source: "safe-rl",              target: "constrained-mdp",      label: "based on" },
+
+  // Unsupervised RL — reward-free pretraining + transfer
+  { source: "rl",                   target: "unsupervised-rl",      label: "includes" },
+  { source: "unsupervised-rl",      target: "exploration",          label: "uses" },
+  { source: "unsupervised-rl",      target: "intrinsic-motivation", label: "uses" },
+  { source: "unsupervised-rl",      target: "skill-discovery",      label: "includes" },
 ];

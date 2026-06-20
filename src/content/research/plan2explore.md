@@ -11,6 +11,8 @@ graphDescription: "Sekar et al. (2020). Exploration by planning ahead in imagina
 graphEdges:
   - target: model-based-rl
     label: based on
+  - target: unsupervised-rl
+    label: based on
   - target: exploration
     label: based on
   - target: intrinsic-motivation
