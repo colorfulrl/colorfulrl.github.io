@@ -428,6 +428,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Reward that depends on the history of states/actions, not just the current state — e.g. 'reach A then B'. Made Markovian by augmenting the state with an automaton (reward machine) or temporal-logic monitor, mirroring how belief state augments for partial observability.",
   },
+  {
+    id: "scaling-rl",
+    type: "concept",
+    label: "Scaling Deep RL",
+    description:
+      "Deep RL networks notoriously fail to improve — or even collapse — when naively scaled up, unlike supervised learning, because of non-stationary, noisy bootstrap targets. This is the study of architectures, normalizations, regularizers, high replay ratios, and losses (e.g. classification instead of regression) that let value/actor networks scale in parameters and compute while staying sample-efficient. BBF, SimBa, BRO, HL-Gauss.",
+  },
 
   {
     id: "epistemic-uncertainty",
@@ -616,6 +623,9 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "reward-hacking",       target: "rlhf",                 label: "motivates" },
   { source: "non-markovian-reward", target: "temporal-abstraction", label: "structures" },
   { source: "non-markovian-reward", target: "pomdp",                label: "related to" },
+
+  // scaling deep RL
+  { source: "rl",                   target: "scaling-rl",           label: "includes" },
 
   // model-based → planning algorithms
   { source: "model-based-rl",       target: "mcts",                 label: "uses" },
