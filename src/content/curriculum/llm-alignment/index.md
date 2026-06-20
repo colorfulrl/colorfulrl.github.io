@@ -65,20 +65,41 @@ stages:
     label: "Rich Feedback (đang nổi)"
     labelEn: "Rich Feedback (emerging)"
     items:
+      # Community signal (mở rộng từ RLHF preference modeling)
       - ref: rlcf-scientific-taste
+        after: [instructgpt]
       - ref: rlcf-community-notes
+        after: [rlcf-scientific-taste]
+      # Checklist signal (mở rộng từ RLAIF)
       - ref: rlcf-checklist
+        after: [constitutional-ai]
       - ref: cm2
+        after: [rlcf-checklist]
+      # Critique signal (mở rộng từ RLAIF)
       - ref: critique-rl
+        after: [constitutional-ai]
       - ref: crl
-      - ref: icrl
-      - ref: rlbf
-      - ref: triplay-rl
-      - ref: spiral
-      - ref: co-rewarding
-      - ref: restrain
-      - ref: prl
+        after: [critique-rl]
+      # Self-feedback signal (mở rộng từ Reasoning RL)
       - ref: rlsf
+        after: [deepseek-r1]
+      - ref: restrain
+        after: [rlsf]
+      - ref: co-rewarding
+        after: [restrain]
+      # Self-play signal (mở rộng từ Reasoning RL)
+      - ref: spiral
+        after: [deepseek-r1]
+      - ref: triplay-rl
+        after: [spiral]
+      # Process / tool-use signal (mở rộng từ RLVR)
+      - ref: prl
+        after: [grpo]
+      - ref: icrl
+        after: [grpo]
+      # Real-time corrective signal (mở rộng từ Safety)
+      - ref: rlbf
+        after: [weak-to-strong]
 ---
 
 RLHF là chiến lược chủ đạo cho post-training LLM. Bản đồ này phân theo **nguồn của
