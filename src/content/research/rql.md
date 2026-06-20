@@ -13,6 +13,8 @@ graphEdges:
     label: based on
   - target: flow-matching
     label: uses
+  - target: expanded-mdp
+    label: uses
   - target: value-based
     label: uses
   - target: credit-assignment

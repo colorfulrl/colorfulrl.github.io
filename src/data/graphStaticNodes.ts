@@ -465,6 +465,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Casts RL/decision-making as modeling a sequence of (state, action, return) tokens — predict the next action like a language model predicts the next word, sidestepping value functions and dynamic programming. Realized with transformers (Decision/Trajectory Transformer) or diffusion over whole trajectories (Diffuser, Decision Diffuser).",
   },
   {
+    id: "expanded-mdp",
+    type: "concept",
+    label: "Expanded MDP",
+    description:
+      "Treats each refinement step of an iterative generative policy (a diffusion denoising step, or a flow Euler step) as a separate action in an augmented MDP — so generation can be trained with standard RL, avoiding backpropagation-through-time and using value gradients. Introduced for diffusion generation (DDPO), extended to control (DPPO), offline RL (BDPO), and reversible flows (RQL).",
+  },
+  {
     id: "skill-discovery",
     type: "concept",
     label: "Skill Discovery",
@@ -636,6 +643,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
 
   // generative-policy families
   { source: "flow-matching",        target: "diffusion-model",      label: "related to" },
+  { source: "expanded-mdp",         target: "diffusion-model",      label: "expands" },
+  { source: "expanded-mdp",         target: "flow-matching",        label: "expands" },
 
   // model-based → planning algorithms
   { source: "model-based-rl",       target: "mcts",                 label: "uses" },
