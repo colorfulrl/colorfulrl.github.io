@@ -15,8 +15,8 @@ graphEdges:
     label: uses
   - target: belief-state
     label: uses
-  - target: contextual-mdp
-    label: based on
+  - target: bamdp
+    label: solves
   - target: exploration
     label: addresses
   - target: mujoco

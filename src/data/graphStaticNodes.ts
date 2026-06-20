@@ -103,6 +103,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "A family of MDPs sharing structure but differing by a context variable c that sets the dynamics/reward. When c is hidden it must be inferred — this is exactly meta-RL (context = task) and procedurally-generated environments (context = level seed).",
   },
+  {
+    id: "bamdp",
+    type: "concept",
+    label: "Bayes-Adaptive MDP",
+    description:
+      "Augments the state with a posterior (belief) over the unknown MDP/task, so the Bayes-optimal policy on this augmented state automatically trades off exploration and exploitation. The formal bridge between belief-state (the posterior) and contextual-mdp (the unknown task); VariBAD approximates its solution, BAMCP plans in it.",
+  },
+  {
+    id: "block-mdp",
+    type: "concept",
+    label: "Block MDP",
+    description:
+      "Rich, high-dimensional observations emitted from a small set of latent states, where each observation decodes to exactly one latent state (block structure). The formal setting for provably-efficient representation learning and exploration from pixels — more tractable than a general POMDP because observations are decodable.",
+  },
 
   // ── Architectures (G) ───────────────────────────────────────────
   {
@@ -522,6 +536,10 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "belief-state",         target: "rssm",                 label: "realized by" },
   { source: "world-models-concept", target: "pomdp",                label: "addresses" },
   { source: "meta-rl",              target: "contextual-mdp",       label: "based on" },
+  { source: "contextual-mdp",       target: "bamdp",                label: "hidden context →" },
+  { source: "belief-state",         target: "bamdp",                label: "over task →" },
+  { source: "rl",                   target: "block-mdp",            label: "includes" },
+  { source: "block-mdp",            target: "latent-dynamics",      label: "decodes to" },
 
   // rl → new approaches
   { source: "rl",                   target: "hierarchical-rl",      label: "includes" },
