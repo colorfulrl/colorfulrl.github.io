@@ -10,6 +10,8 @@ graphLabel: "Decision Transformer"
 graphEdges:
   - target: offline-rl
     label: based on
+  - target: sequence-modeling
+    label: introduces
   - target: transformer
     label: uses
   - target: d4rl

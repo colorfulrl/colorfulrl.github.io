@@ -11,6 +11,8 @@ graphDescription: "Janner et al. (2022). Plans by iteratively denoising entire t
 graphEdges:
   - target: diffusion-model
     label: uses
+  - target: sequence-modeling
+    label: uses
   - target: model-based-rl
     label: based on
   - target: trajectory-optimization

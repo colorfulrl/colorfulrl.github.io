@@ -311,6 +311,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Policies and value functions conditioned on a goal state g, learning to reach arbitrary goals rather than maximize a single reward. Underpins hindsight relabeling (HER), recursive classification (C-Learning), and contrastive goal-reaching.",
   },
   {
+    id: "sequence-modeling",
+    type: "concept",
+    label: "Sequence Modeling",
+    description:
+      "Casts RL/decision-making as modeling a sequence of (state, action, return) tokens — predict the next action like a language model predicts the next word, sidestepping value functions and dynamic programming. Realized with transformers (Decision/Trajectory Transformer) or diffusion over whole trajectories (Diffuser, Decision Diffuser).",
+  },
+  {
     id: "ctde",
     type: "concept",
     label: "CTDE",
@@ -421,6 +428,9 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // goal-conditioned & contrastive RL lineage
   { source: "rl",                   target: "goal-conditioned-rl",  label: "includes" },
   { source: "goal-conditioned-rl",  target: "contrastive-rl",       label: "uses" },
+
+  // RL as sequence modeling (transformer + diffusion trajectory generation)
+  { source: "offline-rl",           target: "sequence-modeling",    label: "uses" },
 
   // imitation learning & inverse RL
   { source: "rl",                   target: "imitation-learning",   label: "includes" },

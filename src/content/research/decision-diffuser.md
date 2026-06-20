@@ -11,6 +11,8 @@ graphDescription: "Ajay et al. (2023). Models the policy as a return-conditional
 graphEdges:
   - target: diffusion-model
     label: uses
+  - target: sequence-modeling
+    label: uses
   - target: offline-rl
     label: based on
   - target: model-based-rl

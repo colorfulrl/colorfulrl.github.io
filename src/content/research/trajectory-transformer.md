@@ -11,6 +11,8 @@ graphDescription: "Janner et al. (2021). Treats offline RL as sequence generatio
 graphEdges:
   - target: offline-rl
     label: based on
+  - target: sequence-modeling
+    label: introduces
   - target: transformer
     label: uses
   - target: d4rl
