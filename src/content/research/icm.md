@@ -12,6 +12,8 @@ graphEdges:
     label: based on
   - target: intrinsic-motivation
     label: implements
+  - target: curiosity-driven
+    label: introduces
   - target: policy-gradient
     label: uses
   - target: atari

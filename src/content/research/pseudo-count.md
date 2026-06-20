@@ -13,6 +13,8 @@ graphEdges:
     label: based on
   - target: intrinsic-motivation
     label: unifies with
+  - target: count-based-exploration
+    label: introduces
   - target: atari
     label: evaluated on
 ---

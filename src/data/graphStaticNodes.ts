@@ -310,6 +310,34 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Self-generated reward signals derived from novelty, prediction error, or information gain — enables exploration without extrinsic rewards.",
   },
   {
+    id: "count-based-exploration",
+    type: "concept",
+    label: "Count-Based Exploration",
+    description:
+      "Mechanism: reward rarely-visited states with a bonus that decays in the visit count (~1/√N(s)). Extended from the tabular case to deep RL via pseudo-counts from density models (Pseudo-Count, Count-PixelCNN).",
+  },
+  {
+    id: "curiosity-driven",
+    type: "concept",
+    label: "Curiosity-Driven",
+    description:
+      "Mechanism: intrinsic reward from the agent's prediction error about the consequences of its own actions, or information gain about the dynamics — unpredictable, novel transitions are rewarded. ICM, RND, VIME.",
+  },
+  {
+    id: "global-exploration",
+    type: "concept",
+    label: "Global Exploration",
+    description:
+      "Timescale: novelty measured over the entire training history (life-long) — a state seen long ago is no longer novel. RND's lifelong signal and the long-term module of NGU/Agent57.",
+  },
+  {
+    id: "episodic-exploration",
+    type: "concept",
+    label: "Episodic Exploration",
+    description:
+      "Timescale: novelty measured within the current episode only, reset each episode via episodic memory — encourages visiting many distinct states per episode even if seen before across training. The k-NN memory module in NGU.",
+  },
+  {
     id: "temporal-abstraction",
     type: "concept",
     label: "Temporal Abstraction",
@@ -474,6 +502,12 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
 
   // exploration → intrinsic motivation
   { source: "exploration",          target: "intrinsic-motivation", label: "uses" },
+
+  // exploration sub-branches: mechanism (under intrinsic-motivation) vs timescale (under exploration)
+  { source: "intrinsic-motivation", target: "count-based-exploration", label: "includes" },
+  { source: "intrinsic-motivation", target: "curiosity-driven",        label: "includes" },
+  { source: "exploration",          target: "global-exploration",      label: "includes" },
+  { source: "exploration",          target: "episodic-exploration",    label: "includes" },
 
   // model-based → planning algorithms
   { source: "model-based-rl",       target: "mcts",                 label: "uses" },

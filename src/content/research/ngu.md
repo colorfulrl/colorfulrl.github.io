@@ -15,6 +15,10 @@ graphEdges:
     label: based on
   - target: intrinsic-motivation
     label: implements
+  - target: episodic-exploration
+    label: introduces
+  - target: global-exploration
+    label: uses
   - target: rnd
     label: uses
   - target: atari

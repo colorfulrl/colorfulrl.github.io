@@ -13,6 +13,8 @@ graphEdges:
     label: based on
   - target: intrinsic-motivation
     label: implements
+  - target: count-based-exploration
+    label: uses
   - target: pseudo-count
     label: extends
   - target: atari

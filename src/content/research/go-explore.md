@@ -10,6 +10,8 @@ graphLabel: "Go-Explore"
 graphEdges:
   - target: exploration
     label: based on
+  - target: global-exploration
+    label: uses
   - target: atari
     label: evaluated on
 graphDescription: "Ecoffet et al. (2019). Separates exploration from exploitation: return to a remembered promising state deterministically, then explore forward — demolishes Montezuma's Revenge."

@@ -12,6 +12,10 @@ graphEdges:
     label: based on
   - target: intrinsic-motivation
     label: implements
+  - target: curiosity-driven
+    label: uses
+  - target: global-exploration
+    label: uses
   - target: atari
     label: evaluated on
 graphDescription: "Burda et al. (2018). Intrinsic bonus = prediction error of a trained network trying to mimic a fixed random target network — novel states are harder to predict, yielding higher bonus."

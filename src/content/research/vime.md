@@ -13,6 +13,8 @@ graphEdges:
     label: based on
   - target: intrinsic-motivation
     label: implements
+  - target: curiosity-driven
+    label: uses
   - target: model-based-rl
     label: uses
   - target: epistemic-uncertainty

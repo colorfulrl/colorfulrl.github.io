@@ -13,6 +13,10 @@ graphEdges:
     label: extends
   - target: exploration
     label: based on
+  - target: episodic-exploration
+    label: uses
+  - target: global-exploration
+    label: uses
   - target: atari
     label: evaluated on
 ---
