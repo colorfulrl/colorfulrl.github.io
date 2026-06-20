@@ -265,6 +265,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Reward-free pretraining followed by fast downstream adaptation: the agent explores and learns skills, representations, or a world model without any task reward, then finetunes when an extrinsic reward appears. Spans skill discovery (DIAYN, DADS), pure exploration (Plan2Explore, APT), and is measured by the URLB benchmark.",
   },
+  {
+    id: "meta-rl",
+    type: "approach",
+    label: "Meta-RL",
+    description:
+      "Learning to learn: train across a distribution of tasks so the agent adapts to a new task from very few episodes — i.e. fast adaptation at test time. Two styles: optimization-based (MAML learns an easy-to-finetune init) and context-based (RL², PEARL, VariBAD infer the task from recent experience).",
+  },
 
   // ── New Concepts (Y) ────────────────────────────────────────────
   {
@@ -337,6 +344,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     label: "Skill Discovery",
     description:
       "Learning a set of diverse, reusable skills with no reward — typically by maximizing the mutual information I(z; s) between a latent skill code z and the states it visits, so different z lead to distinguishable, predictable behaviors. The core mechanism of unsupervised skill-based RL (DIAYN, DADS).",
+  },
+  {
+    id: "task-inference",
+    type: "concept",
+    label: "Task Inference",
+    description:
+      "Inferring which task/MDP the agent currently faces from recent experience, usually as a latent context variable, so a single policy conditioned on it adapts instantly. Implicit in RL²'s RNN hidden state; explicit and probabilistic in PEARL and VariBAD, where posterior uncertainty drives exploration.",
   },
   {
     id: "ctde",
@@ -476,4 +490,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "unsupervised-rl",      target: "exploration",          label: "uses" },
   { source: "unsupervised-rl",      target: "intrinsic-motivation", label: "uses" },
   { source: "unsupervised-rl",      target: "skill-discovery",      label: "includes" },
+
+  // Meta-RL — learning to adapt fast at test time
+  { source: "rl",                   target: "meta-rl",              label: "includes" },
+  { source: "meta-rl",              target: "task-inference",       label: "includes" },
 ];
