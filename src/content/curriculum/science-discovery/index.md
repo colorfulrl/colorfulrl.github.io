@@ -1,7 +1,7 @@
 ---
 domain: "Science & Discovery"
-description: "Lộ trình RL cho khám phá khoa học: điều khiển plasma lò fusion, khám phá thuật toán, thiết kế chip và phân tử — nơi RL giải bài toán con người chưa giải được."
-descriptionEn: "An RL-for-science path: fusion plasma control, algorithm discovery, chip and molecule design — RL solving problems humans hadn't."
+description: "RL cho khám phá khoa học — KHÔNG phải một lộ trình tuyến tính mà ba nhánh song song: điều khiển hệ vật lý (plasma, khí cầu), khám phá thuật toán/toán (nhân ma trận, sắp xếp), và thiết kế (chip, phân tử)."
+descriptionEn: "RL for scientific discovery — NOT a linear path but three parallel branches: controlling physical systems (plasma, balloons), discovering algorithms/math (matrix multiply, sorting), and design (chips, molecules)."
 order: 7
 draft: false
 stages:
@@ -10,30 +10,55 @@ stages:
     labelEn: "Prerequisites (Core-RL)"
     items:
       - ref: ppo
+      - ref: dqn
       - ref: muzero
-  - id: core
-    label: "Cốt lõi"
-    labelEn: "Core"
+  - id: physical-control
+    label: "Điều khiển hệ vật lý"
+    labelEn: "Physical-System Control"
     items:
-      - ref: tokamak-plasma-control
+      - ref: tokamak-plasma
         after: [ppo]
+      - ref: stratospheric-balloon
+        after: [ppo]
+  - id: algorithm-discovery
+    label: "Khám phá Thuật toán & Toán"
+    labelEn: "Algorithm & Math Discovery"
+    items:
       - ref: alphatensor
         after: [muzero]
-  - id: advanced
-    label: "Nâng cao"
-    labelEn: "Advanced"
+      - ref: alphadev
+        after: [alphatensor]
+      - ref: funsearch
+        after: [alphatensor]
+  - id: design
+    label: "Thiết kế (Chip & Phân tử)"
+    labelEn: "Design (Chips & Molecules)"
     items:
       - ref: alphachip
-        after: [alphatensor]
+        after: [ppo]
       - ref: moldqn
-        after: [tokamak-plasma-control]
+        after: [dqn]
 ---
 
-Đây là mảng "wow" nhất của RL ứng dụng — nơi agent giải bài toán khoa học thật:
-**điều khiển plasma** trong lò phản ứng nhiệt hạch (Degrave 2022, Nature — RL giữ
-hình dạng plasma trong tokamak), **AlphaTensor** (khám phá thuật toán nhân ma
-trận nhanh hơn), **AlphaChip** (thiết kế bố cục chip), và **MolDQN** / thiết kế
-phân tử-thuốc. Điểm chung: không gian hành động khổng lồ + reward từ mô phỏng/quy
-luật vật lý, nối thẳng `model-based-rl`, `mcts` và `trajectory-optimization`.
+Đây là mảng "wow" nhất của RL ứng dụng — agent giải bài toán khoa học thật, đôi
+khi *vượt* lời giải tốt nhất con người từng biết. Khác các domain trước, đây
+**không phải một lộ trình tuyến tính** mà ba nhánh độc lập, mỗi nhánh là một
+*cách RL chạm khoa học*:
 
-> **Prerequisite**: PPO, MuZero từ [Core-RL graph](/research).
+- **Điều khiển hệ vật lý**: giữ hình dạng plasma trong lò phản ứng nhiệt hạch
+  (**Tokamak**, Degrave 2022 — RL điều khiển 19 cuộn từ ở 10kHz), và lái khí cầu
+  tầng bình lưu bằng dòng gió (**Stratospheric Balloon**, Bellemare 2020). Reward
+  từ mô phỏng vật lý + an toàn phần cứng thật.
+- **Khám phá Thuật toán & Toán**: tìm thuật toán nhân ma trận nhanh hơn
+  (**AlphaTensor**), thuật toán sắp xếp ngắn hơn (**AlphaDev**), và lời giải toán
+  mới (**FunSearch** — LLM + tìm kiếm tiến hóa, không RL thuần). Không gian hành
+  động khổng lồ, reward = đúng + nhanh hơn.
+- **Thiết kế**: bố cục chip (**AlphaChip**, dùng trong TPU thật) và thiết kế phân
+  tử-thuốc (**MolDQN**). Hành động = chọn linh kiện/nguyên tử, reward = chất lượng
+  thiết kế.
+
+Điểm chung cả ba: **không gian hành động khổng lồ + reward từ mô phỏng/quy luật**,
+nối thẳng `model-based-rl`, `mcts` (AlphaTensor/AlphaDev là MuZero-style) và
+`trajectory-optimization`.
+
+> **Prerequisite**: PPO, DQN, MuZero từ [Core-RL graph](/research).
