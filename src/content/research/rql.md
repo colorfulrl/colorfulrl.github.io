@@ -19,6 +19,6 @@ graphEdges:
     label: uses
   - target: credit-assignment
     label: addresses
-  - target: mujoco
+  - target: ogbench
     label: evaluated on
 ---

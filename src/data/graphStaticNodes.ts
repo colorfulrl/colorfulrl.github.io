@@ -228,6 +228,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Procedurally-generated gridworld navigation tasks with sparse rewards (Chevalier-Boisvert et al.) — each episode gives a fresh layout, so a state is rarely seen twice. The standard testbed for exploration in procedurally-generated environments (RIDE, BeBold, NovelD, RE3); often paired with NetHack/MiniHack.",
   },
+  {
+    id: "ogbench",
+    type: "benchmark",
+    label: "OGBench",
+    description:
+      "Offline Goal-Conditioned RL Benchmark (Park et al., 2025) — diverse, challenging locomotion and manipulation tasks (antmaze, humanoidmaze, cube, scene, puzzle) in state and pixel form, designed to stress trajectory stitching and multimodality where D4RL has saturated. Single-task reward variants are used for standard offline RL (FQL, RQL).",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
