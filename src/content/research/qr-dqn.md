@@ -10,6 +10,8 @@ graphLabel: "QR-DQN"
 graphEdges:
   - target: distributional-rl
     label: extends
+  - target: aleatoric-uncertainty
+    label: models
   - target: c51
     label: extends
   - target: atari

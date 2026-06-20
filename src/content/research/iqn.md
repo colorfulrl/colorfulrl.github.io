@@ -10,6 +10,8 @@ graphLabel: "IQN"
 graphEdges:
   - target: distributional-rl
     label: extends
+  - target: aleatoric-uncertainty
+    label: models
   - target: qr-dqn
     label: extends
   - target: atari

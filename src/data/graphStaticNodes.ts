@@ -409,6 +409,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Uncertainty about model parameters due to limited data — distinct from aleatoric (environment) randomness. Applied in two ways: as exploration bonus (VIME) and as model safety signal to detect OOD regions and prevent model exploitation (uncertainty-aware MBRL).",
   },
   {
+    id: "aleatoric-uncertainty",
+    type: "concept",
+    label: "Aleatoric Uncertainty",
+    description:
+      "Irreducible randomness inherent in the environment — stochastic transitions and rewards that more data cannot remove, unlike epistemic uncertainty. Distributional RL captures it by learning the full return distribution Z(s,a) instead of just its mean, enabling risk-sensitive behaviour.",
+  },
+  {
     id: "goal-conditioned-rl",
     type: "concept",
     label: "Goal-Conditioned RL",
@@ -547,6 +554,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
 
   // model-free branches
   { source: "model-free-rl",        target: "distributional-rl",    label: "includes" },
+  { source: "distributional-rl",    target: "aleatoric-uncertainty", label: "models" },
+  { source: "epistemic-uncertainty", target: "aleatoric-uncertainty", label: "contrasts with" },
   { source: "model-free-rl",        target: "exploration",          label: "includes" },
   { source: "model-free-rl",        target: "maximum-entropy-rl",   label: "includes" },
 
