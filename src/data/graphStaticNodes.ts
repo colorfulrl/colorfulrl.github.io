@@ -179,6 +179,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Unsupervised Reinforcement Learning Benchmark (Laskin et al., 2021) — two phases: reward-free pretraining, then downstream adaptation with extrinsic rewards. 12 continuous-control tasks over 3 DMControl domains; ships 8 unsupervised RL baselines for fair comparison.",
   },
+  {
+    id: "meta-world",
+    type: "benchmark",
+    label: "Meta-World",
+    description:
+      "Benchmark of 50 distinct simulated robotic-manipulation tasks on a Sawyer arm (Yu et al., 2019), with ML1/ML10/ML45 meta-RL splits and MT10/MT50 multi-task splits. The standard testbed for broad-distribution meta-RL and multi-task learning.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
@@ -353,6 +360,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
       "Inferring which task/MDP the agent currently faces from recent experience, usually as a latent context variable, so a single policy conditioned on it adapts instantly. Implicit in RL²'s RNN hidden state; explicit and probabilistic in PEARL and VariBAD, where posterior uncertainty drives exploration.",
   },
   {
+    id: "meta-exploration",
+    type: "concept",
+    label: "Meta-Exploration",
+    description:
+      "Exploration in the meta-RL setting whose purpose is to quickly identify the task — gathering the task-relevant information a separate exploitation policy then uses. Often decoupled from exploitation (DREAM) and driven by information gain / empowerment (MetaCURE).",
+  },
+  {
     id: "ctde",
     type: "concept",
     label: "CTDE",
@@ -494,4 +508,5 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   // Meta-RL — learning to adapt fast at test time
   { source: "rl",                   target: "meta-rl",              label: "includes" },
   { source: "meta-rl",              target: "task-inference",       label: "includes" },
+  { source: "meta-rl",              target: "meta-exploration",     label: "includes" },
 ];
