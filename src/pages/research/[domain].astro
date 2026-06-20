@@ -139,8 +139,9 @@ const domainDesc =
           </a>
           <span class="text-foreground shrink-0 text-sm font-semibold">{entry.data.domain}</span>
 
-          <!-- Stage legend (reading order) -->
-          <div class="flex items-center gap-1 overflow-x-auto" style="scrollbar-width:none">
+          <!-- Stage legend (reading order) — full-width row that wraps so all
+               stages show even with 8+ stages (no horizontal clipping). -->
+          <div class="order-last flex basis-full flex-wrap items-center gap-x-1 gap-y-1">
             {stageLabels.map((s, i) => (
               <>
                 {i > 0 && <span class="text-border shrink-0">→</span>}
