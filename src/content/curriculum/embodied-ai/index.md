@@ -5,12 +5,20 @@ descriptionEn: "A reading path from language-action grounding for robots to larg
 order: 1
 draft: false
 stages:
+  - id: prerequisites
+    label: "Nền tảng (Core-RL)"
+    labelEn: "Prerequisites (Core-RL)"
+    items:
+      - ref: ppo
+      - ref: sac
   - id: core
     label: "Cốt lõi"
     labelEn: "Core"
     items:
       - ref: saycan
+        after: [ppo, sac]
       - ref: mimicgen
+        after: [ppo]
   - id: advanced
     label: "Nâng cao"
     labelEn: "Advanced"
@@ -18,6 +26,7 @@ stages:
       - ref: rt-2
         after: [saycan]
       - ref: dreureka
+        after: [sac]
 ---
 
 Embodied AI ghép RL điều khiển với nhận thức thị giác-ngôn ngữ để robot hành
