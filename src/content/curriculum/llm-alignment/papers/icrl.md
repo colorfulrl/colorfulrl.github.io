@@ -1,6 +1,10 @@
 ---
-title: "ICRL: In-Context Reinforcement Learning"
+title: "In-Context Reinforcement Learning for Tool Use in Large Language Models"
+authors: ["Yaoqi Ye", "Yiran Zhao", "Keyu Duan", "Zeyu Zheng", "Kenji Kawaguchi", "Cihang Xie", "Michael Qizhe Shieh"]
+year: 2026
+venue: "arXiv preprint"
+arxiv: "https://arxiv.org/abs/2603.08068"
 graphLabel: "ICRL"
-graphDescription: "Model học dùng tool trực tiếp qua RL, không cần supervised fine-tuning. Thay vì dữ liệu gán nhãn, dạy dùng tool qua các ví dụ trong prompt khi train; dần gỡ bỏ ví dụ để model hành động độc lập. [metadata chờ bổ sung]"
+graphDescription: "Ye et al. (2026). In-Context RL (ICRL) — học dùng tool qua RL không cần SFT: đưa ví dụ few-shot vào prompt trong các rollout RL, rồi giảm dần ví dụ tới zero-shot để model hành động độc lập. Thay thế pipeline SFT, data-efficient."
 draft: false
 ---

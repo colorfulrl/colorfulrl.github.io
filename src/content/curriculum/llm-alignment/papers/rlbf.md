@@ -1,6 +1,10 @@
 ---
-title: "RLBF: Reinforcement Learning with Backtracking Feedback"
+title: "Reinforcement Learning with Backtracking Feedback (RLBF)"
+authors: ["Bilgehan Sel", "Vaishakh Keshava", "Phillip Wallis", "Lukas Rutishauser", "Ming Jin", "Dingcheng Li"]
+year: 2026
+venue: "NeurIPS 2025"
+arxiv: "https://arxiv.org/abs/2602.08377"
 graphLabel: "RLBF"
-graphDescription: "Reward không dựa 'câu nào tốt hơn' mà dựa khả năng model BACKTRACK khi phát hiện vi phạm an toàn hay sinh sai. Critic phát tín hiệu kiểu 'lùi lại x token', model học tự sửa output ngay khi sinh — RL theo tín hiệu sửa lỗi thời gian thực, hướng an toàn/robustness. [metadata chờ bổ sung]"
+graphDescription: "Sel et al. (2026). RL with Backtracking Feedback — model học tự sửa lỗi sinh ra: khi có vi phạm an toàn, sinh tín hiệu 'backtrack' rồi sinh tiếp. Kèm SFT data tiêm vi phạm vào văn bản an toàn. Giảm mạnh attack success rate, bền với GCG/middle-filling. Hướng an toàn/robustness."
 draft: false
 ---

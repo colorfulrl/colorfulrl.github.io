@@ -1,6 +1,10 @@
 ---
-title: "CRL: Critique Reinforcement Learning"
+title: "Critique-Coder: Enhancing Coder Models by Critique Reinforcement Learning (CRL)"
+authors: ["Chi Ruan", "Dongfu Jiang", "Yubo Wang", "Wenhu Chen"]
+year: 2025
+venue: "arXiv preprint"
+arxiv: "https://arxiv.org/abs/2509.22824"
 graphLabel: "CRL"
-graphDescription: "Tên gần giống Critique-RL nhưng CRL train một model duy nhất sinh phán đoán nhị phân True/False về lời giải. Reward = phán đoán có khớp ground truth không → tập trung vào đánh giá ĐÚNG, không phải phản hồi giàu thông tin như Critique-RL. [metadata chờ bổ sung]"
+graphDescription: "Ruan et al. (2025). Critique Reinforcement Learning (CRL) — model sinh phê bình cho cặp (câu hỏi, lời giải), reward = phán đoán True/False có khớp ground truth không. Critique-Coder trộn 20% dữ liệu CRL vào RL chuẩn; vượt RL-only, >60% trên LiveCodeBench v5. Tập trung đánh giá ĐÚNG (khác Critique-RL giàu phản hồi)."
 draft: false
 ---

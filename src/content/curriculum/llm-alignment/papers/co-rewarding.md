@@ -1,6 +1,10 @@
 ---
-title: "Co-rewarding: Self-supervised RL from Complementary Signals"
+title: "Co-rewarding: Stable Self-supervised RL for Eliciting Reasoning in Large Language Models"
+authors: ["Zizhuo Zhang", "Jianing Zhu", "Xinmu Ge", "Zihua Zhao", "Zhanke Zhou", "Jiangchao Yao", "Bo Han", "et al."]
+year: 2025
+venue: "ICLR 2026"
+arxiv: "https://arxiv.org/abs/2508.00410"
 graphLabel: "Co-rewarding"
-graphDescription: "RL tự giám sát: model học từ nhiều tín hiệu phản hồi bổ trợ thay vì một. Ví dụ kiểm tra nhất quán giữa các câu hỏi tương tự, hoặc so với phiên bản 'teacher' cập nhật chậm. Khó reward-hack hơn, giúp suy luận ổn định/đáng tin hơn. [metadata chờ bổ sung]"
+graphDescription: "Zhang et al. (2025). RL tự giám sát ổn định: tìm giám sát bổ trợ từ góc nhìn khác — (1) đồng thuận tương phản giữa các câu hỏi tương đồng ngữ nghĩa, (2) teacher cập nhật chậm với pseudo-label (self-distillation). Khó reward-hack hơn, tránh collapse. +3.31% toán. ICLR 2026."
 draft: false
 ---

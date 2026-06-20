@@ -1,6 +1,10 @@
 ---
-title: "RLCF: Reinforcement Learning from Community Feedback (AI Can Learn Scientific Taste)"
+title: "AI Can Learn Scientific Taste (RL from Community Feedback)"
+authors: ["Jingqi Tong", "Mingzhe Li", "Hangcheng Li", "Zhiheng Xi", "Tianxiang Sun", "Ning Ding", "Xuanjing Huang", "Xipeng Qiu", "et al."]
+year: 2026
+venue: "arXiv preprint"
+arxiv: "https://arxiv.org/abs/2603.14473"
 graphLabel: "RLCF (Scientific Taste)"
-graphDescription: "Huấn luyện AI bằng tín hiệu từ cộng đồng khoa học (citation, upvote, adoption) để học thế nào là ý tưởng nghiên cứu tốt. Hai bước: học phân biệt ý tưởng tốt/kém, rồi train một model sinh ý tưởng tác động cao theo phán đoán đó. [metadata chờ bổ sung]"
+graphDescription: "Tong et al. (2026). RL from Community Feedback (RLCF) — dùng tín hiệu cộng đồng khoa học (citation) làm giám sát: train 'Scientific Judge' trên 700K cặp paper match theo citation để đánh giá ý tưởng, rồi dùng làm reward model train 'Scientific Thinker' sinh ý tưởng nghiên cứu tác động cao."
 draft: false
 ---
