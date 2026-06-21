@@ -41,4 +41,15 @@ stages:
         after: [vqc-deep-rl]
       - ref: qrl-hardware-errors
         after: [quantum-gym, tfq]
+
+  - id: s4-advanced
+    label: "Kiến Trúc Nâng Cao: Lý Thuyết & Đa Tác Tử"
+    labelEn: "Advanced: Fully Quantum Theory & Multi-Agent"
+    items:
+      - ref: dunjko-2016-qml
+        after: [qrl-survey]
+      - ref: qmarl-vqc
+        after: [quantum-gym]
+      - ref: eqmarl
+        after: [qmarl-vqc]
 ---
