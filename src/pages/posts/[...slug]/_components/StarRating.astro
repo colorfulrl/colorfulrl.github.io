@@ -36,7 +36,7 @@ const t = useTranslations();
   <span
     data-rating-summary
     data-empty-label={t.post.ratingEmpty}
-    data-template={t.post.ratingSummary}
+    data-template-vi={t.post.ratingSummary}
     class="text-muted-foreground text-sm"
   ></span>
 </div>
@@ -66,7 +66,13 @@ const t = useTranslations();
       return;
     }
     const avg = rows.reduce((sum, row) => sum + row.value, 0) / rows.length;
-    summary.textContent = (summary.dataset.template ?? "")
+    const lang = document.documentElement.getAttribute("data-lang") || "vi";
+    const templates = {
+      vi: summary.dataset.templateVi ?? "{{avg}}/5 · {{count}} lượt đánh giá",
+      en: "{{avg}}/5 · {{count}} ratings",
+    };
+    const template = templates[lang] || templates.vi;
+    summary.textContent = template
       .replace("{{avg}}", avg.toFixed(1))
       .replace("{{count}}", String(rows.length));
   }
@@ -127,4 +133,26 @@ const t = useTranslations();
   }
 
   initRatingWidgets();
+  document.addEventListener("astro:page-load", initRatingWidgets);
+  const observer = new MutationObserver(() => {
+    for (const widget of document.querySelectorAll("[data-rating-slug]")) {
+      const summary = widget.querySelector("[data-rating-summary]");
+      if (summary && summary.textContent) {
+        // Re-render with updated template for new language
+        const match = summary.textContent.match(/([\d.]+)\/5.*?(\d+)/);
+        if (match) {
+          const lang = document.documentElement.getAttribute("data-lang") || "vi";
+          const templates = {
+            vi: "{{avg}}/5 · {{count}} lượt đánh giá",
+            en: "{{avg}}/5 · {{count}} ratings",
+          };
+          const template = templates[lang] || templates.vi;
+          summary.textContent = template
+            .replace("{{avg}}", match[1])
+            .replace("{{count}}", match[2]);
+        }
+      }
+    }
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 </script>
