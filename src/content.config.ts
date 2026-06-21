@@ -185,6 +185,22 @@ const otherTopics = defineCollection({
   }),
 });
 
+// Domain-specific papers for other-topics folders — same shape as curriculumPaper.
+const otherTopicsPaper = defineCollection({
+  loader: glob({ pattern: "*/papers/*.{md,mdx}", base: `./${OTHER_TOPICS_PATH}` }),
+  schema: z.object({
+    title: z.string(),
+    authors: z.array(z.string()).optional(),
+    year: z.number().optional(),
+    venue: z.string().optional(),
+    arxiv: z.string().optional(),
+    abstract: z.string().optional(),
+    graphLabel: z.string().optional(),
+    graphDescription: z.string().optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
 // English body sidecar files: vi/*/  _en.md  (underscore prefix excluded from `posts` glob).
 // ID format: "vi/<slug>/_en"
 const postsEn = defineCollection({
@@ -192,4 +208,4 @@ const postsEn = defineCollection({
   schema: z.unknown(),
 });
 
-export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper, otherTopics, postsEn };
+export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper, otherTopics, otherTopicsPaper, postsEn };

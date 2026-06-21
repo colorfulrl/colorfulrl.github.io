@@ -19,9 +19,13 @@ const { entry } = Astro.props;
 
 const { Content } = await render(entry);
 
-// Domain-specific papers live in curriculum/<domain>/papers/.
+// Domain-specific papers: curriculum/<domain>/papers/ OR other-topics/<domain>/papers/.
 const allCurriculumPapers = await getCollection("curriculumPaper", p => !p.data.draft);
-const domainPapers = allCurriculumPapers.filter(p => p.id.startsWith(`${entry.id}/papers/`));
+const allOtherTopicPapers = await getCollection("otherTopicsPaper", p => !p.data.draft);
+const domainPapers = [
+  ...allCurriculumPapers.filter(p => p.id.startsWith(`${entry.id}/papers/`)),
+  ...allOtherTopicPapers.filter(p => p.id.startsWith(`${entry.id}/papers/`)),
+];
 const curriculumPaperMap = new Map(domainPapers.map(p => [p.id.split("/").pop()!, p]));
 
 // Core-RL papers (ppo, sac, …) are referenced as prerequisites but live in
