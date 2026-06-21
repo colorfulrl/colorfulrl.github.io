@@ -1,7 +1,6 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import { getRelativeLocaleUrl } from "astro:i18n";
 import IconRss from "@/assets/icons/IconRss.svg";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import logoSrc from "@/assets/images/logo.png";
@@ -19,14 +18,13 @@ import config from "@/config";
 
 const { socials, posts: postsConfig } = config;
 
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
+const t = useTranslations();
 
 const posts = await getCollection("posts");
-const sortedPosts = getSortedPosts(posts, locale);
+const sortedPosts = getSortedPosts(posts, "vi");
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
-const homePath = getRelativeLocaleUrl(locale, "");
+const homePath = "/";
 ---
 
 <Layout>
@@ -70,14 +68,14 @@ const homePath = getRelativeLocaleUrl(locale, "");
 
       <div class="mt-6 flex items-center gap-4">
         <LinkButton
-          href={getRelativeLocaleUrl(locale, "posts")}
+          href="/posts"
           class="bg-accent text-accent-foreground rounded-md px-5 py-2.5 text-sm font-medium no-underline hover:opacity-90"
         >
           Đọc phần giới thiệu
           <IconArrowRight class="inline-block ml-1 rtl:-rotate-180" />
         </LinkButton>
         <LinkButton
-          href={getRelativeLocaleUrl(locale, "about")}
+          href="/about"
           class="text-foreground/80 hover:text-accent text-sm underline decoration-dashed underline-offset-4"
         >
           Giới thiệu
@@ -147,7 +145,7 @@ const homePath = getRelativeLocaleUrl(locale, "");
     }
 
     <div class="my-10 text-center">
-      <LinkButton href={getRelativeLocaleUrl(locale, "posts")}>
+      <LinkButton href="/posts">
         {t.home.allPosts}
         <IconArrowRight class="inline-block rtl:-rotate-180" />
       </LinkButton>

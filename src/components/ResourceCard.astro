@@ -2,16 +2,14 @@
 import type { CollectionEntry } from "astro:content";
 import { RESOURCE_TYPES } from "@/data/resourceTypes";
 import { useTranslations } from "@/i18n";
-import config from "@/config";
 
 type Props = CollectionEntry<"resources">;
 
 const { data } = Astro.props;
 const { title, url, type, source, description, descriptionEn, thumbnail, date } = data;
 
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
-const localizedDescription = locale === "en" ? (descriptionEn ?? description) : description;
+const t = useTranslations();
+const localizedDescription = description;
 
 const meta = RESOURCE_TYPES[type] ?? {
   vi: type, en: type,
@@ -20,13 +18,10 @@ const meta = RESOURCE_TYPES[type] ?? {
   iconBg: "", iconColor: "",
 };
 
-const label = locale === "en" ? meta.en : meta.vi;
+const label = meta.vi;
 
 const formattedDate = date
-  ? date.toLocaleDateString(locale === "en" ? "en-US" : "vi-VN", {
-      year: "numeric",
-      month: "short",
-    })
+  ? date.toLocaleDateString("vi-VN", { year: "numeric", month: "short" })
   : null;
 ---
 

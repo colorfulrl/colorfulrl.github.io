@@ -12,7 +12,7 @@ type Props = {
 
 const { page } = Astro.props;
 
-const t = useTranslations(Astro.currentLocale);
+const t = useTranslations();
 
 // `paginate()` doesn't expose a "jump to page N" helper, only prev/next/first/last.
 // Derive the page-1 base URL, then rebuild `${base}/${n}` for any N — matches the

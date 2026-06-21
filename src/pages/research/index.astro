@@ -5,12 +5,10 @@ import Footer from "@/components/Footer.astro";
 import { getCollection } from "astro:content";
 import { buildResearchGraph } from "@/utils/buildResearchGraph";
 import { useTranslations } from "@/i18n";
-import { getRelativeLocaleUrl } from "astro:i18n";
 import config from "@/config";
 import { Content as ResearchIntro } from "./_intro.md";
 
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
+const t = useTranslations();
 
 const entries = await getCollection("research");
 const { nodes, edges } = buildResearchGraph(entries);
@@ -26,9 +24,7 @@ const graphData = {
       type: n.type,
       description: n.description,
       slug: n.slug ?? null,
-      href: n.slug
-        ? getRelativeLocaleUrl(locale, `research/${n.slug}`)
-        : null,
+      href: n.slug ? `/research/${n.slug}` : null,
     },
   })),
   edges: edges.map((e, i) => ({
@@ -219,27 +215,25 @@ const graphJson = JSON.stringify(graphData);
     <section class="app-layout">
       <div class="border-border w-full border-t py-10">
         <h2 class="font-display text-2xl font-semibold tracking-tight">
-          {locale === "en" ? "Learning Paths" : "Lộ trình học"}
+          Lộ trình học
         </h2>
         <p class="text-muted-foreground mt-2 max-w-2xl text-sm">
-          {locale === "en"
-            ? "Domain-specific reading paths: prerequisites → core → advanced."
-            : "Lộ trình đọc theo từng domain: nền tảng → cốt lõi → nâng cao."}
+          Lộ trình đọc theo từng domain: nền tảng → cốt lõi → nâng cao.
         </p>
         <div class="mt-6 grid gap-4 sm:grid-cols-2">
           {curricula.map(d => {
             const paperCount = d.data.stages.reduce((n, s) => n + s.items.length, 0);
             return (
-              <a href={getRelativeLocaleUrl(locale, `research/${d.id}`)}
+              <a href={`/research/${d.id}`}
                 class="border-border hover:border-accent group rounded-xl border p-5 transition-colors">
                 <h3 class="font-display group-hover:text-accent text-base font-semibold transition-colors">{d.data.domain}</h3>
                 <p class="text-muted-foreground mt-2 text-sm leading-relaxed line-clamp-3">
-                  {locale === "en" ? (d.data.descriptionEn ?? d.data.description) : d.data.description}
+                  {d.data.description}
                 </p>
                 <div class="text-muted-foreground mt-3 flex items-center gap-3 text-xs">
-                  <span>{d.data.stages.length} {locale === "en" ? "stages" : "giai đoạn"}</span>
+                  <span>{d.data.stages.length} giai đoạn</span>
                   <span>·</span>
-                  <span>{paperCount} {locale === "en" ? "papers" : "paper"}</span>
+                  <span>{paperCount} paper</span>
                 </div>
               </a>
             );

@@ -1,41 +1,22 @@
 ---
-import { getRelativeLocaleUrl } from "astro:i18n";
-import { stripBase, stripLocale } from "@/utils/withBase";
-
-const currentLocale = Astro.currentLocale ?? "vi";
-
-// Lấy path hiện tại, bỏ base và locale prefix
-const rawPath = stripBase(Astro.url.pathname);
-const cleanPath = stripLocale(rawPath, currentLocale);
-
-const viUrl = getRelativeLocaleUrl("vi", cleanPath);
-const enUrl = getRelativeLocaleUrl("en", cleanPath);
+// Client-side language toggle — no server locale needed.
+// Active state is managed by i18n-client.ts based on localStorage.
 ---
 
 <div class="flex items-center gap-1 text-sm font-medium">
-  <a
-    href={viUrl}
-    class:list={[
-      "px-1.5 py-0.5 rounded transition-colors",
-      currentLocale === "vi"
-        ? "text-accent font-semibold"
-        : "text-muted-foreground hover:text-foreground",
-    ]}
+  <button
+    data-lang-btn="vi"
+    class="px-1.5 py-0.5 rounded transition-colors text-accent font-semibold"
     aria-label="Tiếng Việt"
   >
     VI
-  </a>
-  <span class="text-border">|</span>
-  <a
-    href={enUrl}
-    class:list={[
-      "px-1.5 py-0.5 rounded transition-colors",
-      currentLocale === "en"
-        ? "text-accent font-semibold"
-        : "text-muted-foreground hover:text-foreground",
-    ]}
+  </button>
+  <span class="text-border" aria-hidden="true">|</span>
+  <button
+    data-lang-btn="en"
+    class="px-1.5 py-0.5 rounded transition-colors text-muted-foreground hover:text-foreground"
     aria-label="English"
   >
     EN
-  </a>
+  </button>
 </div>

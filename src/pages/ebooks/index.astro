@@ -11,11 +11,10 @@ import { EBOOK_CATEGORY_LABELS } from "@/data/ebookCategories";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
+const t = useTranslations();
 
 const ebooks = await getCollection("ebooks");
-const sortedEbooks = getSortedEbooks(ebooks, locale);
+const sortedEbooks = getSortedEbooks(ebooks, "vi");
 
 // Derive unique categories in the order they first appear (by ebook sort order)
 const seenCats = new Set<string>();
@@ -39,7 +38,7 @@ for (const ebook of sortedEbooks) {
 function getCategoryLabel(slug: string) {
   const entry = EBOOK_CATEGORY_LABELS[slug];
   if (!entry) return slug;
-  return locale === "en" ? entry.en : entry.vi;
+  return entry.vi;
 }
 ---
 

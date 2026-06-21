@@ -1,12 +1,9 @@
 ---
-import { getRelativeLocaleUrl } from "astro:i18n";
 import LinkButton from "@/components/LinkButton.astro";
 import IconCoffee from "@/assets/icons/IconCoffee.svg";
 import { useTranslations } from "@/i18n";
-import config from "@/config";
 
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
+const t = useTranslations();
 ---
 
 <div
@@ -15,7 +12,7 @@ const t = useTranslations(locale);
   <p class="font-display text-lg font-semibold">{t.post.supportTitle}</p>
   <p class="text-muted-foreground text-sm">{t.post.supportDesc}</p>
   <LinkButton
-    href={getRelativeLocaleUrl(locale, "support")}
+    href="/support"
     class="btn-shine from-accent-soft to-accent text-accent-foreground! gap-1.5 rounded-full bg-gradient-to-br px-4 py-2 text-sm leading-none font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_-2px_var(--accent)] transition-transform hover:-translate-y-0.5"
   >
     <IconCoffee class="size-4.5 shrink-0 -translate-y-px" />

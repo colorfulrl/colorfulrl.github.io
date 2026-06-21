@@ -34,13 +34,6 @@ export default defineConfig({
         config.features?.showArchives !== false || !page.endsWith("/archives/"),
     }),
   ],
-  i18n: {
-    locales: ["vi", "en"],
-    defaultLocale: "vi",
-    routing: {
-      prefixDefaultLocale: false,
-    },
-  },
   markdown: {
     remarkPlugins: [
       remarkMath,

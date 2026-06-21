@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "home":       { "vi": "Trang chủ",        "en": "Home" },
+    "posts":      { "vi": "Bài viết",          "en": "Posts" },
+    "tags":       { "vi": "Thẻ",               "en": "Tags" },
+    "about":      { "vi": "Giới thiệu",        "en": "About" },
+    "archives":   { "vi": "Lưu trữ",           "en": "Archives" },
+    "search":     { "vi": "Tìm kiếm",          "en": "Search" },
+    "ebooks":     { "vi": "Ebook",             "en": "Ebooks" },
+    "resources":  { "vi": "Tài nguyên",        "en": "Resources" },
+    "research":   { "vi": "Nghiên cứu",        "en": "Research" },
+    "curriculum": { "vi": "Lộ trình",          "en": "Curriculum" },
+    "categories": { "vi": "Chủ đề",            "en": "Categories" },
+    "more":       { "vi": "Thêm",              "en": "More" },
+    "support":    { "vi": "Buy me a coffee",   "en": "Buy me a coffee" }
+  },
+  "post": {
+    "publishedAt":       { "vi": "Đăng",                    "en": "Published at" },
+    "updatedAt":         { "vi": "Cập nhật",                "en": "Updated" },
+    "sharePostIntro":    { "vi": "Chia sẻ bài này:",        "en": "Share this post:" },
+    "sharePostOn":       { "vi": "Chia sẻ qua {{platform}}","en": "Share this post on {{platform}}" },
+    "sharePostViaEmail": { "vi": "Chia sẻ qua email",       "en": "Share this post via email" },
+    "tagLabel":          { "vi": "Chủ đề",                  "en": "Tags" },
+    "backToTop":         { "vi": "Lên đầu trang",           "en": "Back to top" },
+    "goBack":            { "vi": "Quay lại",                "en": "Go back" },
+    "editPage":          { "vi": "Sửa trang",               "en": "Edit page" },
+    "previousPost":      { "vi": "Bài trước",               "en": "Previous Post" },
+    "nextPost":          { "vi": "Bài kế",                  "en": "Next Post" },
+    "supportTitle":      { "vi": "Thích bài viết này?",     "en": "Enjoyed this post?" },
+    "supportDesc":       { "vi": "Nếu bài viết có ích, bạn có thể ủng hộ mình để có thêm động lực viết tiếp.", "en": "If you found it useful, you can support me to keep writing more." },
+    "supportCta":        { "vi": "Buy me a coffee",         "en": "Buy me a coffee" },
+    "ratingLabel":       { "vi": "Đánh giá bài viết",       "en": "Rate this post" },
+    "ratingStarLabel":   { "vi": "{{value}} sao",           "en": "{{value}} star" },
+    "ratingEmpty":       { "vi": "Chưa có đánh giá",        "en": "No ratings yet" },
+    "ratingSummary":     { "vi": "{{avg}}/5 · {{count}} lượt đánh giá", "en": "{{avg}}/5 · {{count}} ratings" },
+    "viewCount":         { "vi": "· {{count}} lượt xem",   "en": "· {{count}} views" }
+  },
+  "pagination": {
+    "prev": { "vi": "Trước", "en": "Prev" },
+    "next": { "vi": "Kế",   "en": "Next" },
+    "page": { "vi": "Trang", "en": "Page" }
+  },
+  "home": {
+    "socialLinks": { "vi": "Liên hệ",         "en": "Social Links" },
+    "featured":    { "vi": "Bài chọn lọc",    "en": "Featured" },
+    "recentPosts": { "vi": "Bài gần đây",     "en": "Recent Posts" },
+    "allPosts":    { "vi": "Tất cả bài viết", "en": "All Posts" }
+  },
+  "footer": {
+    "copyright":        { "vi": "Phạm Nhật Khoa",  "en": "Phạm Nhật Khoa" },
+    "allRightsReserved":{ "vi": "",                  "en": "All rights reserved." }
+  },
+  "pages": {
+    "tagTitle":       { "vi": "Chủ đề",         "en": "Tag" },
+    "tagDesc":        { "vi": "Tất cả bài có chủ đề",   "en": "All the articles with the tag" },
+    "tagsTitle":      { "vi": "Chủ đề",         "en": "Tags" },
+    "tagsDesc":       { "vi": "Mọi chủ đề được dùng.", "en": "All the tags used in posts." },
+    "postsTitle":     { "vi": "Bài viết",        "en": "Posts" },
+    "postsDesc":      { "vi": "Tất cả bài đã đăng.", "en": "All the articles I've posted." },
+    "archivesTitle":  { "vi": "Lưu trữ",         "en": "Archives" },
+    "archivesDesc":   { "vi": "Mọi bài đã lưu trữ.", "en": "All the articles I've archived." },
+    "searchTitle":    { "vi": "Tìm kiếm",        "en": "Search" },
+    "searchDesc":     { "vi": "Tìm bài viết bất kỳ…", "en": "Search any article ..." },
+    "ebooksTitle":    { "vi": "Ebook gợi ý",     "en": "Recommended Ebooks" },
+    "ebooksDesc":     { "vi": "Những ebook mình đã đọc và muốn giới thiệu tới bạn.", "en": "Ebooks I've read and want to recommend to you." },
+    "categoryTitle":  { "vi": "Chủ đề",          "en": "Category" },
+    "categoryDesc":   { "vi": "Tất cả bài có chủ đề", "en": "All the articles in the category" },
+    "categoriesTitle":{ "vi": "Chủ đề",          "en": "Categories" },
+    "categoriesDesc": { "vi": "Mọi chủ đề được dùng để phân loại bài viết.", "en": "All the categories used to classify articles." },
+    "supportTitle":   { "vi": "Ủng hộ blog",     "en": "Support the blog" },
+    "supportDesc":    { "vi": "Cách ủng hộ mình duy trì và phát triển blog.", "en": "Ways you can support me in keeping this blog running." },
+    "resourcesTitle": { "vi": "Tài nguyên",      "en": "Resources" },
+    "resourcesDesc":  { "vi": "Bài viết, video, repo và khóa học mình thấy đáng đọc.", "en": "Articles, videos, repos and courses worth reading." },
+    "researchTitle":  { "vi": "Bản đồ nghiên cứu", "en": "Research Map" },
+    "researchDesc":   { "vi": "Đồ thị tri thức RL: chủ đề, khái niệm và bài báo quan trọng.", "en": "RL knowledge graph: topics, concepts and key papers." }
+  },
+  "ebooks": {
+    "viewLink":       { "vi": "Xem ebook",      "en": "View ebook" },
+    "comingSoon":     { "vi": "Sắp có liên kết","en": "Link coming soon" },
+    "by":             { "vi": "Tác giả",        "en": "By" },
+    "contactToGet":   { "vi": "Liên hệ để nhận sách", "en": "Contact to get this book" },
+    "restrictedNote": { "vi": "Sách này không thể chia sẻ công khai do bản quyền, vui lòng liên hệ riêng.", "en": "This book can't be shared publicly due to copyright, please reach out privately." },
+    "requestSubject": { "vi": "Xin sách",       "en": "Book request" },
+    "categories":     { "vi": "Chủ đề",         "en": "Categories" },
+    "readMore":       { "vi": "Xem thêm",       "en": "Read more" },
+    "readLess":       { "vi": "Thu gọn",        "en": "Read less" }
+  },
+  "a11y": {
+    "skipToContent":    { "vi": "Bỏ qua tới nội dung", "en": "Skip to content" },
+    "openMenu":         { "vi": "Mở menu",              "en": "Open menu" },
+    "closeMenu":        { "vi": "Đóng menu",            "en": "Close menu" },
+    "toggleTheme":      { "vi": "Đổi chế độ sáng/tối", "en": "Toggle theme" },
+    "searchPlaceholder":{ "vi": "Tìm bài viết…",       "en": "Search posts..." },
+    "noResults":        { "vi": "Không có kết quả",    "en": "No results found" },
+    "goToPreviousPage": { "vi": "Trang trước",          "en": "Go to previous page" },
+    "goToNextPage":     { "vi": "Trang kế",             "en": "Go to next page" }
+  },
+  "notFound": {
+    "title":   { "vi": "404 — Không tìm thấy", "en": "404 Not Found" },
+    "message": { "vi": "Trang này không tồn tại", "en": "Page Not Found" },
+    "goHome":  { "vi": "Về trang chủ",          "en": "Go back home" }
+  }
+}

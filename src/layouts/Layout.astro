@@ -4,8 +4,11 @@ import { ClientRouter } from "astro:transitions";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import PostListStats from "@/components/PostListStats.astro";
 import { getAssetPath } from "@/utils/withBase";
+import { getEnStrings } from "@/i18n";
 import config from "@/config";
 import "@/styles/global.css";
+
+const i18nEn = getEnStrings();
 
 type Props = {
   title?: string;
@@ -30,7 +33,8 @@ const rssHref = getAssetPath("rss.xml");
 <!doctype html>
 <html
   dir={site.dir ?? "ltr"}
-  lang={Astro.currentLocale ?? site.lang}
+  lang={site.lang}
+  data-lang="vi"
   class="overflow-y-scroll scroll-smooth"
 >
   <head>
@@ -109,8 +113,9 @@ const rssHref = getAssetPath("rss.xml");
     }
 
     <!--
-      Inline FOUC-prevention script: sets data-theme on <html> before
-      the browser paints. Runs synchronously, no defer/async.
+      Inline FOUC-prevention scripts: run synchronously before first paint.
+      1) Sets data-theme for light/dark mode.
+      2) Sets data-lang for language preference.
     -->
     <script is:inline>
       (function () {
@@ -120,9 +125,16 @@ const rssHref = getAssetPath("rss.xml");
         ).matches;
         const theme = stored ?? (prefersDark ? "dark" : "light");
         document.firstElementChild?.setAttribute("data-theme", theme);
-        // Expose value so theme.ts can skip re-detection.
         window.__theme = { value: theme };
+
+        const lang = localStorage.getItem("pnk-lang") ?? "vi";
+        document.firstElementChild?.setAttribute("data-lang", lang);
       })();
+    </script>
+
+    <!-- Inject en translations for client-side language switching -->
+    <script define:vars={{ i18nEn }} is:inline>
+      window.__i18n = { en: i18nEn };
     </script>
 
     <ClientRouter />
@@ -133,6 +145,9 @@ const rssHref = getAssetPath("rss.xml");
     <slot />
     <script>
       import "@/scripts/theme";
+    </script>
+    <script>
+      import "@/scripts/i18n-client";
     </script>
     <PostListStats />
   </body>
