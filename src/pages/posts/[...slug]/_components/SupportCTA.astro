@@ -9,13 +9,13 @@ const t = useTranslations();
 <div
   class="border-border bg-muted my-8 flex flex-col items-center gap-3 rounded-lg border border-dashed p-6 text-center"
 >
-  <p class="font-display text-lg font-semibold">{t.post.supportTitle}</p>
-  <p class="text-muted-foreground text-sm">{t.post.supportDesc}</p>
+  <p class="font-display text-lg font-semibold" data-i18n="post.supportTitle">{t.post.supportTitle}</p>
+  <p class="text-muted-foreground text-sm" data-i18n="post.supportDesc">{t.post.supportDesc}</p>
   <LinkButton
     href="/support"
     class="btn-shine from-accent-soft to-accent text-accent-foreground! gap-1.5 rounded-full bg-gradient-to-br px-4 py-2 text-sm leading-none font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_8px_-2px_var(--accent)] transition-transform hover:-translate-y-0.5"
   >
     <IconCoffee class="size-4.5 shrink-0 -translate-y-px" />
-    {t.post.supportCta}
+    <span data-i18n="post.supportCta">{t.post.supportCta}</span>
   </LinkButton>
 </div>

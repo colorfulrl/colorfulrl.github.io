@@ -20,27 +20,34 @@ const { slug } = Astro.props;
     supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
   }}
 >
+  let cachedRatingData = null;
+
   async function initRatingBadge() {
     const el = document.querySelector("[data-rating-badge-slug]");
     if (!el || !supabaseUrl || !supabaseKey) return;
 
     const slug = el.dataset.ratingBadgeSlug;
-    const res = await fetch(
-      `${supabaseUrl}/rest/v1/post_ratings?slug=eq.${encodeURIComponent(slug)}&select=value`,
-      {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-        },
-      }
-    );
-    if (!res.ok) return;
-    const rows = await res.json();
-    if (rows.length === 0) return;
+    if (!cachedRatingData) {
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/post_ratings?slug=eq.${encodeURIComponent(slug)}&select=value`,
+        {
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+          },
+        }
+      );
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (rows.length === 0) return;
+      cachedRatingData = rows.reduce((sum, r) => sum + r.value, 0) / rows.length;
+    }
 
-    const avg = rows.reduce((sum, r) => sum + r.value, 0) / rows.length;
-    el.textContent = `· ★ ${avg.toFixed(1)}`;
+    el.textContent = `· ★ ${cachedRatingData.toFixed(1)}`;
   }
 
   initRatingBadge();
+  document.addEventListener("astro:page-load", initRatingBadge);
+  const observer = new MutationObserver(() => initRatingBadge());
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 </script>
