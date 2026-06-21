@@ -18,6 +18,7 @@ const decodeSegment = (value: string) => {
   }
 };
 
+// Add new pages here + add nav.X key to ui.json — breadcrumb i18n is then automatic.
 const navLabels: Record<string, string> = {
   posts: t.nav.posts,
   tags: t.nav.tags,
@@ -26,36 +27,39 @@ const navLabels: Record<string, string> = {
   search: t.nav.search,
 };
 
-// Metadata for breadcrumbs that need special rendering (with i18n)
 interface BreadcrumbItem {
   text: string;
-  navKey?: string; // for i18n
-  pageNum?: number; // if pagination
+  navKey?: string;
+  pageNum?: number;
 }
 
-const breadcrumbsMeta: BreadcrumbItem[] = breadcrumbList.map(b => ({ text: b }));
-
-// if breadcrumb is Home > Posts > [page] <etc>
-// replace Posts with metadata for localized rendering
-if (breadcrumbsMeta[0]?.text === "posts") {
-  const pageNum = breadcrumbList[1] ? parseInt(breadcrumbList[1], 10) : 1;
-  breadcrumbsMeta.splice(0, 2, {
-    text: t.nav.posts,
-    navKey: "nav.posts",
-    pageNum,
-  });
-}
-
-// if breadcrumb is Home > Tags > [tag] > [page] <etc>
-// keep tag name as-is, add page metadata if present
-if (breadcrumbsMeta[0]?.text === "tags" && breadcrumbsMeta[2]?.text && !isNaN(Number(breadcrumbsMeta[2].text))) {
-  const tagName = decodeSegment(breadcrumbsMeta[1]?.text || "");
-  const pageNum = parseInt(breadcrumbsMeta[2]?.text || "1", 10);
-  breadcrumbsMeta.splice(1, 3, {
-    text: tagName,
-    pageNum: pageNum > 1 ? pageNum : undefined,
-  });
-}
+const breadcrumbsMeta: BreadcrumbItem[] = (() => {
+  // /posts/2  → Posts (page 2)
+  if (
+    breadcrumbList[0] === "posts" &&
+    breadcrumbList.length >= 2 &&
+    !isNaN(Number(breadcrumbList[1]))
+  ) {
+    return [{ text: t.nav.posts, navKey: "nav.posts", pageNum: parseInt(breadcrumbList[1], 10) }];
+  }
+  // /tags/[tag]/2  → Tags > [tag] (page 2)
+  if (
+    breadcrumbList[0] === "tags" &&
+    breadcrumbList.length >= 3 &&
+    !isNaN(Number(breadcrumbList[2]))
+  ) {
+    const pageNum = parseInt(breadcrumbList[2], 10);
+    return [
+      { text: t.nav.tags, navKey: "nav.tags" },
+      { text: decodeSegment(breadcrumbList[1]), pageNum: pageNum > 1 ? pageNum : undefined },
+    ];
+  }
+  // Default: navKey auto-derived from navLabels — no per-segment hardcoding needed
+  return breadcrumbList.map(b => ({
+    text: navLabels[b] ?? decodeSegment(b),
+    navKey: b in navLabels ? `nav.${b}` : undefined,
+  }));
+})();
 ---
 
 <nav class="app-layout mt-8 mb-1" aria-label="breadcrumb">
