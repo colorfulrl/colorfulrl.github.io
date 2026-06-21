@@ -124,6 +124,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Learning a latent world model WITHOUT a pixel-reconstruction objective. Reconstruction wastes capacity on task-irrelevant visual detail and breaks under distractors, so decoder-free methods train the latent via self-prediction of value+actions (MuDreamer), redundancy reduction à la Barlow Twins (R2-Dreamer), or JEPA-style continuous-deterministic prediction (Dreamer-CDP) — usually trading reconstruction for an internal regularizer that prevents representation collapse.",
   },
+  {
+    id: "causal-rl",
+    type: "concept",
+    label: "Causal RL",
+    description:
+      "Embedding causal knowledge (structure, confounders, counterfactuals) into RL — formalized as (M, G): an RL setting M (MDP/POMDP/bandit/DTR) plus causal information G. A cross-cutting lens rather than a rival of model-free/based: it spans deconfounded offline RL, causal world models, invariant state abstraction, causal imitation, and causal bandits, targeting sample efficiency, generalization, and interpretability.",
+  },
 
   // ── Architectures (G) ───────────────────────────────────────────
   {
@@ -599,6 +606,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "world-models-concept", target: "latent-dynamics",      label: "uses" },
   { source: "latent-dynamics",      target: "rssm",                 label: "implements" },
   { source: "latent-dynamics",      target: "decoder-free",         label: "variant: no recon" },
+  { source: "rl",                   target: "causal-rl",            label: "lens" },
 
   // MDP formalisms (problem-formulation axis)
   { source: "rl",                   target: "pomdp",                label: "includes" },
