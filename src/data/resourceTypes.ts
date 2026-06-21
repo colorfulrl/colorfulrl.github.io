@@ -62,6 +62,14 @@ export const RESOURCE_TYPES: Record<
     badgeBg: "bg-orange-100 dark:bg-orange-900/30",
     badgeText: "text-orange-700 dark:text-orange-400",
   },
+  paper: {
+    vi: "Paper",
+    en: "Paper",
+    iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
+    iconColor: "text-indigo-600 dark:text-indigo-400",
+    badgeBg: "bg-indigo-100 dark:bg-indigo-900/30",
+    badgeText: "text-indigo-700 dark:text-indigo-400",
+  },
 };
 
-export const RESOURCE_TYPE_ORDER = ["article", "video", "repo", "course", "tool", "platform"] as const;
+export const RESOURCE_TYPE_ORDER = ["article", "video", "repo", "course", "tool", "platform", "paper"] as const;
