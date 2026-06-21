@@ -41,10 +41,14 @@
     "page": { "vi": "Trang", "en": "Page" }
   },
   "home": {
-    "socialLinks": { "vi": "Liên hệ",         "en": "Social Links" },
-    "featured":    { "vi": "Bài chọn lọc",    "en": "Featured" },
-    "recentPosts": { "vi": "Bài gần đây",     "en": "Recent Posts" },
-    "allPosts":    { "vi": "Tất cả bài viết", "en": "All Posts" }
+    "heroSubtitle":     { "vi": "— cùng chia sẻ kiến thức về Reinforcement Learning", "en": "— sharing knowledge about Reinforcement Learning" },
+    "heroParagraph":    { "vi": "Reinforcement Learning là một trong những lĩnh vực rất nổi trong mảng Machine Learning và AI. Blog mang đến những kiến thức, những góc nhìn, những định hướng và cũng như những nghiên cứu cá nhân về Reinforcement Learning. Blog còn là nơi mọi người đóng góp ý kiến để thảo luận thêm và cùng nhau học hỏi.", "en": "Reinforcement Learning is one of the most exciting fields in Machine Learning and AI. This blog brings knowledge, perspectives, guidance, and personal research on RL — a space to share ideas, discuss, and learn together." },
+    "heroCtaPrimary":   { "vi": "Đọc phần giới thiệu", "en": "Read introduction" },
+    "heroCtaSecondary": { "vi": "Giới thiệu",          "en": "About" },
+    "socialLinks":      { "vi": "Liên hệ:",            "en": "Social Links:" },
+    "featured":         { "vi": "Bài chọn lọc",        "en": "Featured" },
+    "recentPosts":      { "vi": "Bài gần đây",         "en": "Recent Posts" },
+    "allPosts":         { "vi": "Tất cả bài viết",     "en": "All Posts" }
   },
   "footer": {
     "copyright":        { "vi": "Phạm Nhật Khoa",  "en": "Phạm Nhật Khoa" },

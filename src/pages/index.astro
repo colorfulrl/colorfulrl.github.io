@@ -48,7 +48,7 @@ const homePath = "/";
           >
             <span class="text-rainbow">Colorful RL</span>
             <br />
-            <span class="text-muted-foreground font-display italic font-medium text-3xl sm:text-4xl">
+            <span class="text-muted-foreground font-display italic font-medium text-3xl sm:text-4xl" data-i18n="home.heroSubtitle">
               — cùng chia sẻ kiến thức về Reinforcement Learning
             </span>
           </h1>
@@ -62,7 +62,7 @@ const homePath = "/";
         />
       </div>
 
-      <p class="mt-2 max-w-2xl text-lg leading-relaxed text-foreground/85">
+      <p class="mt-2 max-w-2xl text-lg leading-relaxed text-foreground/85" data-i18n="home.heroParagraph">
         Reinforcement Learning là một trong những lĩnh vực rất nổi trong mảng Machine Learning và AI. Blog mang đến những kiến thức, những góc nhìn, những định hướng và cũng như những nghiên cứu cá nhân về Reinforcement Learning. Blog còn là nơi mọi người đóng góp ý kiến để thảo luận thêm và cùng nhau học hỏi.
       </p>
 
@@ -71,14 +71,14 @@ const homePath = "/";
           href="/posts"
           class="bg-accent text-accent-foreground rounded-md px-5 py-2.5 text-sm font-medium no-underline hover:opacity-90"
         >
-          Đọc phần giới thiệu
+          <span data-i18n="home.heroCtaPrimary">Đọc phần giới thiệu</span>
           <IconArrowRight class="inline-block ml-1 rtl:-rotate-180" />
         </LinkButton>
         <LinkButton
           href="/about"
           class="text-foreground/80 hover:text-accent text-sm underline decoration-dashed underline-offset-4"
         >
-          Giới thiệu
+          <span data-i18n="home.heroCtaSecondary">Giới thiệu</span>
         </LinkButton>
         <a
           target="_blank"
@@ -99,8 +99,8 @@ const homePath = "/";
       {
         socials.length > 0 && (
           <div class="mt-6 flex max-sm:flex-col sm:items-center text-sm text-muted-foreground">
-            <div class="me-2 mb-1 whitespace-nowrap sm:mb-0">
-              {t.home.socialLinks}:
+            <div class="me-2 mb-1 whitespace-nowrap sm:mb-0" data-i18n="home.socialLinks">
+              {t.home.socialLinks}
             </div>
             <Socials />
           </div>
@@ -118,7 +118,7 @@ const homePath = "/";
           ]}
         >
           <h2 class="font-display text-3xl font-semibold tracking-tight">
-            ✦ {t.home.featured}
+            ✦ <span data-i18n="home.featured">{t.home.featured}</span>
           </h2>
           <ul>
             {featuredPosts.map(data => (
@@ -132,7 +132,7 @@ const homePath = "/";
     {
       recentPosts.length > 0 && (
         <section id="recent-posts" class="pt-14 pb-8">
-          <h2 class="font-display text-3xl font-semibold tracking-tight">
+          <h2 class="font-display text-3xl font-semibold tracking-tight" data-i18n="home.recentPosts">
             {t.home.recentPosts}
           </h2>
           <ul>
@@ -146,7 +146,7 @@ const homePath = "/";
 
     <div class="my-10 text-center">
       <LinkButton href="/posts">
-        {t.home.allPosts}
+        <span data-i18n="home.allPosts">{t.home.allPosts}</span>
         <IconArrowRight class="inline-block rtl:-rotate-180" />
       </LinkButton>
     </div>
