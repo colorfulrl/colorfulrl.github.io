@@ -9,7 +9,7 @@ const { data } = Astro.props;
 const { title, url, type, source, description, descriptionEn, thumbnail, date } = data;
 
 const t = useTranslations();
-const localizedDescription = description;
+const tEn = useTranslations("en");
 
 const meta = RESOURCE_TYPES[type] ?? {
   vi: type, en: type,
@@ -60,7 +60,7 @@ const formattedDate = date
           meta.badgeText,
         ]}
       >
-        {label}
+        <span data-en={meta.en !== meta.vi ? meta.en : undefined}>{label}</span>
       </span>
     </div>
 
@@ -70,15 +70,17 @@ const formattedDate = date
       </p>
     )}
 
-    {localizedDescription && (
+    {description && (
       <div>
-        <p data-res-desc class="line-clamp-3 text-sm leading-relaxed">
-          {localizedDescription}
+        <p data-res-desc data-en={descriptionEn || undefined} class="line-clamp-3 text-sm leading-relaxed">
+          {description}
         </p>
         <button
           data-res-toggle
-          data-more={t.ebooks.readMore}
-          data-less={t.ebooks.readLess}
+          data-more-vi={t.ebooks.readMore}
+          data-more-en={tEn.ebooks.readMore}
+          data-less-vi={t.ebooks.readLess}
+          data-less-en={tEn.ebooks.readLess}
           hidden
           class="text-accent mt-1 text-xs hover:underline focus:outline-none"
         >
@@ -90,6 +92,12 @@ const formattedDate = date
 </li>
 
 <script>
+  function resBtnLabel(btn: HTMLButtonElement, type: "more" | "less") {
+    const lang = document.documentElement.getAttribute("data-lang") || "vi";
+    const key = lang === "en" ? (type + "En") : (type + "Vi");
+    return (btn.dataset as Record<string, string>)[key] ?? btn.dataset[type] ?? "";
+  }
+
   function initResourceToggles() {
     document
       .querySelectorAll<HTMLButtonElement>("[data-res-toggle]")
@@ -102,14 +110,23 @@ const formattedDate = date
 
         if (desc.scrollHeight <= desc.clientHeight) return;
         fresh.hidden = false;
+        fresh.textContent = resBtnLabel(fresh, "more");
 
         fresh.addEventListener("click", () => {
           const expanding = desc.classList.contains("line-clamp-3");
           desc.classList.toggle("line-clamp-3", !expanding);
-          fresh.textContent = expanding ? fresh.dataset.less! : fresh.dataset.more!;
+          fresh.dataset.expanded = expanding ? "1" : "";
+          fresh.textContent = resBtnLabel(fresh, expanding ? "less" : "more");
         });
       });
   }
+
+  const resLangObs = new MutationObserver(() => {
+    document.querySelectorAll<HTMLButtonElement>("[data-res-toggle]:not([hidden])").forEach(btn => {
+      btn.textContent = resBtnLabel(btn, btn.dataset.expanded === "1" ? "less" : "more");
+    });
+  });
+  resLangObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
   document.addEventListener("astro:page-load", initResourceToggles);
 </script>

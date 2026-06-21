@@ -17,6 +17,7 @@ import { useTranslations } from "@/i18n";
 import config from "@/config";
 
 const t = useTranslations();
+const tEn = useTranslations("en");
 
 const allResources = await getCollection("resources");
 const resources = allResources
@@ -60,6 +61,10 @@ function getTypeLabel(type: string) {
   if (!meta) return type;
   return meta.vi;
 }
+
+function getTypeLabelEn(type: string) {
+  return RESOURCE_TYPES[type]?.en ?? type;
+}
 ---
 
 <Layout title={`${t.pages.resourcesTitle} | ${config.site.title}`}>
@@ -69,17 +74,21 @@ function getTypeLabel(type: string) {
   <Main pageTitle={t.pages.resourcesTitle} pageDesc={t.pages.resourcesDesc} i18nTitle="pages.resourcesTitle" i18nDesc="pages.resourcesDesc">
     {
       resources.length === 0 ? (
-        <p class="text-muted-foreground italic">Coming soon…</p>
+        <p class="text-muted-foreground italic" data-i18n="ebooks.comingSoon">{t.ebooks.comingSoon}</p>
       ) : (
         <>
           <!-- Search bar -->
           <div
             id="res-search-wrap"
             class="mb-8"
-            data-show-more="Xem thêm"
-            data-show-less="Thu gọn"
-            data-count-label="kết quả"
-            data-no-results="Không tìm thấy kết quả nào."
+            data-show-more-vi={t.ebooks.readMore}
+            data-show-more-en={tEn.ebooks.readMore}
+            data-show-less-vi={t.ebooks.readLess}
+            data-show-less-en={tEn.ebooks.readLess}
+            data-count-label-vi="kết quả"
+            data-count-label-en="results"
+            data-no-results-vi="Không tìm thấy kết quả nào."
+            data-no-results-en="No results found."
           >
             <div class="relative flex items-center">
               <svg class="text-muted-foreground pointer-events-none absolute left-3.5 size-4 shrink-0"
@@ -92,6 +101,7 @@ function getTypeLabel(type: string) {
                 id="res-search"
                 type="text"
                 placeholder="Tìm kiếm tài nguyên..."
+                data-en-placeholder="Search resources..."
                 autocomplete="off"
                 class="border-border bg-surface/50 focus:border-accent w-full rounded-lg border py-2.5 pl-10 pr-24 text-sm outline-none transition-colors focus:ring-1 focus:ring-accent/20"
               />
@@ -100,7 +110,9 @@ function getTypeLabel(type: string) {
               </span>
               <button id="res-search-clear"
                 class="text-muted-foreground hover:text-foreground absolute right-3 hidden rounded p-1 transition-colors"
-                aria-label="Xóa tìm kiếm" style="display:none">
+                aria-label="Xóa tìm kiếm"
+                data-en-aria-label="Clear search"
+                style="display:none">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                   class="size-4">
@@ -126,7 +138,7 @@ function getTypeLabel(type: string) {
                       ]}
                     >
                       {Icon && <Icon class="size-4" />}
-                      {getTypeLabel(type)}
+                      <span data-en={getTypeLabelEn(type) !== getTypeLabel(type) ? getTypeLabelEn(type) : undefined}>{getTypeLabel(type)}</span>
                       <span class="text-xs opacity-60">({grouped.get(type)!.length})</span>
                     </a>
                   </li>
@@ -153,7 +165,7 @@ function getTypeLabel(type: string) {
                     </span>
                   )}
                   <h2 class="font-display text-xl font-semibold tracking-tight">
-                    {getTypeLabel(type)}
+                    <span data-en={getTypeLabelEn(type) !== getTypeLabel(type) ? getTypeLabelEn(type) : undefined}>{getTypeLabel(type)}</span>
                   </h2>
                 </div>
                 <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -182,16 +194,18 @@ function getTypeLabel(type: string) {
     expanded: boolean;
   }
 
+  function getWrapLabel(wrap: HTMLElement, key: string) {
+    const lang = document.documentElement.getAttribute("data-lang") || "vi";
+    const d = wrap.dataset as Record<string, string | undefined>;
+    return (lang === "en" ? d[key + "En"] : d[key + "Vi"]) ?? d[key] ?? "";
+  }
+
   function initResources() {
     // Clean up any buttons injected by a previous init (SPA navigation)
     document.querySelectorAll(".res-show-more").forEach(el => el.remove());
 
     const wrap = document.getElementById("res-search-wrap");
     if (!wrap) return;
-    const showMoreLabel = wrap.dataset.showMore ?? "Show more";
-    const showLessLabel = wrap.dataset.showLess ?? "Show less";
-    const countLabel    = wrap.dataset.countLabel ?? "results";
-    const noResults     = wrap.dataset.noResults ?? "No results found.";
 
     // Build per-section state
     const sections: SectionState[] = [];
@@ -207,7 +221,9 @@ function getTypeLabel(type: string) {
         btn = document.createElement("button");
         btn.className =
           "res-show-more mt-5 flex items-center gap-1.5 text-sm text-accent decoration-dashed underline-offset-4 hover:underline";
-        updateBtnText(btn, items.length, false, showMoreLabel, showLessLabel);
+        btn.dataset.total = String(items.length);
+        updateBtnText(btn, items.length, false,
+          getWrapLabel(wrap, "showMore"), getWrapLabel(wrap, "showLess"));
         ul.after(btn);
       }
 
@@ -219,7 +235,9 @@ function getTypeLabel(type: string) {
         items.forEach((li, i) => {
           if (i >= INITIAL_SHOW) li.style.display = state.expanded ? "" : "none";
         });
-        updateBtnText(btn!, items.length, state.expanded, showMoreLabel, showLessLabel);
+        btn!.dataset.expanded = state.expanded ? "1" : "";
+        updateBtnText(btn!, items.length, state.expanded,
+          getWrapLabel(wrap, "showMore"), getWrapLabel(wrap, "showLess"));
       });
     });
 
@@ -231,17 +249,17 @@ function getTypeLabel(type: string) {
     function applySearch(query: string) {
       const q = query.toLowerCase();
       let total = 0;
+      const countLabel  = getWrapLabel(wrap!, "countLabel");
+      const noResults   = getWrapLabel(wrap!, "noResults");
 
       sections.forEach(({ el, items, btn, expanded }) => {
         if (!q) {
-          // Restore original show-more state
           items.forEach((li, i) => {
             li.style.display = i >= INITIAL_SHOW && !expanded ? "none" : "";
           });
           el.style.display = "";
           if (btn) btn.style.display = "";
         } else {
-          // Filter: show only matches, ignore INITIAL_SHOW limit
           if (btn) btn.style.display = "none";
           let sectionCount = 0;
           items.forEach(li => {
@@ -254,11 +272,10 @@ function getTypeLabel(type: string) {
         }
       });
 
-      // Update UI
       if (clearBtn) clearBtn.style.display = q ? "" : "none";
       if (countEl) {
         if (q) {
-          countEl.textContent = `${total} ${countLabel}`;
+          countEl.textContent = total === 0 ? noResults : `${total} ${countLabel}`;
           countEl.classList.remove("hidden");
           countEl.className =
             total === 0
@@ -283,6 +300,17 @@ function getTypeLabel(type: string) {
     clearBtn?.addEventListener("click", () => {
       if (input) { input.value = ""; applySearch(""); input.focus(); }
     });
+
+    // Re-render show-more button labels on lang change
+    const langObs = new MutationObserver(() => {
+      document.querySelectorAll<HTMLButtonElement>(".res-show-more").forEach(btn => {
+        const total = parseInt(btn.dataset.total ?? "0", 10);
+        const expanded = btn.dataset.expanded === "1";
+        updateBtnText(btn, total, expanded,
+          getWrapLabel(wrap!, "showMore"), getWrapLabel(wrap!, "showLess"));
+      });
+    });
+    langObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
   }
 
   function updateBtnText(

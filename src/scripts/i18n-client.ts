@@ -43,6 +43,26 @@ function applyLang(lang: Lang) {
     }
   });
 
+  // data-en-placeholder: swap placeholder attr
+  document.querySelectorAll<HTMLInputElement>("[data-en-placeholder]").forEach(el => {
+    if (lang === "en") {
+      if (!el.dataset.viPlaceholder) el.dataset.viPlaceholder = el.placeholder;
+      el.placeholder = el.dataset.enPlaceholder!;
+    } else {
+      if (el.dataset.viPlaceholder !== undefined) el.placeholder = el.dataset.viPlaceholder;
+    }
+  });
+
+  // data-en-aria-label: swap aria-label attr
+  document.querySelectorAll<HTMLElement>("[data-en-aria-label]").forEach(el => {
+    if (lang === "en") {
+      if (!el.dataset.viAriaLabel) el.dataset.viAriaLabel = el.getAttribute("aria-label") ?? "";
+      el.setAttribute("aria-label", el.dataset.enAriaLabel!);
+    } else {
+      if (el.dataset.viAriaLabel !== undefined) el.setAttribute("aria-label", el.dataset.viAriaLabel);
+    }
+  });
+
   // Update lang toggle buttons active state
   document.querySelectorAll<HTMLElement>("[data-lang-btn]").forEach(btn => {
     const active = btn.dataset.langBtn === lang;
