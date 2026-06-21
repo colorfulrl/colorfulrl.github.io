@@ -131,6 +131,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Embedding causal knowledge (structure, confounders, counterfactuals) into RL — formalized as (M, G): an RL setting M (MDP/POMDP/bandit/DTR) plus causal information G. A cross-cutting lens rather than a rival of model-free/based: it spans deconfounded offline RL, causal world models, invariant state abstraction, causal imitation, and causal bandits, targeting sample efficiency, generalization, and interpretability.",
   },
+  {
+    id: "llm-for-rl",
+    type: "concept",
+    label: "LLM-Guided RL",
+    description:
+      "Placing a pre-trained large language model INSIDE the RL loop — as policy/optimizer proposing parameter updates from linguistic + numerical context (ProPS), as a reward designer, as a planner, or as an exploration prior. The opposite direction of RLHF (which uses RL to align an LLM): here the LLM is a component that guides the RL agent, injecting semantic prior knowledge and in-context reasoning beyond scalar rewards.",
+  },
 
   // ── Architectures (G) ───────────────────────────────────────────
   {
@@ -607,6 +614,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "latent-dynamics",      target: "rssm",                 label: "implements" },
   { source: "latent-dynamics",      target: "decoder-free",         label: "variant: no recon" },
   { source: "rl",                   target: "causal-rl",            label: "lens" },
+  { source: "rl",                   target: "llm-for-rl",           label: "lens" },
 
   // MDP formalisms (problem-formulation axis)
   { source: "rl",                   target: "pomdp",                label: "includes" },
