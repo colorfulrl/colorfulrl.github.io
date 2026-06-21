@@ -49,13 +49,22 @@ import {
       (ratingGroups[row.slug] ??= []).push(row.value);
     }
 
+    const lang = document.documentElement.getAttribute("data-lang") || "vi";
+    const templates = {
+      vi: "· {{count}} lượt xem",
+      en: "· {{count}} views",
+    };
+
     for (const card of cards) {
       const slug = card.dataset.postStatsSlug;
 
       const viewEl = card.querySelector("[data-view-stat]");
       if (viewEl && viewMap[slug] != null) {
-        viewEl.textContent = (viewEl.dataset.template ?? "· {{count}}")
-          .replace("{{count}}", Number(viewMap[slug]).toLocaleString());
+        const template = templates[lang] || templates.vi;
+        viewEl.textContent = template.replace(
+          "{{count}}",
+          Number(viewMap[slug]).toLocaleString(lang === "en" ? "en-US" : "vi-VN")
+        );
       }
 
       const ratingEl = card.querySelector("[data-rating-stat]");
@@ -68,4 +77,8 @@ import {
   }
 
   initPostListStats();
+  document.addEventListener("astro:page-load", initPostListStats);
+  // Watch for lang change
+  const observer = new MutationObserver(() => initPostListStats());
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 </script>

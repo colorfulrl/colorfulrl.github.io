@@ -16,7 +16,7 @@ const t = useTranslations();
 
 <span
   data-view-slug={slug}
-  data-template={t.post.viewCount}
+  data-template-vi={t.post.viewCount}
   class="text-muted-foreground text-sm"
 ></span>
 
@@ -62,9 +62,43 @@ const t = useTranslations();
       sessionStorage.setItem(sessionKey, "1");
     }
 
-    el.textContent = (el.dataset.template ?? "{{count}}")
-      .replace("{{count}}", Number(count).toLocaleString("vi-VN"));
+    const lang = document.documentElement.getAttribute("data-lang") || "vi";
+    const templates = {
+      vi: el.dataset.templateVi ?? "· {{count}} lượt xem",
+      en: "· {{count}} views",
+    };
+    const template = templates[lang] || templates.vi;
+    el.textContent = template.replace(
+      "{{count}}",
+      Number(count).toLocaleString(lang === "en" ? "en-US" : "vi-VN")
+    );
+  }
+
+  function updateViewCountDisplay() {
+    const el = document.querySelector("[data-view-slug]");
+    if (!el) return;
+    const lang = document.documentElement.getAttribute("data-lang") || "vi";
+    const templates = {
+      vi: el.dataset.templateVi ?? "· {{count}} lượt xem",
+      en: "· {{count}} views",
+    };
+    const template = templates[lang] || templates.vi;
+    const match = el.textContent?.match(/(\d+)/);
+    if (match) {
+      const count = Number(match[1]);
+      el.textContent = template.replace(
+        "{{count}}",
+        count.toLocaleString(lang === "en" ? "en-US" : "vi-VN")
+      );
+    }
   }
 
   initViewCount();
+
+  document.addEventListener("astro:page-load", initViewCount);
+  // Watch for lang change via i18n-client.ts
+  const observer = new MutationObserver(() => {
+    if (document.documentElement.getAttribute("data-lang")) updateViewCountDisplay();
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 </script>
