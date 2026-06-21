@@ -57,20 +57,30 @@ if (breadcrumbList[0] === "tags" && !isNaN(Number(breadcrumbList[2]))) {
   >
     <li>
       <a href="/" class="opacity-80">
-        {t.nav.home}
+        <span data-i18n="nav.home">{t.nav.home}</span>
       </a>
       <span aria-hidden="true" class="opacity-80">&raquo;</span>
     </li>
     {
-      breadcrumbList.map((breadcrumb, index) =>
-        index + 1 === breadcrumbList.length ? (
+      breadcrumbList.map((breadcrumb, index) => {
+        // For static nav labels, add data-i18n; for dynamic content, render as-is
+        const navLabel = navLabels[breadcrumb];
+        const content = navLabel ?? decodeSegment(breadcrumb);
+        const iNav = navLabel ?
+          (breadcrumb === "posts" ? "nav.posts" :
+           breadcrumb === "tags" ? "nav.tags" :
+           breadcrumb === "about" ? "nav.about" :
+           breadcrumb === "archives" ? "nav.archives" :
+           breadcrumb === "search" ? "nav.search" : null) : null;
+
+        return index + 1 === breadcrumbList.length ? (
           <li>
             <span
               class:list={["capitalize opacity-75", { lowercase: index > 0 }]}
               aria-current="page"
+              data-i18n={iNav || undefined}
             >
-              {/* make the last part lowercase in Home > Tags > some-tag */}
-              {navLabels[breadcrumb] ?? decodeSegment(breadcrumb)}
+              {content}
             </span>
           </li>
         ) : (
@@ -79,14 +89,14 @@ if (breadcrumbList[0] === "tags" && !isNaN(Number(breadcrumbList[2]))) {
               href={`/${breadcrumb}`}
               class="capitalize opacity-70"
             >
-              {navLabels[breadcrumb] ?? decodeSegment(breadcrumb)}
+              <span data-i18n={iNav || undefined}>{content}</span>
             </a>
             <span aria-hidden="true" class="opacity-70">
               &raquo;
             </span>
           </li>
-        )
-      )
+        );
+      })
     }
   </ul>
 </nav>
