@@ -8,10 +8,11 @@ import { useTranslations } from "@/i18n";
 
 export async function getStaticPaths() {
   const domains = await getCollection("curriculum", e => !e.data.draft);
-  return domains.map(entry => ({
-    params: { domain: entry.id },
-    props: { entry },
-  }));
+  const others = await getCollection("otherTopics", e => !e.data.draft);
+  return [
+    ...domains.map(entry => ({ params: { domain: entry.id }, props: { entry } })),
+    ...others.map(entry => ({ params: { domain: entry.id }, props: { entry } })),
+  ];
 }
 
 const { entry } = Astro.props;
