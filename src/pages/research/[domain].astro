@@ -4,6 +4,7 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
+import { useTranslations } from "@/i18n";
 
 export async function getStaticPaths() {
   const domains = await getCollection("curriculum", e => !e.data.draft);
@@ -119,6 +120,8 @@ const stageLabels = entry.data.stages.map((s, i) => ({
 }));
 
 const domainDesc = entry.data.description;
+const t = useTranslations();
+const tEn = useTranslations("en");
 ---
 
 <Layout title={`${entry.data.domain} | ${config.site.title}`}>
@@ -132,7 +135,7 @@ const domainDesc = entry.data.description;
         <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
           <a href="/research"
             class="text-muted-foreground hover:text-accent shrink-0 text-sm">
-            ← Nghiên cứu
+            ← <span data-i18n="nav.research">{t.nav.research}</span>
           </a>
           <span class="text-foreground shrink-0 text-sm font-semibold">{entry.data.domain}</span>
 
@@ -164,10 +167,14 @@ const domainDesc = entry.data.description;
         <div id="curr-cy" class="w-full flex-1" data-graph={graphJson}
           data-constraints={constraintsJson}
           data-progress-key={`curriculum-read:${entry.id}`}
-          data-l-detail="Mở chi tiết →"
-          data-l-graph="Xem trong graph chính →"
-          data-l-arxiv="Đọc paper (arXiv) →"
-          data-l-nodetail="Chưa có trang chi tiết"></div>
+          data-l-detail-vi={t.research.lDetail}
+          data-l-detail-en={tEn.research.lDetail}
+          data-l-graph-vi={t.research.lGraph}
+          data-l-graph-en={tEn.research.lGraph}
+          data-l-arxiv-vi={t.research.lArxiv}
+          data-l-arxiv-en={tEn.research.lArxiv}
+          data-l-nodetail-vi={t.research.lNoDetail}
+          data-l-nodetail-en={tEn.research.lNoDetail}></div>
 
         <!-- Detail panel -->
         <aside id="curr-panel"
@@ -179,7 +186,8 @@ const domainDesc = entry.data.description;
             </div>
             <button id="curr-panel-close"
               class="text-muted-foreground hover:text-foreground ml-2 shrink-0 rounded p-0.5"
-              aria-label="Đóng">
+              aria-label="Đóng"
+              data-en-aria-label="Close">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="size-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -190,7 +198,7 @@ const domainDesc = entry.data.description;
 
             <label class="mt-4 flex cursor-pointer items-center gap-2 text-sm">
               <input id="curr-panel-read" type="checkbox" class="accent-accent size-4" />
-              <span>Đánh dấu đã đọc</span>
+              <span data-i18n="research.markAsRead">{t.research.markAsRead}</span>
             </label>
 
             <div id="curr-panel-links" class="mt-4 space-y-2 border-t border-border pt-3"></div>
@@ -203,7 +211,7 @@ const domainDesc = entry.data.description;
           style="display:none">
           <div class="bg-background/90 border-border pointer-events-auto inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs shadow-lg backdrop-blur-sm">
             <span class="bg-accent size-2 animate-pulse rounded-full"></span>
-            <span class="text-muted-foreground">Đường prereq</span>
+            <span class="text-muted-foreground" data-i18n="research.prereqPath">{t.research.prereqPath}</span>
             <span class="text-border mx-0.5">·</span>
             <button id="curr-exit-focus" class="text-muted-foreground hover:text-accent font-medium transition-colors">Esc</button>
           </div>
@@ -251,12 +259,19 @@ const domainDesc = entry.data.description;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const constraints = JSON.parse(container.dataset.constraints ?? "{}");
     const progressKey = container.dataset.progressKey ?? "curriculum-read";
-    const L = {
-      detail:   container.dataset.lDetail   ?? "Mở chi tiết →",
-      graph:    container.dataset.lGraph    ?? "Xem trong graph chính →",
-      arxiv:    container.dataset.lArxiv    ?? "Đọc paper (arXiv) →",
-      noDetail: container.dataset.lNodetail ?? "Chưa có trang chi tiết",
-    };
+    function getL() {
+      const lang = document.documentElement.getAttribute("data-lang") || "vi";
+      const d = container!.dataset as Record<string, string | undefined>;
+      function pick(key: string, fallback: string) {
+        return (lang === "en" ? d[key + "En"] : d[key + "Vi"]) ?? fallback;
+      }
+      return {
+        detail:   pick("lDetail",   "Mở chi tiết →"),
+        graph:    pick("lGraph",    "Xem trong graph chính →"),
+        arxiv:    pick("lArxiv",    "Đọc paper (arXiv) →"),
+        noDetail: pick("lNodetail", "Chưa có trang chi tiết"),
+      };
+    }
 
     // Hide canvas until layout settles, then fade in (same trick as the main
     // graph — avoids the initial-position flash *and* the stale-canvas bug where
@@ -406,15 +421,15 @@ const domainDesc = entry.data.description;
 
       let links = "";
       if (d.detailHref) {
-        links += `<a href="${d.detailHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.detail}</a>`;
+        links += `<a href="${d.detailHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${getL().detail}</a>`;
       }
       if (d.arxiv) {
-        links += `<a href="${d.arxiv}" target="_blank" rel="noopener" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.arxiv}</a>`;
+        links += `<a href="${d.arxiv}" target="_blank" rel="noopener" class="text-accent flex items-center gap-1 text-xs hover:underline">${getL().arxiv}</a>`;
       }
       if (d.graphHref) {
-        links += `<a href="${d.graphHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${L.graph}</a>`;
+        links += `<a href="${d.graphHref}" class="text-accent flex items-center gap-1 text-xs hover:underline">${getL().graph}</a>`;
       }
-      panelLinks.innerHTML = links || `<span class="text-muted-foreground text-xs italic">${L.noDetail}</span>`;
+      panelLinks.innerHTML = links || `<span class="text-muted-foreground text-xs italic">${getL().noDetail}</span>`;
 
       panel.classList.remove("translate-x-full");
     }
@@ -473,6 +488,15 @@ const domainDesc = entry.data.description;
     document.getElementById("curr-panel-close")?.addEventListener("click", exitFocus);
     document.getElementById("curr-exit-focus")?.addEventListener("click", exitFocus);
     document.addEventListener("keydown", e => { if (e.key === "Escape" && focusedId) exitFocus(); });
+
+    // Re-render open panel on lang switch so link labels update
+    const langObs = new MutationObserver(() => {
+      if (focusedId) {
+        const node = cy.getElementById(focusedId);
+        if (!node.empty()) showPanel(node);
+      }
+    });
+    langObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
     document.getElementById("curr-zoom-in")?.addEventListener("click", () =>
       cy.zoom({ level: cy.zoom() * 1.2, renderedPosition: { x: container.clientWidth / 2, y: container.clientHeight / 2 } }));

@@ -123,5 +123,12 @@ export interface UIStrings {
     noDesc: string;
     openPage: string;
     noResults: string;
+    related: string;
+    markAsRead: string;
+    prereqPath: string;
+    lDetail: string;
+    lGraph: string;
+    lArxiv: string;
+    lNoDetail: string;
   };
 }

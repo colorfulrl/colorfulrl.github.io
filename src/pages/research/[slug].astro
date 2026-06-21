@@ -43,7 +43,7 @@ const relatedNodes = graphNodes.filter(
       href="/research"
       class="text-muted-foreground hover:text-accent mb-6 inline-flex items-center gap-1 text-sm"
     >
-      ← {t.nav.research}
+      ← <span data-i18n="nav.research">{t.nav.research}</span>
     </a>
 
     <div class="max-w-2xl">
@@ -95,8 +95,8 @@ const relatedNodes = graphNodes.filter(
 
       {relatedNodes.length > 0 && (
         <div class="mt-10">
-          <h2 class="mb-3 text-sm font-medium uppercase tracking-wide opacity-60">
-            Liên quan
+          <h2 class="mb-3 text-sm font-medium uppercase tracking-wide opacity-60" data-i18n="research.related">
+            {t.research.related}
           </h2>
           <div class="flex flex-wrap gap-2">
             {relatedNodes.map(n => (

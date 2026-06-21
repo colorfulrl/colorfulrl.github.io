@@ -116,6 +116,13 @@
     "noRels":           { "vi": "Không có quan hệ",                                                           "en": "No relationships" },
     "noDesc":           { "vi": "Không có mô tả",                                                             "en": "No description" },
     "openPage":         { "vi": "Mở trang →",                                                                  "en": "Open page →" },
-    "noResults":        { "vi": "Không có kết quả",                                                           "en": "No results" }
+    "noResults":        { "vi": "Không có kết quả",                                                           "en": "No results" },
+    "related":          { "vi": "Liên quan",                                                                   "en": "Related" },
+    "markAsRead":       { "vi": "Đánh dấu đã đọc",                                                           "en": "Mark as read" },
+    "prereqPath":       { "vi": "Đường prereq",                                                               "en": "Prereq path" },
+    "lDetail":          { "vi": "Mở chi tiết →",                                                              "en": "Open detail →" },
+    "lGraph":           { "vi": "Xem trong graph chính →",                                                    "en": "View in main graph →" },
+    "lArxiv":           { "vi": "Đọc paper (arXiv) →",                                                       "en": "Read paper (arXiv) →" },
+    "lNoDetail":        { "vi": "Chưa có trang chi tiết",                                                     "en": "No detail page yet" }
   }
 }
