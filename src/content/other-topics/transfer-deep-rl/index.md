@@ -45,4 +45,15 @@ stages:
         after: [policy-distillation]
       - ref: pcgrad
         after: [ppo, progressive-neural-nets]
+
+  - id: s4-repr-transfer
+    label: "Representational Transfer: Pre-train từ Video & Images"
+    labelEn: "Representational Transfer: Pre-training from Video & Images"
+    items:
+      - ref: mvp
+        after: [tl-drl-survey]
+      - ref: r3m
+        after: [mvp]
+      - ref: vip
+        after: [r3m]
 ---
