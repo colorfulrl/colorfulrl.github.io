@@ -117,6 +117,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Rich, high-dimensional observations emitted from a small set of latent states, where each observation decodes to exactly one latent state (block structure). The formal setting for provably-efficient representation learning and exploration from pixels — more tractable than a general POMDP because observations are decodable.",
   },
+  {
+    id: "decoder-free",
+    type: "concept",
+    label: "Decoder-Free",
+    description:
+      "Learning a latent world model WITHOUT a pixel-reconstruction objective. Reconstruction wastes capacity on task-irrelevant visual detail and breaks under distractors, so decoder-free methods train the latent via self-prediction of value+actions (MuDreamer), redundancy reduction à la Barlow Twins (R2-Dreamer), or JEPA-style continuous-deterministic prediction (Dreamer-CDP) — usually trading reconstruction for an internal regularizer that prevents representation collapse.",
+  },
 
   // ── Architectures (G) ───────────────────────────────────────────
   {
@@ -591,6 +598,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "model-based-rl",       target: "world-models-concept", label: "includes" },
   { source: "world-models-concept", target: "latent-dynamics",      label: "uses" },
   { source: "latent-dynamics",      target: "rssm",                 label: "implements" },
+  { source: "latent-dynamics",      target: "decoder-free",         label: "variant: no recon" },
 
   // MDP formalisms (problem-formulation axis)
   { source: "rl",                   target: "pomdp",                label: "includes" },

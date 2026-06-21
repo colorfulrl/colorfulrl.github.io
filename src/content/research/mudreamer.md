@@ -11,6 +11,8 @@ graphDescription: "Burchi & Timofte (2024). Decoder-free DreamerV3 — learns la
 graphEdges:
   - target: model-based-rl
     label: based on
+  - target: decoder-free
+    label: instance of
   - target: dreamerv3
     label: extends
   - target: latent-dynamics

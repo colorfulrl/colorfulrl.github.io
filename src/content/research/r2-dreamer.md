@@ -11,6 +11,8 @@ graphDescription: "Morihira et al. (2026). Decoder-free MBRL with Barlow-Twins r
 graphEdges:
   - target: model-based-rl
     label: based on
+  - target: decoder-free
+    label: instance of
   - target: latent-dynamics
     label: uses
   - target: dreamerv3
