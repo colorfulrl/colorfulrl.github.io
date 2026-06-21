@@ -21,7 +21,7 @@ const t = useTranslations();
 
   <Breadcrumb />
 
-  <Main pageTitle={t.pages.categoriesTitle} pageDesc={t.pages.categoriesDesc}>
+  <Main pageTitle={t.pages.categoriesTitle} pageDesc={t.pages.categoriesDesc} i18nTitle="pages.categoriesTitle" i18nDesc="pages.categoriesDesc">
     <ul class="flex flex-wrap gap-3">
       {
         categories.map(({ category, categoryName }) => (

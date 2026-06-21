@@ -6,9 +6,13 @@ type Props = {
   pageDesc?: string;
   class?: string;
   wide?: boolean;
+  i18nTitle?: string;
+  i18nTitleSuffix?: string;
+  i18nDesc?: string;
+  i18nDescSuffix?: string;
 };
 
-const { pageTitle, pageDesc, class: className, wide } = Astro.props;
+const { pageTitle, pageDesc, class: className, wide, i18nTitle, i18nTitleSuffix, i18nDesc, i18nDescSuffix } = Astro.props;
 
 const backUrl = config.features.showBackButton ? Astro.url.pathname : "/";
 ---
@@ -23,8 +27,16 @@ const backUrl = config.features.showBackButton ? Astro.url.pathname : "/";
     className,
   ]}
 >
-  <h1 class="text-2xl font-semibold sm:text-3xl">{pageTitle}</h1>
-  <p class="mt-2 mb-6 italic">{pageDesc}</p>
+  <h1 class="text-2xl font-semibold sm:text-3xl">
+    {i18nTitle
+      ? <><span data-i18n={i18nTitle}>{pageTitle}</span>{i18nTitleSuffix ?? ""}</>
+      : pageTitle}
+  </h1>
+  <p class="mt-2 mb-6 italic">
+    {i18nDesc
+      ? <><span data-i18n={i18nDesc}>{pageDesc}</span>{i18nDescSuffix ?? ""}</>
+      : pageDesc}
+  </p>
   <slot />
 </main>
 

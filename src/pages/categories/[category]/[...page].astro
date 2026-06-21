@@ -44,8 +44,12 @@ const t = useTranslations();
   <Breadcrumb />
 
   <Main
-    pageTitle={`${t.pages.categoryTitle}: ${categoryName}`}
-    pageDesc={`${t.pages.categoryDesc} "${categoryName}".`}
+    pageTitle={t.pages.categoryTitle}
+    i18nTitle="pages.categoryTitle"
+    i18nTitleSuffix={`: ${categoryName}`}
+    pageDesc={t.pages.categoryDesc}
+    i18nDesc="pages.categoryDesc"
+    i18nDescSuffix={` "${categoryName}".`}
   >
     <ul>
       {page.data.map(data => <Card {...data} />)}
