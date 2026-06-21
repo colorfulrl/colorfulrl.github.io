@@ -162,7 +162,7 @@ const curriculumPaper = defineCollection({
 // ID format: "vi/<slug>/_en"
 const postsEn = defineCollection({
   loader: glob({ pattern: "**/_en.{md,mdx}", base: `./src/content/posts` }),
-  schema: z.object({}),
+  schema: z.unknown(),
 });
 
 export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper, postsEn };

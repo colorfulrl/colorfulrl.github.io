@@ -28,6 +28,11 @@
   @apply max-w-app mx-auto w-full px-4 sm:px-6 lg:px-8;
 }
 
+/* Bilingual content blocks: hide en by default, swap when html[data-lang="en"] */
+[data-lang-content="en"] { display: none; }
+html[data-lang="en"] [data-lang-content="en"] { display: block; }
+html[data-lang="en"] [data-lang-content="vi"] { display: none; }
+
 @utility max-w-prose-wide {
   /* Tighter measure for body prose so dòng đọc không quá dài khi container rộng */
   @apply mx-auto max-w-2xl md:max-w-3xl lg:max-w-4xl;

@@ -78,10 +78,19 @@ const {
 
 const { Content } = await render(post);
 
-// Load optional English body sidecar (_en.md alongside index.md)
-const enId = post.id.replace(/\/index$/, "/_en");
-const postEn = await getEntry("postsEn", enId);
-const { Content: ContentEn } = postEn ? await render(postEn) : { Content: null };
+// Load optional English body sidecar (_en.md alongside index.md).
+// NOTE: post.id is the frontmatter `slug` (e.g. "dreamer-v1-..."), so we derive
+// the sidecar id from filePath instead: "<dir-relative-to-posts>/_en".
+const enDir = post.filePath
+  ?.replace(/^.*?content\/posts\//, "")
+  .replace(/\/[^/]+$/, "");
+let ContentEn: Awaited<ReturnType<typeof render>>["Content"] | null = null;
+if (enDir) {
+  try {
+    const postEn = await getEntry("postsEn", `${enDir}/_en`);
+    if (postEn) ({ Content: ContentEn } = await render(postEn));
+  } catch { /* no sidecar — render vi only */ }
+}
 const ratingSlug = getPostSlug(post.id, post.filePath).replace(/^\//, "");
 
 let ogImageUrl: string | undefined;

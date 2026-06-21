@@ -33,6 +33,16 @@ function applyLang(lang: Lang) {
     }
   });
 
+  // Handle content-level data-en attributes (post titles, descriptions, etc.)
+  document.querySelectorAll<HTMLElement>("[data-en]").forEach(el => {
+    if (lang === "en") {
+      if (!el.dataset.vi) el.dataset.vi = el.textContent ?? "";
+      el.textContent = el.dataset.en!;
+    } else {
+      if (el.dataset.vi !== undefined) el.textContent = el.dataset.vi;
+    }
+  });
+
   // Update lang toggle buttons active state
   document.querySelectorAll<HTMLElement>("[data-lang-btn]").forEach(btn => {
     const active = btn.dataset.langBtn === lang;
