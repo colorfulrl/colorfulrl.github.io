@@ -18,14 +18,9 @@ const decodeSegment = (value: string) => {
   }
 };
 
-// Add new pages here + add nav.X key to ui.json — breadcrumb i18n is then automatic.
-const navLabels: Record<string, string> = {
-  posts: t.nav.posts,
-  tags: t.nav.tags,
-  about: t.nav.about,
-  archives: t.nav.archives,
-  search: t.nav.search,
-};
+// Every nav.X key in ui.json is a valid breadcrumb label automatically.
+// Adding a page = add its nav.X entry to ui.json; nothing to touch here.
+const navLabels = t.nav as unknown as Record<string, string>;
 
 interface BreadcrumbItem {
   text: string;
