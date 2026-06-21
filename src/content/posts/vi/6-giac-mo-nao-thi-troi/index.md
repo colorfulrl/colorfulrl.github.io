@@ -2,6 +2,7 @@
 author: Phạm Nhật Khoa
 pubDatetime: 2026-06-05T08:00:00+07:00
 title: "Giấc mơ nào thì trôi: tôi đi kiểm lời giải thích của chính mình"
+titleEn: "Which Dreams Drift: I Tested My Own Explanation"
 slug: giac-mo-nao-thi-troi
 featured: true
 draft: false
@@ -12,6 +13,8 @@ tags:
   - research
 description: >-
   Ở bài trước tôi nói giấc mơ của agent không trôi xa "vì môi trường tuần hoàn". Bài này tôi đi kiểm lời giải thích đó — tìm ra một môi trường nơi giấc mơ vỡ tung gấp 75 lần, rồi một thí nghiệm tiếp theo dạy tôi rằng tôi đã gọi sai tên: thứ thật sự quyết định không phải tính tuần hoàn mà là tính ổn định. Câu chuyện về việc để dữ liệu sửa chính mình hai lần, và vì sao nó giải thích một quyết định kiến trúc của Dreamer 4.
+descriptionEn: >-
+  In the previous post I said the agent's dreams don't drift "because the environment is cyclic." This post tests that claim — finding an environment where dreams collapse 75× worse, then a follow-up that taught me I had named the wrong thing: what actually decides drift is not cyclicity but stability. A story about letting data correct you twice, and why it explains an architectural choice in Dreamer 4.
 ---
 
 ## Table of contents

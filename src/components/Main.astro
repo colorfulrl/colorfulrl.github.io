@@ -10,9 +10,10 @@ type Props = {
   i18nTitleSuffix?: string;
   i18nDesc?: string;
   i18nDescSuffix?: string;
+  enTitle?: string;
 };
 
-const { pageTitle, pageDesc, class: className, wide, i18nTitle, i18nTitleSuffix, i18nDesc, i18nDescSuffix } = Astro.props;
+const { pageTitle, pageDesc, class: className, wide, i18nTitle, i18nTitleSuffix, i18nDesc, i18nDescSuffix, enTitle } = Astro.props;
 
 const backUrl = config.features.showBackButton ? Astro.url.pathname : "/";
 ---
@@ -27,7 +28,7 @@ const backUrl = config.features.showBackButton ? Astro.url.pathname : "/";
     className,
   ]}
 >
-  <h1 class="text-2xl font-semibold sm:text-3xl">
+  <h1 class="text-2xl font-semibold sm:text-3xl" data-en={enTitle || undefined}>
     {i18nTitle
       ? <><span data-i18n={i18nTitle}>{pageTitle}</span>{i18nTitleSuffix ?? ""}</>
       : pageTitle}

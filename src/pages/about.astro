@@ -9,6 +9,7 @@ import FloatingDecor from "@/components/decor/FloatingDecor.astro";
 import config from "@/config";
 
 const about = await getEntry("pages", "about");
+const aboutEn = await getEntry("pages", "about-en");
 
 if (!about) {
   throw new Error(
@@ -16,7 +17,8 @@ if (!about) {
   );
 }
 
-const { Content } = await render(about);
+const { Content: ContentVi } = await render(about);
+const { Content: ContentEn } = aboutEn ? await render(aboutEn) : { Content: null };
 ---
 
 <Layout
@@ -30,8 +32,19 @@ const { Content } = await render(about);
 
   <Breadcrumb />
 
-  <Main pageTitle={about.data.title} class="app-prose">
-    <Content />
+  <Main
+    pageTitle={about.data.title}
+    enTitle={aboutEn?.data.title}
+    class="app-prose"
+  >
+    <div data-lang-content="vi">
+      <ContentVi />
+    </div>
+    {ContentEn && (
+      <div data-lang-content="en">
+        <ContentEn />
+      </div>
+    )}
   </Main>
 
   <Footer />

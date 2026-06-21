@@ -2,6 +2,7 @@
 author: Phạm Nhật Khoa
 pubDatetime: 2026-06-08T20:00:00+07:00
 title: "Tôi suýt tưởng mình vượt DreamerV3: bốn cái bẫy khi đọc một con số"
+titleEn: "I Almost Thought I Beat DreamerV3: Four Traps When Reading a Number"
 slug: suyt-tuong-vuot-sota
 featured: true
 draft: false
@@ -18,6 +19,12 @@ description: >-
   giác đó ra như thế nào: bốn confound nối nhau, mỗi cái nuốt một phần khoảng cách, cho tới
   khi 860-so-với-596 chẳng còn nghĩa là gì. Một bài học về việc một con số trần trụi gần như
   luôn nói dối.
+descriptionEn: >-
+  I reimplemented DreamerV3 in PyTorch, ran it on cheetah, and got 860 — while DreamerV3's
+  official leaderboard says 596. For about thirty seconds I believed I had just beaten one of
+  the strongest algorithms in the field. This post is how I dismantled that feeling: four
+  confounds chained together, each swallowing part of the gap, until 860-vs-596 meant nothing.
+  A lesson in how a bare number almost always lies.
 ---
 
 ## Table of contents

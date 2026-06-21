@@ -65,6 +65,7 @@ const { post, prevPost, nextPost } = Astro.props;
 
 const {
   title,
+  titleEn,
   description,
   ogImage: initOgImage,
   canonicalURL,
@@ -123,6 +124,7 @@ const ogImage = ogImageUrl
     <h1
       style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
       class="font-display text-accent inline-block text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
+      data-en={titleEn || undefined}
     >
       {title}
     </h1>

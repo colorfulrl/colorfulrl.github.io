@@ -11,7 +11,7 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, ...props } = data;
+const { title, titleEn, description, descriptionEn, ...props } = data;
 
 const t = useTranslations();
 
@@ -27,7 +27,10 @@ const postSlug = getPostSlug(id, filePath).replace(/^\//, "");
       "focus-visible:no-underline focus-visible:underline-offset-0",
     ]}
   >
-    <Heading transition:name={slugifyStr(title.replaceAll(".", "-"))}>
+    <Heading
+      transition:name={slugifyStr(title.replaceAll(".", "-"))}
+      data-en={titleEn || undefined}
+    >
       {title}
     </Heading>
   </a>
@@ -40,5 +43,5 @@ const postSlug = getPostSlug(id, filePath).replace(/^\//, "");
     ></span>
     <span data-rating-stat class="text-muted-foreground text-sm"></span>
   </div>
-  <p>{description}</p>
+  <p data-en={descriptionEn || undefined}>{description}</p>
 </li>

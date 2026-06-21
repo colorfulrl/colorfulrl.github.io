@@ -2,6 +2,7 @@
 author: Phạm Nhật Khoa
 pubDatetime: 2026-05-24T20:00:00+07:00
 title: "Dreamer V1: học hành vi bên trong giấc mơ"
+titleEn: "Dreamer V1: Learning Behavior Inside Dreams"
 slug: dreamer-v1-hoc-trong-giac-mo
 featured: true
 draft: false
@@ -12,6 +13,8 @@ tags:
   - rssm
 description: >-
   Giải thích Dreamer V1 (Hafner 2020) theo lối trực giác trước, công thức sau: world model trong không gian ẩn, học hành vi hoàn toàn bằng tưởng tượng, và mẹo pathwise gradient chảy xuyên qua mô hình. Kèm một ví dụ số λ-return chạy tay.
+descriptionEn: >-
+  An intuition-first, equations-second walkthrough of Dreamer V1 (Hafner 2020): world model in latent space, behavior learning purely in imagination, and the pathwise gradient trick flowing through the model. Includes a worked numerical λ-return example.
 ---
 
 ## Table of contents

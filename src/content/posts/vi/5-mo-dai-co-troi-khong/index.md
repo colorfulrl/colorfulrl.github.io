@@ -2,6 +2,7 @@
 author: Phạm Nhật Khoa
 pubDatetime: 2026-06-04T21:30:00+07:00
 title: "Mơ dài có trôi không? Ba giả thuyết sai và một câu trả lời cho Dreamer 4"
+titleEn: "Do Long Dreams Drift? Three Wrong Hypotheses and One Answer for Dreamer 4"
 slug: mo-dai-co-troi-khong
 featured: true
 draft: false
@@ -12,6 +13,8 @@ tags:
   - research
 description: >-
   Dreamer học hành vi hoàn toàn bằng cách "mơ" tương lai trong world model. Câu hỏi tự nhiên: mơ càng dài, giấc mơ có trôi xa thực tế không (compounding error)? Tôi đo trực tiếp hiện tượng đó, đặt ba giả thuyết — và sai cả ba. Nhưng ba cái sai khớp nhau thành câu trả lời cho việc vì sao Dreamer 4 phải đổi kiến trúc.
+descriptionEn: >-
+  Dreamer learns behavior purely by "dreaming" the future inside a world model. Natural question: do longer dreams drift further from reality (compounding error)? I measured this directly, formed three hypotheses — and got all three wrong. But the three misses together form an answer for why Dreamer 4 had to change its architecture.
 ---
 
 ## Table of contents

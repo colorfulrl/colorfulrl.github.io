@@ -2,6 +2,7 @@
 author: Phạm Nhật Khoa
 pubDatetime: 2026-06-04T20:00:00+07:00
 title: "Một hyperparameter, hai cách hỏng: dự án nghiên cứu đầu tiên của tôi"
+titleEn: "One Hyperparameter, Two Failure Modes: My First Research Project"
 slug: free-nats-hai-co-che-hong
 featured: true
 draft: false
@@ -12,6 +13,8 @@ tags:
   - research
 description: >-
   Một con số nhảy 44% khi tôi đổi đúng một hyperparameter (free nats) trong Dreamer. Thay vì hài lòng, tôi biến nó thành một thí nghiệm có kỷ luật — và phát hiện free nats hỏng theo HAI cơ chế khác nhau ở hai đầu. Đây là câu chuyện dự án nghiên cứu đầu tiên của tôi, kể cả kết quả lẫn cách làm.
+descriptionEn: >-
+  A single number jumped 44% when I changed one hyperparameter (free nats) in Dreamer. Instead of stopping there, I turned it into a disciplined experiment — and found that free nats fails via TWO distinct mechanisms at opposite ends. The story of my first research project: results and process alike.
 ---
 
 ## Table of contents

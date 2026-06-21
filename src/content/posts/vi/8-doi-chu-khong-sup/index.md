@@ -2,6 +2,7 @@
 author: Phạm Nhật Khoa
 pubDatetime: 2026-06-09T20:00:00+07:00
 title: "Đói chứ không sụp: khi reward cạn, và làm sao tôi biết cái thước của mình không mù"
+titleEn: "Hungry, Not Collapsed: When Rewards Run Dry, and How I Verified My Metric Wasn't Blind"
 slug: doi-chu-khong-sup
 featured: true
 draft: false
@@ -17,6 +18,12 @@ description: >-
   Dreamer tự dựng và thấy biểu diễn vẫn khỏe nguyên dù policy chết hẳn — starvation, không
   collapse. Nhưng câu chuyện thật của bài này là một bẫy phương pháp: một con số "không đổi"
   chẳng chứng minh được gì cho tới khi tôi chứng minh được cái thước đo nó *có thể* đổi.
+descriptionEn: >-
+  When an agent learns poorly under sparse reward, there are two very different diagnoses: its
+  internal representation collapsed, or the policy is just starved of signal. I measured this
+  on my own Dreamer build and found the representation stayed healthy while the policy died —
+  starvation, not collapse. But the real story is a methodological trap: a number that "doesn't
+  change" proves nothing until you prove the measure *can* change.
 ---
 
 ## Table of contents
