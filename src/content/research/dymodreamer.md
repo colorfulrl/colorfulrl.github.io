@@ -9,6 +9,8 @@ draft: false
 graphLabel: "DyMoDreamer"
 graphDescription: "Zhang et al. (2025). Inter-frame differencing mask decouples dynamic objects from static background → stochastic categorical modulation injected into RSSM. SOTA Atari 100k 156.6% HNS, DMControl 832, Crafter +9.5%."
 graphEdges:
+  - target: decoder-free
+    label: instance of
   - target: model-based-rl
     label: based on
   - target: rssm
