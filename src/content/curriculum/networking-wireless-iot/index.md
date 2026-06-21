@@ -1,37 +1,64 @@
 ---
 domain: "Networking, Wireless & IoT"
-description: "Lộ trình RL cho mạng: cấp phát tài nguyên không dây, định tuyến, điều khiển nghẽn, và biên IoT/UAV."
-descriptionEn: "An RL-for-networking path: wireless resource allocation, routing, congestion control, and IoT/UAV edge."
+description: "Lộ trình RL cho mạng/hệ thống: điều khiển trực tuyến dưới bất định. Từ survey, qua congestion control, adaptive streaming & resource scheduling (Pensieve, DeepRM), tới cấp phát tài nguyên không dây và biên IoT."
+descriptionEn: "An RL-for-networking/systems path: online control under uncertainty. From a survey, through congestion control, adaptive streaming & resource scheduling (Pensieve, DeepRM), to wireless resource allocation and IoT edge."
 order: 10
 draft: false
 stages:
-  - id: prerequisites
-    label: "Nền tảng (Core-RL)"
-    labelEn: "Prerequisites (Core-RL)"
+  - id: survey
+    label: "Survey & Nền tảng"
+    labelEn: "Survey & Foundations"
     items:
       - ref: dqn
-      - ref: ddpg
-  - id: core
-    label: "Cốt lõi"
-    labelEn: "Core"
-    items:
-      - ref: drl-resource-allocation
+      - ref: ppo
+      - ref: a3c
+      - ref: luong-survey
         after: [dqn]
-      - ref: drl-experience-driven-networking
-        after: [ddpg]
-  - id: advanced
-    label: "Nâng cao"
-    labelEn: "Advanced"
+  - id: congestion
+    label: "Điều khiển Nghẽn (Transport)"
+    labelEn: "Congestion Control (Transport)"
     items:
-      - ref: drl-uav-iot
-        after: [drl-resource-allocation]
+      - ref: aurora-congestion
+        after: [ppo]
+  - id: systems
+    label: "Streaming & Lập lịch Tài nguyên"
+    labelEn: "Streaming & Resource Scheduling"
+    items:
+      - ref: pensieve
+        after: [a3c]
+      - ref: deeprm
+        after: [a3c]
+  - id: wireless
+    label: "Cấp phát Tài nguyên Không dây"
+    labelEn: "Wireless Resource Allocation"
+    items:
+      - ref: wireless-resource-allocation
+        after: [dqn]
+  - id: edge-iot
+    label: "Biên & IoT Offloading"
+    labelEn: "Edge & IoT Offloading"
+    items:
+      - ref: edge-offloading
+        after: [ppo]
 ---
 
-Mạng và viễn thông là bài toán điều khiển trực tuyến dưới bất định: **cấp phát
-tài nguyên** (phổ, công suất, băng thông), **định tuyến** thích nghi, **điều
-khiển nghẽn**, và điều phối **biên IoT/UAV**. RL hấp dẫn vì môi trường thay đổi
-liên tục và mô hình giải tích khó. Mốc: **DRL cho cấp phát tài nguyên không
-dây**, **experience-driven networking** (DRL-TE, Xu 2018), điều phối **UAV-IoT**.
-Đây là mảng systems — phù hợp page orientation ngắn hơn là lineage sâu.
+Mạng và hệ thống là bài toán **điều khiển trực tuyến dưới bất định**: lưu lượng và
+điều kiện mạng thay đổi liên tục, mô hình giải tích khó — RL học policy bắt được
+mẫu phức tạp từ dữ liệu. Nhóm MIT (Mao, Alizadeh) khởi xướng phần lớn dòng
+"systems + RL".
 
-> **Prerequisite**: DQN, DDPG từ [Core-RL graph](/research).
+Năm nhánh:
+
+- **Congestion Control**: điều tiết tốc độ gửi để dùng hết băng thông mà không gây
+  nghẽn — **Aurora** (Jay 2019) đóng khung thành RL, nêu thách thức thật: fairness,
+  safety, generalization.
+- **Adaptive Streaming (ABR)**: **Pensieve** (Mao 2017) dùng A3C chọn bitrate video
+  theo throughput/buffer quá khứ, học từ mô phỏng, vượt heuristic thủ công.
+- **Lập lịch Tài nguyên**: **DeepRM** (Mao 2016) đóng gói job lên cụm tài nguyên đa
+  chiều như bài toán RL (reward = -slowdown). Mốc systems-RL đầu tiên.
+- **Cấp phát Không dây**: phổ/công suất/băng thông, dynamic channel access.
+- **Biên & IoT**: offloading tính toán từ thiết bị IoT lên edge/cloud, điều phối UAV.
+
+> **Prerequisite**: DQN, PPO, A3C từ [Core-RL graph](/research). *Aurora + Luong
+> survey đã verified; Pensieve/DeepRM mô tả từ kiến thức (không trên arXiv); 2 nhánh
+> wireless/edge đang stub — metadata chờ Khoa cung cấp survey.*
