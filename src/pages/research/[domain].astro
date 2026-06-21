@@ -116,6 +116,7 @@ const constraintsJson = JSON.stringify({ stageGroups, fixedNodeConstraint });
 
 const stageLabels = entry.data.stages.map((s, i) => ({
   label: s.label,
+  labelEn: s.labelEn,
   color: STAGE_COLORS[i % STAGE_COLORS.length],
 }));
 
@@ -147,7 +148,7 @@ const tEn = useTranslations("en");
                 {i > 0 && <span class="text-border shrink-0">→</span>}
                 <span class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs">
                   <span class="size-2.5 rounded-full" style={`background-color:${s.color}`}></span>
-                  <span class="text-muted-foreground">{s.label}</span>
+                  <span class="text-muted-foreground" data-en={s.labelEn && s.labelEn !== s.label ? s.labelEn : undefined}>{s.label}</span>
                 </span>
               </>
             ))}
