@@ -1,5 +1,5 @@
 ---
-domain: "Lái xe tự hành"
+domain: "Autonomous Driving"
 description: "Lộ trình từ học bắt chước hành vi lái (imitation) tới RL trên xe thật và world model lái xe — nơi compounding error và long-tail là cạm bẫy sống còn. Giả định đã biết imitation learning từ Core-RL."
 descriptionEn: "A path from imitation of driving behaviour to real-car RL and driving world models — where compounding error and the long tail are existential pitfalls. Assumes imitation learning from Core-RL."
 order: 2
