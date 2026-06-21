@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
+import { type CollectionEntry, getCollection, getEntry, render } from "astro:content";
 import PostLayout from "@/layouts/PostLayout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
@@ -77,6 +77,11 @@ const {
 } = post.data;
 
 const { Content } = await render(post);
+
+// Load optional English body sidecar (_en.md alongside index.md)
+const enId = post.id.replace(/\/index$/, "/_en");
+const postEn = await getEntry("postsEn", enId);
+const { Content: ContentEn } = postEn ? await render(postEn) : { Content: null };
 const ratingSlug = getPostSlug(post.id, post.filePath).replace(/^\//, "");
 
 let ogImageUrl: string | undefined;
@@ -153,7 +158,14 @@ const ogImage = ogImageUrl
         "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
       ]}
     >
-      <Content />
+      {ContentEn ? (
+        <>
+          <div data-lang-content="vi"><Content /></div>
+          <div data-lang-content="en"><ContentEn /></div>
+        </>
+      ) : (
+        <Content />
+      )}
     </article>
 
     <hr class="my-8 border-dashed" />

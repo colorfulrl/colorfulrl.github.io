@@ -13,6 +13,7 @@ const posts = defineCollection({
       pubDatetime: z.date(),
       modDatetime: z.date().optional().nullable(),
       title: z.string(),
+      titleEn: z.string().optional(),
       featured: z.boolean().optional(),
       draft: z.boolean().optional(),
       tags: z.array(z.string()).default(["others"]),
@@ -21,6 +22,7 @@ const posts = defineCollection({
       category: z.string().optional(),
       ogImage: image().or(z.string()).optional(),
       description: z.string(),
+      descriptionEn: z.string().optional(),
       canonicalURL: z.string().optional(),
       hideEditPost: z.boolean().optional(),
       timezone: z.string().optional(),
@@ -156,4 +158,11 @@ const curriculumPaper = defineCollection({
   }),
 });
 
-export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper };
+// English body sidecar files: vi/*/  _en.md  (underscore prefix excluded from `posts` glob).
+// ID format: "vi/<slug>/_en"
+const postsEn = defineCollection({
+  loader: glob({ pattern: "**/_en.{md,mdx}", base: `./src/content/posts` }),
+  schema: z.object({}),
+});
+
+export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper, postsEn };
