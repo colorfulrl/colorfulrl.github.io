@@ -16,6 +16,9 @@ const { nodes, edges } = buildResearchGraph(entries);
 const curricula = (await getCollection("curriculum", e => !e.data.draft))
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 
+const otherTopics = (await getCollection("otherTopics", e => !e.data.draft))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
 const graphData = {
   nodes: nodes.map(n => ({
     data: {
@@ -232,6 +235,40 @@ const graphJson = JSON.stringify(graphData);
         </p>
         <div class="mt-6 grid gap-4 sm:grid-cols-2">
           {curricula.map(d => {
+            const paperCount = d.data.stages.reduce((n, s) => n + s.items.length, 0);
+            return (
+              <a href={`/research/${d.id}`}
+                class="border-border hover:border-accent group rounded-xl border p-5 transition-colors">
+                <h3 class="font-display group-hover:text-accent text-base font-semibold transition-colors">{d.data.domain}</h3>
+                <p class="text-muted-foreground mt-2 text-sm leading-relaxed line-clamp-3"
+                  data-en={d.data.descriptionEn || undefined}>
+                  {d.data.description}
+                </p>
+                <div class="text-muted-foreground mt-3 flex items-center gap-3 text-xs">
+                  <span>{d.data.stages.length} <span data-i18n="research.stages">{t.research.stages}</span></span>
+                  <span>·</span>
+                  <span>{paperCount} paper</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Other Topics section ────────────────────────────────────────────── -->
+  {otherTopics.length > 0 && (
+    <section class="app-layout">
+      <div class="border-border w-full border-t py-10">
+        <h2 class="font-display text-2xl font-semibold tracking-tight" data-i18n="research.otherTopicsTitle">
+          {t.research.otherTopicsTitle}
+        </h2>
+        <p class="text-muted-foreground mt-2 max-w-2xl text-sm" data-i18n="research.otherTopicsDesc">
+          {t.research.otherTopicsDesc}
+        </p>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          {otherTopics.map(d => {
             const paperCount = d.data.stages.reduce((n, s) => n + s.items.length, 0);
             return (
               <a href={`/research/${d.id}`}

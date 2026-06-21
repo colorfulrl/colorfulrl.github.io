@@ -130,5 +130,7 @@ export interface UIStrings {
     lGraph: string;
     lArxiv: string;
     lNoDetail: string;
+    otherTopicsTitle: string;
+    otherTopicsDesc: string;
   };
 }
