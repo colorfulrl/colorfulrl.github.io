@@ -6,9 +6,9 @@ import { getCollection } from "astro:content";
 import { buildResearchGraph } from "@/utils/buildResearchGraph";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
-import { Content as ResearchIntro } from "./_intro.md";
 
 const t = useTranslations();
+const tEn = useTranslations("en");
 
 const entries = await getCollection("research");
 const { nodes, edges } = buildResearchGraph(entries);
@@ -49,7 +49,7 @@ const graphJson = JSON.stringify(graphData);
 
         <!-- Row 1: Type filter buttons — scrollable, never wraps -->
         <div class="flex items-center gap-0.5 overflow-x-auto" style="scrollbar-width:none">
-          <span class="text-foreground mr-2 shrink-0 text-sm font-medium">{t.nav.research}</span>
+          <span class="text-foreground mr-2 shrink-0 text-sm font-medium" data-i18n="nav.research">{t.nav.research}</span>
           <button data-type-btn="topic"
             class="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-all hover:bg-surface">
             <span class="bg-red-500 size-2.5 rounded-full"></span>
@@ -103,6 +103,7 @@ const graphJson = JSON.stringify(graphData);
                 id="cy-search"
                 type="text"
                 placeholder="Tìm node, khái niệm, paper..."
+                data-en-placeholder="Search nodes, concepts, papers..."
                 autocomplete="off"
                 class="border-border bg-surface/50 focus:border-accent w-full rounded-md border py-1 pl-8 pr-16 text-xs outline-none transition-colors focus:ring-1 focus:ring-accent/20"
               />
@@ -111,7 +112,8 @@ const graphJson = JSON.stringify(graphData);
               </span>
               <button id="cy-search-clear"
                 class="text-muted-foreground hover:text-foreground absolute right-1.5 hidden rounded p-0.5 transition-colors"
-                aria-label="Xóa tìm kiếm">
+                aria-label="Xóa tìm kiếm"
+                data-en-aria-label="Clear search">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                   class="size-3.5">
@@ -140,12 +142,18 @@ const graphJson = JSON.stringify(graphData);
     <div
       id="cy-graph-wrap"
       class="relative flex-1 flex overflow-hidden"
-      data-connects-to="Kết nối tới"
-      data-connected-from="Được kết nối bởi"
-      data-no-rels="Không có quan hệ"
-      data-no-desc="Không có mô tả"
-      data-open-page="Mở trang →"
-      data-no-results="Không có kết quả"
+      data-connects-to-vi={t.research.connectsTo}
+      data-connects-to-en={tEn.research.connectsTo}
+      data-connected-from-vi={t.research.connectedFrom}
+      data-connected-from-en={tEn.research.connectedFrom}
+      data-no-rels-vi={t.research.noRels}
+      data-no-rels-en={tEn.research.noRels}
+      data-no-desc-vi={t.research.noDesc}
+      data-no-desc-en={tEn.research.noDesc}
+      data-open-page-vi={t.research.openPage}
+      data-open-page-en={tEn.research.openPage}
+      data-no-results-vi={t.research.noResults}
+      data-no-results-en={tEn.research.noResults}
     >
       <div id="cy" class="flex-1 w-full" data-graph={graphJson}></div>
 
@@ -153,7 +161,8 @@ const graphJson = JSON.stringify(graphData);
       <aside
         id="cy-rel-panel"
         class="border-border bg-background/97 absolute right-0 top-0 bottom-0 z-10 w-64 translate-x-full overflow-y-auto border-l shadow-xl backdrop-blur-sm transition-transform duration-200"
-        aria-label="Quan hệ node"
+        aria-label={t.research.noRels}
+        data-en-aria-label="Node relationships"
       >
         <!-- Panel header -->
         <div class="border-border flex items-start justify-between border-b px-3 py-2.5">
@@ -166,7 +175,8 @@ const graphJson = JSON.stringify(graphData);
           </div>
           <button id="cy-panel-close"
             class="text-muted-foreground hover:text-foreground ml-2 mt-0.5 shrink-0 rounded p-0.5 transition-colors"
-            aria-label="Đóng">
+            aria-label="Đóng"
+            data-en-aria-label="Close">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               class="size-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -185,7 +195,7 @@ const graphJson = JSON.stringify(graphData);
           <span class="text-muted-foreground">Focus:</span>
           <span id="cy-focus-label" class="text-foreground max-w-[8rem] truncate font-medium"></span>
           <span class="text-border mx-0.5">·</span>
-          <span class="text-muted-foreground">Lân cận</span>
+          <span class="text-muted-foreground" data-i18n="research.vicinity">{t.research.vicinity}</span>
           <button data-depth="1" class="text-accent rounded px-1 font-semibold transition-colors hover:text-accent">1</button>
           <button data-depth="2" class="text-muted-foreground rounded px-1 transition-colors hover:text-accent">2</button>
           <span class="text-border mx-0.5">·</span>
@@ -205,7 +215,7 @@ const graphJson = JSON.stringify(graphData);
         <p id="cy-tooltip-title" class="font-display font-semibold leading-snug"></p>
       </div>
       <p id="cy-tooltip-desc" class="text-muted-foreground mt-1.5 text-xs leading-relaxed"></p>
-      <p id="cy-tooltip-hint" class="text-accent mt-2 hidden text-xs">Nhấn để xem chi tiết →</p>
+      <p id="cy-tooltip-hint" class="text-accent mt-2 hidden text-xs" data-i18n="research.clickForDetails">{t.research.clickForDetails}</p>
     </div>
   </div>
   <!-- ── /Graph section ─────────────────────────────────────────────── -->
@@ -214,11 +224,11 @@ const graphJson = JSON.stringify(graphData);
   {curricula.length > 0 && (
     <section class="app-layout">
       <div class="border-border w-full border-t py-10">
-        <h2 class="font-display text-2xl font-semibold tracking-tight">
-          Lộ trình học
+        <h2 class="font-display text-2xl font-semibold tracking-tight" data-i18n="research.curriculumTitle">
+          {t.research.curriculumTitle}
         </h2>
-        <p class="text-muted-foreground mt-2 max-w-2xl text-sm">
-          Lộ trình đọc theo từng domain: nền tảng → cốt lõi → nâng cao.
+        <p class="text-muted-foreground mt-2 max-w-2xl text-sm" data-i18n="research.curriculumDesc">
+          {t.research.curriculumDesc}
         </p>
         <div class="mt-6 grid gap-4 sm:grid-cols-2">
           {curricula.map(d => {
@@ -231,7 +241,7 @@ const graphJson = JSON.stringify(graphData);
                   {d.data.description}
                 </p>
                 <div class="text-muted-foreground mt-3 flex items-center gap-3 text-xs">
-                  <span>{d.data.stages.length} giai đoạn</span>
+                  <span>{d.data.stages.length} <span data-i18n="research.stages">{t.research.stages}</span></span>
                   <span>·</span>
                   <span>{paperCount} paper</span>
                 </div>
@@ -246,9 +256,9 @@ const graphJson = JSON.stringify(graphData);
   <!-- ── Research notes ────────────────────────────────────────────────── -->
   <div class="app-layout">
     <div class="border-border w-full border-t py-14">
-      <article class="app-prose max-w-3xl prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)">
-        <ResearchIntro />
-      </article>
+      <h2 class="font-display text-2xl font-semibold tracking-tight" data-i18n="research.introTitle">
+        {t.research.introTitle}
+      </h2>
     </div>
   </div>
 
@@ -357,16 +367,23 @@ const graphJson = JSON.stringify(graphData);
     // settles (called at the end of init). Fallback in case it never fires.
     window.setTimeout(() => { container.style.opacity = "1"; }, 1500);
 
-    // ── Locale strings from data attributes ───────────────────────────────────
+    // ── Locale strings — reads current lang on each call ──────────────────────
     const wrap = document.getElementById("cy-graph-wrap");
-    const L = {
-      connectsTo:    wrap?.dataset.connectsTo    ?? "Kết nối tới",
-      connectedFrom: wrap?.dataset.connectedFrom ?? "Được kết nối bởi",
-      noRels:        wrap?.dataset.noRels        ?? "Không có quan hệ",
-      noDesc:        wrap?.dataset.noDesc        ?? "Không có mô tả",
-      openPage:      wrap?.dataset.openPage      ?? "Mở trang →",
-      noResults:     wrap?.dataset.noResults     ?? "Không có kết quả",
-    };
+    function getL() {
+      const lang = document.documentElement.getAttribute("data-lang") || "vi";
+      const d = (wrap?.dataset ?? {}) as Record<string, string | undefined>;
+      function pick(key: string, fallback: string) {
+        return (lang === "en" ? d[key + "En"] : d[key + "Vi"]) ?? fallback;
+      }
+      return {
+        connectsTo:    pick("connectsTo",    "Kết nối tới"),
+        connectedFrom: pick("connectedFrom", "Được kết nối bởi"),
+        noRels:        pick("noRels",        "Không có quan hệ"),
+        noDesc:        pick("noDesc",        "Không có mô tả"),
+        openPage:      pick("openPage",      "Mở trang →"),
+        noResults:     pick("noResults",     "Không có kết quả"),
+      };
+    }
 
     // ── State ─────────────────────────────────────────────────────────────────
     const BACKBONE_TYPES = ["topic", "approach", "concept", "architecture", "algorithm"];
@@ -546,7 +563,7 @@ const graphJson = JSON.stringify(graphData);
     function showDropdown(results: FuseResult<NodeDoc>[]) {
       if (!dropdown) return;
       if (results.length === 0) {
-        dropdown.innerHTML = `<p class="px-4 py-3 text-xs text-muted-foreground">${L.noResults}</p>`;
+        dropdown.innerHTML = `<p class="px-4 py-3 text-xs text-muted-foreground">${getL().noResults}</p>`;
         dropdown.classList.remove("hidden");
         return;
       }
@@ -688,7 +705,7 @@ const graphJson = JSON.stringify(graphData);
       panelTitle.textContent = label;
       panelBadge.textContent = type;
       panelBadge.className = `shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_BADGE[type] ?? "bg-zinc-100 text-zinc-600"}`;
-      panelDesc.textContent = description || L.noDesc;
+      panelDesc.textContent = description || getL().noDesc;
 
       // Build relationships grouped by direction
       interface RelItem { edgeLabel: string; nodeLabel: string; nodeId: string }
@@ -714,15 +731,15 @@ const graphJson = JSON.stringify(graphData);
       let html = "";
 
       if (outgoing.length === 0 && incoming.length === 0) {
-        html = `<p class="text-muted-foreground text-xs italic">${L.noRels}</p>`;
+        html = `<p class="text-muted-foreground text-xs italic">${getL().noRels}</p>`;
       } else {
         if (outgoing.length > 0) {
-          html += `<p class="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-wider">${L.connectsTo}</p>`;
+          html += `<p class="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-wider">${getL().connectsTo}</p>`;
           html += outgoing.map(r => relItem(r.nodeId, r.nodeLabel, r.edgeLabel, "→")).join("");
         }
         if (incoming.length > 0) {
           if (outgoing.length > 0) html += `<div class="my-3 border-t border-border"></div>`;
-          html += `<p class="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-wider">${L.connectedFrom}</p>`;
+          html += `<p class="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-wider">${getL().connectedFrom}</p>`;
           html += incoming.map(r => relItem(r.nodeId, r.nodeLabel, r.edgeLabel, "←")).join("");
         }
       }
@@ -731,7 +748,7 @@ const graphJson = JSON.stringify(graphData);
         html += `<div class="mt-4 border-t border-border pt-3">
           <a href="${href}"
             class="text-accent flex items-center gap-1 text-xs hover:underline">
-            ${L.openPage}
+            ${getL().openPage}
           </a>
         </div>`;
       }
@@ -997,6 +1014,15 @@ const graphJson = JSON.stringify(graphData);
         if (!n.empty()) enterFocus(n);
       }, 500);
     }
+
+    // Re-render open panel when lang switches (getL() re-reads lang on each call)
+    const langObs = new MutationObserver(() => {
+      if (focusedNodeId) {
+        const node = cy.getElementById(focusedNodeId);
+        if (!node.empty()) showRelPanel(node);
+      }
+    });
+    langObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
   }
 
   document.addEventListener("astro:page-load", initGraph);

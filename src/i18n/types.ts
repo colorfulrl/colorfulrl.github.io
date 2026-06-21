@@ -110,4 +110,18 @@ export interface UIStrings {
     message: string;
     goHome: string;
   };
+  research: {
+    curriculumTitle: string;
+    curriculumDesc: string;
+    stages: string;
+    introTitle: string;
+    clickForDetails: string;
+    vicinity: string;
+    connectsTo: string;
+    connectedFrom: string;
+    noRels: string;
+    noDesc: string;
+    openPage: string;
+    noResults: string;
+  };
 }

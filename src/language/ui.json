@@ -103,5 +103,19 @@
     "title":   { "vi": "404 — Không tìm thấy", "en": "404 Not Found" },
     "message": { "vi": "Trang này không tồn tại", "en": "Page Not Found" },
     "goHome":  { "vi": "Về trang chủ",          "en": "Go back home" }
+  },
+  "research": {
+    "curriculumTitle":  { "vi": "Lộ trình học",                                                                "en": "Learning Roadmap" },
+    "curriculumDesc":   { "vi": "Lộ trình đọc theo từng domain: nền tảng → cốt lõi → nâng cao.",             "en": "Reading path by domain: foundation → core → advanced." },
+    "stages":           { "vi": "giai đoạn",                                                                   "en": "stages" },
+    "introTitle":       { "vi": "Những nghiên cứu",                                                           "en": "My Research" },
+    "clickForDetails":  { "vi": "Nhấn để xem chi tiết →",                                                     "en": "Click to see details →" },
+    "vicinity":         { "vi": "Lân cận",                                                                     "en": "Nearby" },
+    "connectsTo":       { "vi": "Kết nối tới",                                                                 "en": "Connects to" },
+    "connectedFrom":    { "vi": "Được kết nối bởi",                                                           "en": "Connected from" },
+    "noRels":           { "vi": "Không có quan hệ",                                                           "en": "No relationships" },
+    "noDesc":           { "vi": "Không có mô tả",                                                             "en": "No description" },
+    "openPage":         { "vi": "Mở trang →",                                                                  "en": "Open page →" },
+    "noResults":        { "vi": "Không có kết quả",                                                           "en": "No results" }
   }
 }
