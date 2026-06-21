@@ -11,6 +11,8 @@ graphDescription: "Bredis et al. (2026). Decoder-free WM: temporal Transformer p
 graphEdges:
   - target: model-based-rl
     label: based on
+  - target: decoder-free
+    label: instance of
   - target: transformer
     label: uses
   - target: latent-dynamics
