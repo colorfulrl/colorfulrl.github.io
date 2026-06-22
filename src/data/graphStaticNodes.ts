@@ -138,6 +138,13 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Placing a pre-trained large language model INSIDE the RL loop — as policy/optimizer proposing parameter updates from linguistic + numerical context (ProPS), as a reward designer, as a planner, or as an exploration prior. The opposite direction of RLHF (which uses RL to align an LLM): here the LLM is a component that guides the RL agent, injecting semantic prior knowledge and in-context reasoning beyond scalar rewards.",
   },
+  {
+    id: "plasticity",
+    type: "concept",
+    label: "Plasticity Loss",
+    description:
+      "A network's progressive loss of its ability to fit new targets when trained on the non-stationary data of deep RL — the agent keeps capacity but stops learning. A unifying root cause behind scaling failures, overestimation bias, and weak exploration. Manifests as measurable pathologies: dormant/saturated neurons, feature-rank collapse, growing parameter norms, gradient pathologies. Mitigated by resets (primacy bias, ReDo, plasticity injection), normalization (LayerNorm, SpectralNorm), and categorical losses. The plasticity side of the plasticity-stability dilemma (the stability side is catastrophic forgetting in continual RL).",
+  },
 
   // ── Architectures (G) ───────────────────────────────────────────
   {
@@ -615,6 +622,7 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "latent-dynamics",      target: "decoder-free",         label: "variant: no recon" },
   { source: "rl",                   target: "causal-rl",            label: "lens" },
   { source: "rl",                   target: "llm-for-rl",           label: "lens" },
+  { source: "scaling-rl",           target: "plasticity",           label: "bottleneck" },
 
   // MDP formalisms (problem-formulation axis)
   { source: "rl",                   target: "pomdp",                label: "includes" },

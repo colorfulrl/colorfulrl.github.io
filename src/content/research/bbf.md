@@ -15,6 +15,8 @@ graphEdges:
     label: uses
   - target: experience-replay
     label: uses
+  - target: plasticity
+    label: combats via resets
   - target: atari
     label: evaluated on
 ---
