@@ -201,8 +201,8 @@ const otherTopicsPaper = defineCollection({
   }),
 });
 
-// English body sidecar files: vi/*/  _en.md  (underscore prefix excluded from `posts` glob).
-// ID format: "vi/<slug>/_en"
+// English body sidecar files: <slug>/_en.md  (underscore prefix excluded from `posts` glob).
+// ID format: "<slug>/_en"
 const postsEn = defineCollection({
   loader: glob({ pattern: "**/_en.{md,mdx}", base: `./src/content/posts` }),
   schema: z.unknown(),
