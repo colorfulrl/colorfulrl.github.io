@@ -1,0 +1,12 @@
+---
+title: "The Central Role of the Loss Function in Reinforcement Learning"
+url: "https://arxiv.org/pdf/2409.12799"
+type: "paper"
+source: "ArXiv"
+thumbnail: "https://th.bing.com/th/id/R.f7e1f093c2ab2adbd801eab0a84e7a44?rik=8FAYbI113WkaJA&pid=ImgRaw&r=0"
+description: "This paper illustrates the central role of loss functions in data-driven decision making, providing a comprehensive survey on their influence in cost-sensitive classification (CSC) and reinforcement learning (RL). We demonstrate how different regression loss functions affect the sample efficiency and adaptivity of value-based decision making algorithms. Across multiple settings, we prove that algorithms using the binary cross-entropy loss achieve first-order bounds scaling with the optimal policy's cost and are much more efficient than the commonly used squared loss. Moreover, we prove that distributional algorithms using the maximum likelihood loss achieve second-order bounds scaling with the policy variance and are even sharper than first-order bounds. This in particular proves the benefits of distributional RL. We hope that this paper serves as a guide analyzing decision making algorithms with varying loss functions, and can inspire the reader to seek out better loss functions to improve any decision making algorithm."
+descriptionEn: "This paper illustrates the central role of loss functions in data-driven decision making, providing a comprehensive survey on their influence in cost-sensitive classification (CSC) and reinforcement learning (RL). We demonstrate how different regression loss functions affect the sample efficiency and adaptivity of value-based decision making algorithms. Across multiple settings, we prove that algorithms using the binary cross-entropy loss achieve first-order bounds scaling with the optimal policy's cost and are much more efficient than the commonly used squared loss. Moreover, we prove that distributional algorithms using the maximum likelihood loss achieve second-order bounds scaling with the policy variance and are even sharper than first-order bounds. This in particular proves the benefits of distributional RL. We hope that this paper serves as a guide analyzing decision making algorithms with varying loss functions, and can inspire the reader to seek out better loss functions to improve any decision making algorithm."
+date: 2025-04-01
+order: 1
+draft: false
+---
