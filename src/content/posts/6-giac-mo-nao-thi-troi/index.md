@@ -5,7 +5,7 @@ title: "Giấc mơ nào thì trôi: tôi đi kiểm lời giải thích của ch
 titleEn: "Which Dreams Drift: I Tested My Own Explanation"
 slug: giac-mo-nao-thi-troi
 featured: true
-draft: false
+draft: true
 tags:
   - world-models
   - reinforcement-learning

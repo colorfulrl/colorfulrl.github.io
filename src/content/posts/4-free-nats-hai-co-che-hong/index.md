@@ -5,7 +5,7 @@ title: "Một hyperparameter, hai cách hỏng: dự án nghiên cứu đầu ti
 titleEn: "One Hyperparameter, Two Failure Modes: My First Research Project"
 slug: free-nats-hai-co-che-hong
 featured: true
-draft: false
+draft: true
 tags:
   - world-models
   - reinforcement-learning

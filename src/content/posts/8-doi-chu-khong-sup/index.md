@@ -5,7 +5,7 @@ title: "Đói chứ không sụp: khi reward cạn, và làm sao tôi biết cá
 titleEn: "Hungry, Not Collapsed: When Rewards Run Dry, and How I Verified My Metric Wasn't Blind"
 slug: doi-chu-khong-sup
 featured: true
-draft: false
+draft: true
 tags:
   - world-models
   - reinforcement-learning

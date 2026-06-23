@@ -5,7 +5,7 @@ title: "Dreamer V1: học hành vi bên trong giấc mơ"
 titleEn: "Dreamer V1: Learning Behavior Inside Dreams"
 slug: dreamer-v1-hoc-trong-giac-mo
 featured: true
-draft: false
+draft: true
 tags:
   - world-models
   - reinforcement-learning

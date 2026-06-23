@@ -5,7 +5,7 @@ title: "Mơ dài có trôi không? Ba giả thuyết sai và một câu trả l�
 titleEn: "Do Long Dreams Drift? Three Wrong Hypotheses and One Answer for Dreamer 4"
 slug: mo-dai-co-troi-khong
 featured: true
-draft: false
+draft: true
 tags:
   - world-models
   - reinforcement-learning

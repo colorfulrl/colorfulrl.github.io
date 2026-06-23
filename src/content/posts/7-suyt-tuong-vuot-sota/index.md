@@ -5,7 +5,7 @@ title: "Tôi suýt tưởng mình vượt DreamerV3: bốn cái bẫy khi đọc
 titleEn: "I Almost Thought I Beat DreamerV3: Four Traps When Reading a Number"
 slug: suyt-tuong-vuot-sota
 featured: true
-draft: false
+draft: true
 tags:
   - world-models
   - reinforcement-learning
