@@ -143,12 +143,16 @@
   }
 
   /* ===== KaTeX (math) ===== */
-  .prose .katex-display {
-    @apply text-foreground my-6 overflow-x-auto overflow-y-hidden py-2;
+  /* Use .app-prose (not .prose) — article elements carry app-prose in HTML,
+     so .prose .katex selectors never matched and KaTeX inherited the dark
+     prose body color instead of the theme foreground. */
+  .app-prose .katex-display {
+    @apply my-6 overflow-x-auto overflow-y-hidden py-2;
+    color: var(--foreground);
   }
 
-  .prose .katex {
-    @apply text-foreground;
+  .app-prose .katex {
+    color: var(--foreground);
     font-size: 1.05em;
   }
 
