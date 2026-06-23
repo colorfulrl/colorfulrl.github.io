@@ -28,7 +28,49 @@ descriptionEn: >-
 
 ## Table of contents
 
-## 1. Một dòng phương pháp, hai loại thay đổi
+## 1. Bối cảnh: model-based RL và bước ngoặt latent dynamics
+
+Học tăng cường (reinforcement learning) trong thập kỷ qua bị chi phối bởi các phương pháp
+*model-free*: DQN, PPO, SAC và họ hàng. Chúng học một chính sách hoặc một hàm giá trị trực tiếp
+từ tương tác, không dựng một mô hình tường minh của môi trường. Ưu điểm là đơn giản và ổn định;
+nhược điểm cố hữu là **đói mẫu** — để đạt hiệu năng tốt, chúng thường cần hàng triệu tới hàng tỉ
+bước tương tác. Trong nhiều bối cảnh thực tế (robot, hệ thống vật lý, bất kỳ nơi nào mỗi bước
+tương tác đều tốn kém hoặc rủi ro), chi phí mẫu đó là rào cản nghiêm trọng.
+
+Hướng *model-based* hứa hẹn một lối thoát đã được nêu từ lâu. Ý tưởng nền, có từ kiến trúc Dyna
+(Sutton, 1991), là: nếu agent học được một mô hình của môi trường, nó có thể sinh ra kinh nghiệm
+*bên trong mô hình* để huấn luyện chính sách, thay vì tiêu tốn tương tác thật. Khi mô hình đủ
+tốt, một bước tương tác thật có thể được khuếch đại thành rất nhiều bước huấn luyện ảo. Vấn đề là
+"đủ tốt": học một mô hình chính xác của môi trường từ quan sát giàu chiều như ảnh là bài toán
+khó, và một mô hình sai sẽ dẫn chính sách đi lạc. Suốt một thời gian dài, đây là lý do
+model-based RL hoạt động tốt trên các bài toán trạng thái thấp chiều nhưng chật vật trên quan sát
+pixel.
+
+Bước ngoặt đến từ ý tưởng **latent dynamics**: không mô hình hóa động lực trực tiếp trong không
+gian quan sát, mà nén quan sát vào một trạng thái ẩn (latent) gọn nhẹ rồi dự đoán động lực trong
+không gian ẩn đó. Cách làm này mang lại ba điều. Thứ nhất, nó rẻ: triển khai (rollout) một chuỗi
+tưởng tượng trong một vector latent vài trăm chiều nhanh hơn nhiều so với sinh từng khung ảnh đầy
+đủ. Thứ hai, nó tập trung: phép nén loại bỏ phần lớn chi tiết pixel không liên quan tới việc ra
+quyết định, giữ lại cấu trúc có ích. Thứ ba, nó cho phép *lập kế hoạch và tưởng tượng* hoàn toàn
+trong không gian ẩn. PlaNet (Hafner và cộng sự, 2019) là minh chứng quan trọng cho hướng này: nó
+giới thiệu RSSM (Recurrent State-Space Model) làm mô hình động lực ẩn và lập kế hoạch trực tiếp
+trong latent bằng một bộ tìm kiếm (cross-entropy method), đạt hiệu quả mẫu cao trên điều khiển từ
+pixel.
+
+PlaNet còn một hạn chế: nó lập kế hoạch lại từ đầu ở mỗi bước bằng tìm kiếm, một quá trình tốn
+kém khi hành động, và không chưng cất kinh nghiệm thành một chính sách tái sử dụng được. Đây
+chính là khoảng trống mà **Dreamer** ra đời để lấp. Thay vì lập kế hoạch bằng tìm kiếm, Dreamer
+huấn luyện một cặp actor-critic *bên trong* world model latent, dùng gradient chảy xuyên qua mô
+hình khả vi để cập nhật chính sách. Kết quả là một agent vừa hiệu quả mẫu (nhờ học trong tưởng
+tượng) vừa suy luận nhanh khi hành động (chỉ cần một lần truyền qua chính sách, không tìm kiếm).
+Dreamer V1 vì thế không xuất hiện trong chân không: nó là điểm hội tụ của một mạch phát triển
+dài — Dyna đặt nguyên lý, latent dynamics làm nó khả thi trên pixel, PlaNet chứng minh, và
+Dreamer biến nó thành một thuật toán học hành vi trọn vẹn.
+
+Từ điểm khởi đầu đó, dòng Dreamer tiến hóa qua bốn thế hệ trong sáu năm. Phần còn lại của bài
+phân tích quỹ đạo này.
+
+## 2. Một dòng phương pháp, hai loại thay đổi
 
 Dòng Dreamer gồm bốn công trình của Danijar Hafner và cộng sự, trải dài từ 2020 đến 2025:
 
@@ -43,30 +85,30 @@ Khi đặt cạnh nhau, bốn phiên bản này dễ bị đọc thành một da
 đọc đó bỏ lỡ điểm quan trọng nhất. Lập luận của bài viết là: **dòng Dreamer chứa hai loại thay
 đổi có bản chất khác nhau.**
 
-- **V1 → V2 → V3 là ba lần *tinh chỉnh* trên cùng một kiến trúc lõi.** Lõi đó là RSSM
-  (Recurrent State-Space Model) làm world model, cộng với một actor-critic được huấn luyện hoàn
-  toàn bên trong các chuỗi do world model sinh ra. Mỗi phiên bản giữ nguyên xương sống này và
-  thay một số bộ phận để vá một lớp thất bại cụ thể: V2 vá biểu diễn cho miền rời rạc, V3 vá độ
-  bền (robustness) để một cấu hình chạy được mọi miền.
+- **V1 → V2 → V3 là ba lần *tinh chỉnh* trên cùng một kiến trúc lõi.** Lõi đó là RSSM làm world
+  model, cộng với một actor-critic được huấn luyện hoàn toàn bên trong các chuỗi do world model
+  sinh ra. Mỗi phiên bản giữ nguyên xương sống này và thay một số bộ phận để vá một lớp thất bại
+  cụ thể: V2 vá biểu diễn cho miền rời rạc, V3 vá độ bền (robustness) để một cấu hình chạy được
+  mọi miền.
 - **V3 → V4 là một *đứt gãy* kiến trúc.** V4 loại bỏ RSSM, thay bằng một transformer quy mô lớn
   và một mục tiêu sinh dựa trên khuếch tán (diffusion). Nó từ bỏ ngân sách "một GPU" đặc trưng
   của ba phiên bản trước để đổi lấy khả năng mở rộng theo dữ liệu và tham số. Cái tên "Dreamer"
   được giữ lại vì nguyên lý *huấn luyện hành vi trong tưởng tượng* vẫn còn; nhưng cỗ máy sinh ra
   giấc tưởng tượng đó đã được thay mới gần như toàn bộ.
 
-Phần còn lại của bài đi theo trật tự đó. Mục 2 cô lập phần *bất biến* xuyên suốt bốn đời. Các
-mục 3–6 phân tích từng phiên bản: nó thay gì, vì sao, và để lại hạn chế nào cho phiên bản sau.
-Mục 7 tổng hợp toàn bộ theo hai trục — biểu diễn trạng thái và ngân sách tính toán. Mục 8 rút ra
+Phần còn lại của bài đi theo trật tự đó. Mục 3 cô lập phần *bất biến* xuyên suốt bốn đời. Các
+mục 4–7 phân tích từng phiên bản: nó thay gì, vì sao, và để lại hạn chế nào cho phiên bản sau.
+Mục 8 tổng hợp toàn bộ theo hai trục — biểu diễn trạng thái và ngân sách tính toán. Mục 9 rút ra
 hệ quả cho nghiên cứu trong điều kiện tính toán hạn chế.
 
-## 2. Phần bất biến: học hành vi trong tưởng tượng
+## 3. Phần bất biến: học hành vi trong tưởng tượng
 
 Trước khi xét các khác biệt, cần xác định cái không đổi. Cả bốn phiên bản đều là hiện thực của
 một lược đồ Dyna mở rộng: học một mô hình của môi trường, rồi dùng mô hình đó để sinh dữ liệu
 huấn luyện cho chính sách, thay vì tiêu tốn tương tác thật. Ba thành phần dưới đây có mặt ở mọi
 phiên bản (với V4 thay đổi cách hiện thực, không thay vai trò).
 
-### 2.1 World model trong không gian latent
+### 3.1 World model trong không gian latent
 
 World model không dự đoán quan sát kế tiếp trực tiếp trong không gian pixel ở mỗi bước. Nó nén
 quan sát vào một trạng thái latent và dự đoán động lực trong không gian latent đó. Lợi ích kép:
@@ -87,7 +129,7 @@ Huấn luyện ép hai phân phối này gần nhau qua một số hạng KL. Đ
 (chỉ dùng prior) không trôi ra khỏi phân phối mà posterior từng quan sát. Tầm quan trọng của ràng
 buộc này chính là chủ đề mà các phiên bản sau liên tục can thiệp.
 
-### 2.2 Ba vòng lặp tách bạch
+### 3.2 Ba vòng lặp tách bạch
 
 Quá trình huấn luyện gồm ba vòng lặp được tách rời có chủ đích:
 
@@ -103,7 +145,7 @@ mục tiêu cố định (khớp dữ liệu), không phải đuổi theo một 
 thật không được đưa thẳng vào cập nhật chính sách; nó chỉ là mục tiêu huấn luyện cho bộ dự đoán
 phần thưởng, và chính bộ dự đoán này mới sinh tín hiệu phần thưởng cho actor-critic trong vòng 3.
 
-### 2.3 λ-return và gradient pathwise
+### 3.3 λ-return và gradient pathwise
 
 Trong vòng 3, mỗi chuỗi tưởng tượng dài $H$ bước được quy về một mục tiêu giá trị bằng **λ-return** —
 trung bình có trọng số hình học của các ước lượng $n$-bước, mỗi ước lượng "chốt" phần đuôi bằng
@@ -139,12 +181,12 @@ ràng buộc sẽ định hình các lựa chọn thiết kế ở mọi phiên 
 Ba yếu tố trên — world model latent, ba vòng lặp tách bạch, λ-return với cập nhật actor-critic —
 là khung không đổi. Bốn phiên bản khác nhau ở chỗ *điền vào khung này như thế nào*.
 
-## 3. Dreamer V1 (2020): thiết lập paradigm
+## 4. Dreamer V1 (2020): thiết lập paradigm
 
-V1 là phiên bản thiết lập toàn bộ khung ở Mục 2 và chứng minh nó hoạt động end-to-end trên quan
+V1 là phiên bản thiết lập toàn bộ khung ở Mục 3 và chứng minh nó hoạt động end-to-end trên quan
 sát pixel.
 
-### 3.1 Mục tiêu world model
+### 4.1 Mục tiêu world model
 
 Thành phần ngẫu nhiên $z_t$ ở V1 là một biến **Gaussian**: prior và posterior đều xuất ra trung
 bình và độ lệch chuẩn. World model được huấn luyện bằng một cận dưới bằng chứng (ELBO) mở rộng
@@ -164,7 +206,7 @@ trọng so với mô hình thị giác task-agnostic của thế hệ World Mode
 thưởng buộc phải nằm *bên trong* world model. Hệ quả là biểu diễn của V1 mang tính task-aware —
 nó học các đặc trưng quan trọng cho tác vụ, không chỉ để tái tạo thế giới.
 
-### 3.2 Cấu hình và kết quả
+### 4.2 Cấu hình và kết quả
 
 V1 sử dụng chân trời tưởng tượng $H = 15$, $\gamma = 0.99$, $\lambda = 0.95$. Vì world model
 Gaussian khả vi và actor Gaussian dùng tái tham số hóa, toàn bộ vòng 3 được tối ưu bằng lan
@@ -173,7 +215,7 @@ pháp model-free mạnh đương thời (ví dụ D4PG) trong khi chỉ dùng qu
 chứng là: một actor-critic huấn luyện hoàn toàn trong tưởng tượng, với gradient pathwise chảy qua
 một world model học được, là khả thi và hiệu quả mẫu trên điều khiển liên tục từ pixel.
 
-### 3.3 Hạn chế dẫn tới V2
+### 4.3 Hạn chế dẫn tới V2
 
 V1 để lại ba điểm yếu cụ thể, mỗi điểm là một mục tiêu cho phiên bản sau:
 
@@ -187,13 +229,13 @@ V1 để lại ba điểm yếu cụ thể, mỗi điểm là một mục tiêu 
 
 V2 xử lý hai điểm đầu; V3 xử lý điểm thứ ba.
 
-## 4. Dreamer V2 (2021): world model rời rạc
+## 5. Dreamer V2 (2021): world model rời rạc
 
 V2 giữ nguyên khung ba vòng lặp và mục tiêu trong tưởng tượng, nhưng thay đổi *biểu diễn trạng
 thái* và *cách định tuyến gradient*. Kết quả là agent model-based đầu tiên đạt mức con người trên
 bộ Atari 55 trò chơi, trên một GPU đơn — một miền mà trước đó thuộc về các phương pháp model-free.
 
-### 4.1 Latent categorical thay cho Gaussian
+### 5.1 Latent categorical thay cho Gaussian
 
 V2 thay $z_t$ Gaussian bằng một tập **32 biến categorical, mỗi biến 32 lớp**. Mỗi biến là một
 vector one-hot 32 chiều; ghép lại, $z_t$ là một vector thưa 1024 chiều. Prior và posterior giờ
@@ -216,7 +258,7 @@ Giá trị của $z$ bằng đúng mẫu one-hot (vì $p - \text{stopgrad}(p) = 
 chảy qua $p$. KL giữa hai trạng thái categorical trở thành tổng KL của 32 phân phối thành phần,
 mỗi phân phối tính theo công thức rời rạc $\sum_k q_k \log(q_k/p_k)$.
 
-### 4.2 KL balancing
+### 5.2 KL balancing
 
 Số hạng KL gánh hai vai trò không đối xứng. Posterior (có quan sát) nên được tự do mã hóa thông
 tin; prior (dùng khi tưởng tượng) nên học đuổi theo posterior. Phạt KL đối xứng dùng một nửa lực
@@ -232,7 +274,7 @@ học. Đặt trọng số lớn hơn cho số hạng thứ nhất hướng ph�
 posterior, đồng thời chỉ regularize nhẹ posterior để không phá hủy thông tin của nó. Giá trị KL
 thuận không đổi; chỉ gradient được định tuyến lại.
 
-### 4.3 Gradient actor cho hành động rời rạc
+### 5.3 Gradient actor cho hành động rời rạc
 
 Gradient pathwise hoạt động tốt với hành động liên tục, nơi việc tái tham số hóa trơn. Với hành
 động rời rạc, đường straight-through qua actor mang thiên lệch và dễ làm sụp entropy. V2 cho phép
@@ -241,7 +283,7 @@ phần liên tục, cộng một số hạng thưởng entropy luôn hiện di�
 về REINFORCE; trên điều khiển liên tục, nghiêng về pathwise. V2 không thay nguyên lý mà chọn đúng
 công cụ gradient theo loại hành động.
 
-### 4.4 Bộ dự đoán continue
+### 5.4 Bộ dự đoán continue
 
 Các trò chơi Atari có trạng thái kết thúc (game over). V2 thêm một bộ dự đoán nhị phân cho xác
 suất chuỗi còn tiếp tục, để chiết khấu trong tưởng tượng cắt đúng tại các trạng thái kết thúc.
@@ -250,7 +292,7 @@ Thành phần này cần cho mọi miền có episode hữu hạn và được b
 Ablation trong bài báo cho thấy hai thay đổi đóng góp phần lớn cải thiện là latent categorical và
 KL balancing. Hai thay đổi còn lại là điều kiện cần để chạy đúng trên miền rời rạc, có kết thúc.
 
-## 5. Dreamer V3 (2023): một công thức, mọi miền
+## 6. Dreamer V3 (2023): một công thức, mọi miền
 
 V2 vẫn cần tinh chỉnh theo miền. V3 nhắm thẳng vào điều đó. Đóng góp của nó không phải một thuật
 toán "thông minh hơn" mà là **độ bền**: cùng một bộ siêu tham số, không tinh chỉnh lại, đạt hiệu
@@ -258,7 +300,7 @@ năng mạnh trên hơn 150 tác vụ trải khắp các miền có tính chất
 tục tới Atari, tới Minecraft. Cột mốc đáng chú ý là thu thập kim cương trong Minecraft từ con số
 không, không dùng dữ liệu người chơi.
 
-### 5.1 Vấn đề chung: bất biến với thang đo
+### 6.1 Vấn đề chung: bất biến với thang đo
 
 Sợi chỉ nối mọi thành phần mới của V3 là **bất biến với thang đo (scale-invariance)**. Các đại
 lượng — phần thưởng, lợi tức (return), quan sát — có thang đo khác nhau hàng nghìn lần giữa các
@@ -267,7 +309,7 @@ làm mọi tín hiệu độc lập với thang đo cụ thể, nhờ đó một
 về mặt phương pháp: V3 chủ yếu là V2 cộng một hộp công cụ chống-thang-đo, chứ không phải một lõi
 mới.
 
-### 5.2 Symlog: nén thang đo rộng
+### 6.2 Symlog: nén thang đo rộng
 
 Bộ dự đoán hồi quy học kém khi mục tiêu trải trên thang rất rộng, vì sai số bình phương bị các giá
 trị lớn chi phối. V3 học trong không gian symlog (logarit đối xứng):
@@ -283,7 +325,7 @@ theo logarit (giá trị $10^4$ co về cỡ $9{,}2$). Tính đối xứng theo 
 một tốc độ học do đó xử lý được cả phần thưởng rất nhỏ lẫn rất lớn. V3 áp dụng symlog cho bộ giải
 mã quan sát liên tục, bộ dự đoán phần thưởng và critic.
 
-### 5.3 Two-hot: biến hồi quy thành phân loại
+### 6.3 Two-hot: biến hồi quy thành phân loại
 
 Thay vì hồi quy một số vô hướng cho phần thưởng và giá trị, V3 đặt một lưới các mốc (bins) cố định
 trong không gian symlog và để bộ dự đoán xuất một phân phối trên các mốc đó. Giá trị được khôi
@@ -293,7 +335,7 @@ tiêu là $0{,}7$ tại mốc $1$ và $0{,}3$ tại mốc $2$, vì $0{,}7\cdot 1
 mất mát là entropy chéo. Phân loại với entropy chéo ổn định hơn sai số bình phương trên thang
 rộng, và một phân phối trên các mốc có thể biểu diễn lợi tức đa đỉnh.
 
-### 5.4 Chuẩn hóa lợi tức theo phân vị
+### 6.4 Chuẩn hóa lợi tức theo phân vị
 
 Mất mát của actor tỉ lệ với $-V_\lambda$. Nếu $V_\lambda$ đổi thang giữa các miền hoặc trôi trong
 quá trình huấn luyện, độ lớn gradient của actor đổi theo, buộc phải tinh chỉnh hệ số entropy cho
@@ -308,7 +350,7 @@ $$
 Actor tối ưu $\hat{R}$, vốn đã đưa về cỡ đơn vị. Nhờ vậy một hệ số entropy cố định hoạt động trên
 mọi miền. Mẫu số $\max(1, S)$ tránh khuếch đại nhiễu khi lợi tức thật sự nhỏ.
 
-### 5.5 Free bits và unimix
+### 6.5 Free bits và unimix
 
 Hai vá nhỏ hơn nhưng quan trọng cho độ ổn định:
 
@@ -320,7 +362,7 @@ Hai vá nhỏ hơn nhưng quan trọng cho độ ổn định:
   $p = (1-\epsilon)\,p_{\text{net}} + \epsilon\,\text{Uniform}$. Nhờ đó không xác suất nào bằng
   không tuyệt đối, và KL cùng log-xác suất không phát tán về vô cực.
 
-### 5.6 Khả năng mở rộng thuận lợi
+### 6.6 Khả năng mở rộng thuận lợi
 
 Ngoài độ bền, V3 cho thấy một tính chất quan trọng cho định hướng nghiên cứu: tăng kích thước mô
 hình cải thiện điểm số một cách đều đặn, đồng thời tăng hiệu quả mẫu. Tính chất này là điều kiện
@@ -328,12 +370,12 @@ hình cải thiện điểm số một cách đều đặn, đồng thời tăng
 biệt: ở V3, khả năng mở rộng vẫn nằm trong khung RSSM một-GPU. V4 mới là phiên bản đẩy hẳn sang
 chế độ nặng về tính toán.
 
-## 6. Dreamer V4 (2025): đứt gãy kiến trúc
+## 7. Dreamer V4 (2025): đứt gãy kiến trúc
 
 Ba phiên bản đầu chia sẻ một lõi RSSM. V4 thay lõi đó. Đây là khác biệt định tính so với mọi bước
 chuyển trước, và là lý do bài viết gọi nó là một đứt gãy chứ không phải một lần tinh chỉnh.
 
-### 6.1 Vì sao bỏ RSSM
+### 7.1 Vì sao bỏ RSSM
 
 Theo lập luận của bài báo, RSSM gọn và hiệu quả nhưng khó mở rộng tới một phân phối dữ liệu đa
 dạng. Mặt khác, dòng mô hình sinh video quy mô lớn (các mô hình kiểu Genie, Oasis) mở rộng tốt
@@ -345,7 +387,7 @@ Bối cảnh tác vụ cũng khắc nghiệt hơn hẳn. V4 nhận ảnh thô đ
 ảnh 64×64 đã tiền xử lý, dùng hành động chuột và bàn phím cấp thấp thay vì hành động ghép sẵn, và
 học **hoàn toàn từ một tập dữ liệu ngoại tuyến cố định** thay vì tương tác trực tuyến.
 
-### 6.2 Bộ tokenizer nhân quả và mô hình động lực
+### 7.2 Bộ tokenizer nhân quả và mô hình động lực
 
 V4 gồm hai phần, đều dựa trên transformer hai chiều (thời gian × không gian) với attention nhân
 quả theo thời gian.
@@ -356,7 +398,7 @@ quả theo thời gian.
 - **Mô hình động lực** dự đoán token tương lai từ một chuỗi xen kẽ gồm hành động, mức nhiễu, cỡ
   bước và token. Đây là trái tim của V4.
 
-### 6.3 Shortcut forcing
+### 7.3 Shortcut forcing
 
 Mục tiêu huấn luyện của mô hình động lực, gọi là **shortcut forcing**, gộp ba ý tưởng:
 
@@ -367,7 +409,7 @@ Mục tiêu huấn luyện của mô hình động lực, gọi là **shortcut f
 3. **Diffusion forcing.** Mỗi bước thời gian mang một mức nhiễu khác nhau, nên mỗi bước vừa là một
    tác vụ khử nhiễu vừa là ngữ cảnh cho bước sau.
 
-### 6.4 x-prediction và sai số tích lũy
+### 7.4 x-prediction và sai số tích lũy
 
 Một chi tiết tham số hóa đáng chú ý vì nó nối thẳng vào một vấn đề trung tâm của mọi world model:
 sai số tích lũy (compounding error) khi tưởng tượng dài. Thay vì dự đoán *vận tốc* của quá trình
@@ -377,7 +419,7 @@ triển khai chất lượng cao ở độ dài tùy ý. Nói cách khác, đây
 cho bài toán sai số tích lũy — bài toán mà các phiên bản RSSM giải bằng cách giữ chân trời tưởng
 tượng ngắn và dựa vào critic để bootstrap phần đuôi.
 
-### 6.5 Học ngoại tuyến và điều kiện hóa theo hành động
+### 7.5 Học ngoại tuyến và điều kiện hóa theo hành động
 
 V4 huấn luyện theo ba pha: tiền huấn luyện world model trên video, tinh chỉnh agent bằng sao chép
 hành vi cộng một mô hình phần thưởng, và huấn luyện chính sách trong tưởng tượng. Trong pha cuối,
@@ -390,9 +432,9 @@ nó cho phép tận dụng kho video lớn không nhãn, và phù hợp với c�
 tác thật để thu nhãn vừa chậm vừa rủi ro. Đặt vấn đề thu thập kim cương Minecraft *chỉ từ dữ liệu
 ngoại tuyến* chính là để làm nổi bật năng lực này.
 
-### 6.6 PMPO thay cho chuẩn hóa lợi tức
+### 7.6 PMPO thay cho chuẩn hóa lợi tức
 
-V3 xử lý vấn đề thang đo của lợi tức bằng chuẩn hóa theo phân vị (Mục 5.4). V4 chọn một câu trả
+V3 xử lý vấn đề thang đo của lợi tức bằng chuẩn hóa theo phân vị (Mục 6.4). V4 chọn một câu trả
 lời khác: chỉ dùng **dấu của hàm lợi thế (advantage)**, bỏ độ lớn. Vì dấu bất biến với thang đo,
 không cần chuẩn hóa lợi tức nữa. Phương pháp này (PMPO) chia các trạng thái thành tập lợi thế
 dương và âm rồi cân bằng hai tập, đồng thời cộng một số hạng KL về một prior sao chép hành vi để
@@ -400,10 +442,10 @@ giữ chính sách trong vùng hành vi hợp lý. Đây là hai lời giải kh
 biến thang đo: V3 chuẩn hóa độ lớn, V4 vứt bỏ độ lớn.
 
 Đáng chú ý là V4 vẫn giữ một số thành phần từ V3: bộ dự đoán phần thưởng và giá trị dạng symexp
-two-hot, và λ-return cho critic. Điều này xác nhận luận điểm ở Mục 1: cái bị thay là cỗ máy động
+two-hot, và λ-return cho critic. Điều này xác nhận luận điểm ở Mục 2: cái bị thay là cỗ máy động
 lực, không phải toàn bộ công thức.
 
-### 6.7 Kết quả
+### 7.7 Kết quả
 
 V4 là agent đầu tiên thu thập kim cương trong Minecraft hoàn toàn từ dữ liệu ngoại tuyến, không
 tương tác môi trường — một tác vụ đòi hỏi chọn chuỗi hơn 20.000 hành động chuột và bàn phím từ
@@ -415,7 +457,7 @@ chắn và quan trọng nhất là cột mốc định tính: học ngoại tuy�
 Cái giá là quy mô tính toán: khoảng hai tỉ tham số, hàng trăm lõi TPU, hàng nghìn giờ video. Đây
 là một chế độ vận hành khác hẳn ngân sách một-GPU của V1–V3.
 
-## 7. Hai trục tiến hóa
+## 8. Hai trục tiến hóa
 
 Tổng hợp toàn bộ, dòng Dreamer tiến hóa theo hai trục độc lập.
 
@@ -448,7 +490,7 @@ khung RSSM. Cột thứ tư, ở cả hai bảng, là nơi khung đổi. Và s�
 phân vị làm bền actor, rồi PMPO của V4 giải cùng bài toán bằng cách loại bỏ độ lớn thay vì chuẩn
 hóa nó.
 
-## 8. Hệ quả cho nghiên cứu ít tính toán
+## 9. Hệ quả cho nghiên cứu ít tính toán
 
 Với một người làm nghiên cứu trong điều kiện tính toán hạn chế, V4 gửi một tín hiệu hai mặt, và cả
 hai mặt đều đáng ghi nhận thẳng thắn.
@@ -475,7 +517,7 @@ phải là tái lập đỉnh, mà là "trên miền hẹp của tôi, thành ph
 nào thừa". Chính vì V3 và V4 *gộp* nhiều thành phần, việc tách chúng ra và đo đóng góp riêng của
 từng cái trở thành một loại đóng góp mà một người làm việc một mình có thể thực hiện trọn vẹn.
 
-## 9. Tóm lược
+## 10. Tóm lược
 
 Bốn phiên bản Dreamer không phải bốn mô hình rời rạc mà là một quỹ đạo có cấu trúc rõ ràng. V1
 thiết lập paradigm: một world model latent và một actor-critic huấn luyện hoàn toàn trong tưởng
@@ -495,8 +537,10 @@ phải lớn tới đâu.
 Các trích dẫn: Dreamer V1 — Hafner và cộng sự, *Dream to Control*, ICLR 2020 (arXiv:1912.01603);
 V2 — *Mastering Atari with Discrete World Models*, ICLR 2021 (arXiv:2010.02193); V3 — *Mastering
 Diverse Domains through World Models*, 2023 (arXiv:2301.04104); V4 — *Training Agents Inside of
-Scalable World Models*, Hafner, Yan, Lillicrap, 2025 (arXiv:2509.24527). Mô tả cơ chế V1–V3 dựa
-trên nội dung đã được kiểm chứng rộng rãi của ba bài báo; mô tả V4 dựa trên phần tóm tắt gốc và
-phần thân bài báo. Các con số định lượng chi tiết về tỉ lệ thành công của V4 theo từng vật phẩm là
-số liệu do bài báo báo cáo và không được nhắc lại ở đây như khẳng định độc lập. Nếu phát hiện sai
-lệch giữa mô tả trong bài và bản gốc, ưu tiên bản gốc.
+Scalable World Models*, Hafner, Yan, Lillicrap, 2025 (arXiv:2509.24527). Các tiền thân được nhắc
+trong phần bối cảnh: Dyna (Sutton, 1991) và PlaNet (Hafner và cộng sự, *Learning Latent Dynamics
+for Planning from Pixels*, 2019). Mô tả cơ chế V1–V3 dựa trên nội dung đã được kiểm chứng rộng rãi
+của ba bài báo; mô tả V4 dựa trên phần tóm tắt gốc và phần thân bài báo. Các con số định lượng chi
+tiết về tỉ lệ thành công của V4 theo từng vật phẩm là số liệu do bài báo báo cáo và không được
+nhắc lại ở đây như khẳng định độc lập. Nếu phát hiện sai lệch giữa mô tả trong bài và bản gốc, ưu
+tiên bản gốc.
