@@ -30,12 +30,7 @@ descriptionEn: >-
 
 ## 1. Bối cảnh: model-based RL và bước ngoặt latent dynamics
 
-Học tăng cường (reinforcement learning) trong thập kỷ qua bị chi phối bởi các phương pháp
-*model-free*: DQN, PPO, SAC và họ hàng. Chúng học một chính sách hoặc một hàm giá trị trực tiếp
-từ tương tác, không dựng một mô hình tường minh của môi trường. Ưu điểm là đơn giản và ổn định;
-nhược điểm cố hữu là **đói mẫu** — để đạt hiệu năng tốt, chúng thường cần hàng triệu tới hàng tỉ
-bước tương tác. Trong nhiều bối cảnh thực tế (robot, hệ thống vật lý, bất kỳ nơi nào mỗi bước
-tương tác đều tốn kém hoặc rủi ro), chi phí mẫu đó là rào cản nghiêm trọng.
+Reinforcement learning trong thập kỷ qua bị chi phối bởi các phương pháp *model-free*: DQN, PPO, SAC và họ hàng. Chúng học một chính sách hoặc một hàm giá trị trực tiếp từ tương tác, không dựng một mô hình tường minh của môi trường. Ưu điểm là đơn giản và ổn định; nhược điểm cố hữu là **đói mẫu** — để đạt hiệu năng tốt, chúng thường cần hàng triệu tới hàng tỉ bước tương tác. Trong nhiều bối cảnh thực tế (robot, hệ thống vật lý, bất kỳ nơi nào mỗi bước tương tác đều tốn kém hoặc rủi ro), chi phí mẫu đó là rào cản nghiêm trọng.
 
 Hướng *model-based* hứa hẹn một lối thoát đã được nêu từ lâu. Ý tưởng nền, có từ kiến trúc Dyna
 (Sutton, 1991), là: nếu agent học được một mô hình của môi trường, nó có thể sinh ra kinh nghiệm
