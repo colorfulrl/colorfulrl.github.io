@@ -1,9 +1,9 @@
 ---
 author: Phạm Nhật Khoa
 pubDatetime: 2026-06-22T21:00:00+07:00
-title: "Từ Dreamer V1 đến Dreamer V4: một lộ trình tới các world model khả mở rộng"
+title: "Từ Dreamer V1 đến Dreamer V4: một lộ trình tới các Scalable World Model"
 titleEn: "Dreamer V1 to Dreamer V4: A Path Toward Scalable World Models"
-slug: dreamer-v1-den-v4-lo-trinh-world-model-kha-mo-rong
+slug: dreamer-v1-den-v4-lo-trinh-toi-cac-scalable-world-model
 featured: true
 draft: false
 tags:
@@ -30,14 +30,14 @@ descriptionEn: >-
 
 ## 1. Bối cảnh: model-based RL và bước ngoặt latent dynamics
 
-Reinforcement learning trong thập kỷ qua bị chi phối bởi các phương pháp *model-free*: DQN, PPO, SAC và họ hàng. Chúng học một chính sách hoặc một hàm giá trị trực tiếp từ tương tác, không dựng một mô hình tường minh của môi trường. Ưu điểm là đơn giản và ổn định; nhược điểm cố hữu là **đói mẫu** — để đạt hiệu năng tốt, chúng thường cần hàng triệu tới hàng tỉ bước tương tác. Trong nhiều bối cảnh thực tế (robot, hệ thống vật lý, bất kỳ nơi nào mỗi bước tương tác đều tốn kém hoặc rủi ro), chi phí mẫu đó là rào cản nghiêm trọng.
+Reinforcement learning trong thập kỷ qua bị chi phối bởi các phương pháp *model-free*: DQN, PPO, SAC và họ hàng. Chúng học một chính sách hoặc một hàm giá trị trực tiếp từ tương tác, không dựng một mô hình tường minh của môi trường. Ưu điểm là đơn giản và ổn định và nhược điểm cố hữu là **đói mẫu**. Để đạt hiệu năng tốt, chúng thường cần hàng triệu tới hàng tỉ bước tương tác. Trong nhiều bối cảnh thực tế (robot, hệ thống vật lý, bất kỳ nơi nào mỗi bước tương tác đều tốn kém hoặc rủi ro), chi phí mẫu đó là rào cản nghiêm trọng.
 
-Hướng *model-based* hứa hẹn một lối thoát đã được nêu từ lâu. Ý tưởng nền, có từ kiến trúc Dyna
-(Sutton, 1991), là: nếu agent học được một mô hình của môi trường, nó có thể sinh ra kinh nghiệm
-*bên trong mô hình* để huấn luyện chính sách, thay vì tiêu tốn tương tác thật. Khi mô hình đủ
+Hướng *model-based* hứa hẹn một lối thoát đã được nêu từ lâu. Ý tưởng nền được xuất phát từ kiến trúc Dyna
+(Sutton, 1991) được phát biểu như sau: nếu agent học được một mô hình của môi trường, nó có thể sinh ra kinh nghiệm
+*bên trong mô hình* để huấn luyện policy, thay vì tiêu tốn tương tác thật. Khi mô hình đủ
 tốt, một bước tương tác thật có thể được khuếch đại thành rất nhiều bước huấn luyện ảo. Vấn đề là
 "đủ tốt": học một mô hình chính xác của môi trường từ quan sát giàu chiều như ảnh là bài toán
-khó, và một mô hình sai sẽ dẫn chính sách đi lạc. Suốt một thời gian dài, đây là lý do
+khó, và một mô hình sai sẽ dẫn policy đi lạc. Suốt một thời gian dài, đây là lý do
 model-based RL hoạt động tốt trên các bài toán trạng thái thấp chiều nhưng chật vật trên quan sát
 pixel.
 
@@ -47,34 +47,34 @@ không gian ẩn đó. Cách làm này mang lại ba điều. Thứ nhất, nó 
 tưởng tượng trong một vector latent vài trăm chiều nhanh hơn nhiều so với sinh từng khung ảnh đầy
 đủ. Thứ hai, nó tập trung: phép nén loại bỏ phần lớn chi tiết pixel không liên quan tới việc ra
 quyết định, giữ lại cấu trúc có ích. Thứ ba, nó cho phép *lập kế hoạch và tưởng tượng* hoàn toàn
-trong không gian ẩn. PlaNet (Hafner và cộng sự, 2019) là minh chứng quan trọng cho hướng này: nó
+trong không gian ẩn. PlaNet (Danijar Hafner, 2019) là minh chứng quan trọng cho hướng này: nó
 giới thiệu RSSM (Recurrent State-Space Model) làm mô hình động lực ẩn và lập kế hoạch trực tiếp
 trong latent bằng một bộ tìm kiếm (cross-entropy method), đạt hiệu quả mẫu cao trên điều khiển từ
 pixel.
 
 PlaNet còn một hạn chế: nó lập kế hoạch lại từ đầu ở mỗi bước bằng tìm kiếm, một quá trình tốn
-kém khi hành động, và không chưng cất kinh nghiệm thành một chính sách tái sử dụng được. Đây
+kém khi hành động, và không chưng cất kinh nghiệm thành một policy tái sử dụng được. Đây
 chính là khoảng trống mà **Dreamer** ra đời để lấp. Thay vì lập kế hoạch bằng tìm kiếm, Dreamer
 huấn luyện một cặp actor-critic *bên trong* world model latent, dùng gradient chảy xuyên qua mô
-hình khả vi để cập nhật chính sách. Kết quả là một agent vừa hiệu quả mẫu (nhờ học trong tưởng
-tượng) vừa suy luận nhanh khi hành động (chỉ cần một lần truyền qua chính sách, không tìm kiếm).
+hình khả vi để cập nhật policy. Kết quả là một agent vừa hiệu quả mẫu (nhờ học trong tưởng
+tượng) vừa suy luận nhanh khi hành động (chỉ cần một lần truyền qua policy, không tìm kiếm).
 Dreamer V1 vì thế không xuất hiện trong chân không: nó là điểm hội tụ của một mạch phát triển
 dài — Dyna đặt nguyên lý, latent dynamics làm nó khả thi trên pixel, PlaNet chứng minh, và
 Dreamer biến nó thành một thuật toán học hành vi trọn vẹn.
 
-Từ điểm khởi đầu đó, dòng Dreamer tiến hóa qua bốn thế hệ trong sáu năm. Phần còn lại của bài
+Từ điểm khởi đầu đó, dòng Dreamer tiến hóa qua 4 thế hệ trong 6 năm. Phần còn lại của bài
 phân tích quỹ đạo này.
 
 ## 2. Một dòng phương pháp, hai loại thay đổi
 
-Dòng Dreamer gồm bốn công trình của Danijar Hafner và cộng sự, trải dài từ 2020 đến 2025:
+Dòng Dreamer gồm 4 công trình của Danijar Hafner và cộng sự, trải dài từ 2020 đến 2025:
 
 | Phiên bản | Công bố | Định danh | Miền thắng tiêu biểu |
 |---|---|---|---|
 | Dreamer V1 | *Dream to Control* (ICLR 2020, arXiv 1912.01603) | RSSM + actor-critic trong tưởng tượng | DM Control, điều khiển liên tục từ pixel |
 | Dreamer V2 | *Mastering Atari with Discrete World Models* (ICLR 2021, arXiv 2010.02193) | latent rời rạc | Atari, mức con người trên một GPU |
-| Dreamer V3 | *Mastering Diverse Domains through World Models* (2023, arXiv 2301.04104) | một bộ siêu tham số cho mọi miền | hơn 150 tác vụ, kim cương Minecraft từ con số không |
-| Dreamer V4 | *Training Agents Inside of Scalable World Models* (2025, arXiv 2509.24527) | transformer + shortcut forcing | kim cương Minecraft hoàn toàn từ dữ liệu ngoại tuyến |
+| Dreamer V3 | *Mastering Diverse Domains through World Models* (2023, arXiv 2301.04104) | một bộ siêu tham số cho mọi miền | hơn 150 tác vụ, đào kim cương Minecraft từ con số không |
+| Dreamer V4 | *Training Agents Inside of Scalable World Models* (2025, arXiv 2509.24527) | transformer + shortcut forcing | kim cương Minecraft hoàn toàn từ dữ liệu offline |
 
 Khi đặt cạnh nhau, bốn phiên bản này dễ bị đọc thành một danh sách bốn mô hình tách rời. Cách
 đọc đó bỏ lỡ điểm quan trọng nhất. Lập luận của bài viết là: **dòng Dreamer chứa hai loại thay
@@ -93,7 +93,7 @@ Khi đặt cạnh nhau, bốn phiên bản này dễ bị đọc thành một da
 
 Phần còn lại của bài đi theo trật tự đó. Mục 3 cô lập phần *bất biến* xuyên suốt bốn đời. Các
 mục 4–7 phân tích từng phiên bản: nó thay gì, vì sao, và để lại hạn chế nào cho phiên bản sau.
-Mục 8 tổng hợp toàn bộ theo hai trục — biểu diễn trạng thái và ngân sách tính toán. Mục 9 rút ra
+Mục 8 tổng hợp toàn bộ theo 2 trục: biểu diễn trạng thái và ngân sách tính toán. Mục 9 rút ra
 hệ quả cho nghiên cứu trong điều kiện tính toán hạn chế.
 
 ## 3. Phần bất biến: học hành vi trong tưởng tượng
@@ -103,26 +103,25 @@ một lược đồ Dyna mở rộng: học một mô hình của môi trường
 huấn luyện cho chính sách, thay vì tiêu tốn tương tác thật. Ba thành phần dưới đây có mặt ở mọi
 phiên bản (với V4 thay đổi cách hiện thực, không thay vai trò).
 
-### 3.1 World model trong không gian latent
+### 3.1 World model trong latent space
 
 World model không dự đoán quan sát kế tiếp trực tiếp trong không gian pixel ở mỗi bước. Nó nén
-quan sát vào một trạng thái latent và dự đoán động lực trong không gian latent đó. Lợi ích kép:
+quan sát vào một trạng thái latent và dự đoán động lực trong latent space đó. Lợi ích kép:
 một bước "tưởng tượng" trong latent rẻ hơn nhiều so với sinh một khung hình đầy đủ, và biểu diễn
 nén loại bỏ phần lớn chi tiết không liên quan tới việc ra quyết định.
 
 Ở V1–V3, world model là RSSM. Trạng thái mỗi bước tách thành hai phần:
 
-- một thành phần **xác định** $h_t$, do một mạng hồi quy (GRU) mang qua thời gian, tích lũy lịch sử;
-- một thành phần **ngẫu nhiên** $z_t$, mô hình hóa phần bất định của trạng thái.
+- Thành phần **xác định** $h_t$, do một mạng hồi quy (GRU) mang qua thời gian, tích lũy lịch sử;
+- Thành phần **ngẫu nhiên** $z_t$, mô hình hóa phần bất định của trạng thái.
 
 RSSM định nghĩa hai phân phối trên $z_t$:
 
-- **posterior** $q(z_t \mid h_t, o_t)$ — dùng khi có quan sát $o_t$;
-- **prior** $p(z_t \mid h_t)$ — dùng khi không có quan sát, tức là khi tưởng tượng.
+- **Posterior** $q(z_t \mid h_t, o_t)$ — dùng khi có quan sát $o_t$;
+- **Prior** $p(z_t \mid h_t)$ — dùng khi không có quan sát, tức là khi tưởng tượng.
 
-Huấn luyện ép hai phân phối này gần nhau qua một số hạng KL. Đây là điều kiện để việc tưởng tượng
-(chỉ dùng prior) không trôi ra khỏi phân phối mà posterior từng quan sát. Tầm quan trọng của ràng
-buộc này chính là chủ đề mà các phiên bản sau liên tục can thiệp.
+Huấn luyện ép hai phân phối này gần nhau qua một số hạng Kullback–Leibler (KL). Đây là điều kiện
+để việc tưởng tượng (chỉ dùng prior) không trôi ra khỏi phân phối mà posterior từng quan sát. Tầm quan trọng của ràng buộc này chính là chủ đề mà các phiên bản sau liên tục can thiệp.
 
 ### 3.2 Ba vòng lặp tách bạch
 
@@ -156,9 +155,9 @@ Tham số $\lambda$ điều chỉnh cân bằng giữa thiên lệch và phươn
 bước bootstrap, $\lambda \to 1$ quy về Monte Carlo trên toàn chuỗi tưởng tượng. Critic học để dự
 đoán $V_\lambda$ (với mục tiêu được tách gradient), actor học để làm $V_\lambda$ tăng.
 
-Điểm cốt lõi phân biệt Dreamer với học tăng cường model-free nằm ở *cách* actor lấy gradient. Vì
-world model là một mạng neural khả vi, $V_\lambda$ khả vi theo trạng thái, trạng thái khả vi theo
-hành động (qua tái tham số hóa), và hành động khả vi theo tham số actor. Gradient do đó chảy
+Điểm cốt lõi phân biệt Dreamer với học tăng cường model-free nằm ở cách actor lấy gradient. Vì
+world model là một mạng neural khả vi, $V_\lambda$ khả vi theo state, state khả vi theo
+action (qua reparameterization), và action khả vi theo tham số actor. Gradient do đó chảy
 thẳng xuyên qua $H$ bước tưởng tượng:
 
 $$
@@ -167,10 +166,9 @@ $$
 $$
 
 Đây là gradient **pathwise** (còn gọi là reparameterization gradient), khác với ước lượng score
-function (REINFORCE) của model-free. REINFORCE chỉ biết "hành động này dẫn tới giá trị cao, tăng
-xác suất của nó"; gradient pathwise biết "dịch hành động theo hướng này thì giá trị tăng" — một
-vector chỉ hướng, không chỉ một đại lượng vô hướng. Tín hiệu giàu hơn này là nguồn gốc của hiệu
-quả mẫu. Nó cũng đặt ra một điều kiện cứng: mọi thành phần trên đường gradient phải khả vi —
+function (REINFORCE) của model-free. REINFORCE chỉ biết "action này dẫn tới giá trị cao, tăng
+xác suất của nó"; gradient pathwise biết "dịch action theo hướng này thì giá trị tăng" — một
+vector chỉ hướng, không chỉ một đại lượng vô hướng. Tín hiệu giàu hơn này là nguồn gốc của sample-efficiency. Nó cũng đặt ra một điều kiện cứng: mọi thành phần trên đường gradient phải khả vi —
 ràng buộc sẽ định hình các lựa chọn thiết kế ở mọi phiên bản sau.
 
 Ba yếu tố trên — world model latent, ba vòng lặp tách bạch, λ-return với cập nhật actor-critic —
@@ -380,7 +378,7 @@ chính xác đủ để huấn luyện hành vi, và đủ nhanh để suy luậ
 
 Bối cảnh tác vụ cũng khắc nghiệt hơn hẳn. V4 nhận ảnh thô độ phân giải cao (cỡ 360×640) thay vì
 ảnh 64×64 đã tiền xử lý, dùng hành động chuột và bàn phím cấp thấp thay vì hành động ghép sẵn, và
-học **hoàn toàn từ một tập dữ liệu ngoại tuyến cố định** thay vì tương tác trực tuyến.
+học **hoàn toàn từ một tập dữ liệu offline cố định** thay vì tương tác online.
 
 ### 7.2 Bộ tokenizer nhân quả và mô hình động lực
 
@@ -414,7 +412,7 @@ triển khai chất lượng cao ở độ dài tùy ý. Nói cách khác, đây
 cho bài toán sai số tích lũy — bài toán mà các phiên bản RSSM giải bằng cách giữ chân trời tưởng
 tượng ngắn và dựa vào critic để bootstrap phần đuôi.
 
-### 7.5 Học ngoại tuyến và điều kiện hóa theo hành động
+### 7.5 Offline learning và điều kiện hóa theo hành động
 
 V4 huấn luyện theo ba pha: tiền huấn luyện world model trên video, tinh chỉnh agent bằng sao chép
 hành vi cộng một mô hình phần thưởng, và huấn luyện chính sách trong tưởng tượng. Trong pha cuối,
@@ -425,7 +423,7 @@ Phần lớn kiến thức của world model đến từ video **không nhãn h�
 có nhãn hành động là đủ để học điều kiện hóa theo hành động. Tách biệt này có ý nghĩa thực tiễn:
 nó cho phép tận dụng kho video lớn không nhãn, và phù hợp với các ứng dụng như robot, nơi tương
 tác thật để thu nhãn vừa chậm vừa rủi ro. Đặt vấn đề thu thập kim cương Minecraft *chỉ từ dữ liệu
-ngoại tuyến* chính là để làm nổi bật năng lực này.
+offline* chính là để làm nổi bật năng lực này.
 
 ### 7.6 PMPO thay cho chuẩn hóa lợi tức
 
@@ -442,12 +440,12 @@ lực, không phải toàn bộ công thức.
 
 ### 7.7 Kết quả
 
-V4 là agent đầu tiên thu thập kim cương trong Minecraft hoàn toàn từ dữ liệu ngoại tuyến, không
+V4 là agent đầu tiên thu thập kim cương trong Minecraft hoàn toàn từ dữ liệu offline, không
 tương tác môi trường — một tác vụ đòi hỏi chọn chuỗi hơn 20.000 hành động chuột và bàn phím từ
 pixel thô. World model của nó dự đoán tương tác vật thể và cơ chế trò chơi chính xác hơn hẳn các
 mô hình thế giới trước, và đạt suy luận tương tác thời gian thực trên một GPU đơn nhờ shortcut
 forcing. Các con số thành công cụ thể theo từng vật phẩm là số liệu do bài báo báo cáo; điểm chắc
-chắn và quan trọng nhất là cột mốc định tính: học ngoại tuyến, từ pixel thô, ở chân trời rất dài.
+chắn và quan trọng nhất là cột mốc định tính: offline learning, từ pixel thô, ở chân trời rất dài.
 
 Cái giá là quy mô tính toán: khoảng hai tỉ tham số, hàng trăm lõi TPU, hàng nghìn giờ video. Đây
 là một chế độ vận hành khác hẳn ngân sách một-GPU của V1–V3.
@@ -474,7 +472,7 @@ Tổng hợp toàn bộ, dòng Dreamer tiến hóa theo hai trục độc lập.
 | | V1 | V2 | V3 | V4 |
 |---|---|---|---|---|
 | Tính toán | một GPU | một GPU | một GPU | hàng trăm TPU, ~2 tỉ tham số |
-| Nguồn dữ liệu | trực tuyến | trực tuyến | trực tuyến | ngoại tuyến (+ video không nhãn) |
+| Nguồn dữ liệu | online | online | online | offline (+ video không nhãn) |
 | Quan sát | pixel 64×64 | pixel 64×64 | pixel + vector | pixel thô 360×640 |
 | Miền tiêu biểu | DM Control | Atari | hơn 150 tác vụ | Minecraft từ pixel thô |
 
@@ -500,7 +498,7 @@ rời được*, mỗi thành phần là một câu hỏi có thể kiểm chứ
 
 - **x-prediction so với v-prediction** như một cơ chế chống sai số tích lũy — kiểm được trên một
   RSSM nhỏ, không cần quy mô V4.
-- **Huấn luyện trong tưởng tượng từ dữ liệu ngoại tuyến** — một thiết lập hợp với ngân sách hạn
+- **Huấn luyện trong tưởng tượng từ dữ liệu offline** — một thiết lập hợp với ngân sách hạn
   chế vì không cần một môi trường nhanh.
 - **Điều kiện hóa theo hành động từ ít nhãn** — một câu hỏi về hiệu quả mẫu, đo được ở quy mô nhỏ.
 - **PMPO so với chuẩn hóa lợi tức** — hai cách xử lý cùng một bài toán bất biến thang đo, so sánh
@@ -520,7 +518,7 @@ tượng, nối với nhau bằng gradient pathwise. V2 thay biểu diễn từ 
 tuyến lại gradient để chinh phục các miền rời rạc. V3 thêm một hộp công cụ bất biến thang đo để một
 cấu hình duy nhất chạy được mọi miền. Cả ba dùng chung lõi RSSM và ngân sách một GPU. V4 cắt đứt
 khỏi lõi đó: thay RSSM bằng một transformer và một mục tiêu khuếch tán, đổi sự gọn nhẹ lấy khả năng
-mở rộng theo dữ liệu và tham số, và chuyển sang chế độ học hoàn toàn ngoại tuyến — với cái giá là
+mở rộng theo dữ liệu và tham số, và chuyển sang chế độ học hoàn toàn offline — với cái giá là
 quy mô tính toán của một phòng thí nghiệm lớn. Nguyên lý không đổi suốt cả lộ trình là huấn luyện
 hành vi bên trong một mô hình học được; cái thay đổi là mô hình đó được dựng nên như thế nào, và
 phải lớn tới đâu.
