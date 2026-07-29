@@ -263,6 +263,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Offline Goal-Conditioned RL Benchmark (Park et al., 2025) — diverse, challenging locomotion and manipulation tasks (antmaze, humanoidmaze, cube, scene, puzzle) in state and pixel form, designed to stress trajectory stitching and multimodality where D4RL has saturated. Single-task reward variants are used for standard offline RL (FQL, RQL).",
   },
+  {
+    id: "procgen",
+    type: "benchmark",
+    label: "Procgen",
+    description:
+      "16 procedurally-generated game-like environments (Cobbe et al., 2020) where each episode draws a fresh level from a huge distribution — the standard zero-shot generalization testbed: train on N levels, test on held-out levels from the same distribution.",
+  },
+  {
+    id: "carl",
+    type: "benchmark",
+    label: "CARL",
+    description:
+      "Context-Adaptive RL benchmark (Benjamins et al., 2021) — takes classic-control, physics, and game environments and exposes their underlying physical/dynamics parameters (gravity, friction, pole length, ...) as an explicit, controllable context vector, directly instantiating the Contextual MDP formalism for measuring generalization across dynamics, not just across level layouts.",
+  },
 
   // ── New Approaches (O) ──────────────────────────────────────────
   {
@@ -615,6 +629,27 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Statistically sound comparison of RL algorithms under a small number of training runs — interval estimates, performance profiles, and outlier-robust aggregates (interquartile mean) in place of raw mean/median point estimates, which routinely produce reversed rankings. Formalized and popularized by Rliable.",
   },
+  {
+    id: "generalization-rl",
+    type: "approach",
+    label: "Generalization in RL",
+    description:
+      "Zero-shot generalization: train on a distribution of contexts/levels and measure return on held-out ones, with no further adaptation at test time (contrast with meta-RL, which allows a few adaptation steps). Formalized by Kirk et al.'s survey; contextual MDPs (Hallak et al.) are the underlying formalism; CARL and Procgen are the standard benchmarks.",
+  },
+  {
+    id: "bisimulation-metric",
+    type: "concept",
+    label: "Bisimulation Metric",
+    description:
+      "A continuous notion of state similarity: two states are close if their immediate rewards match and their next-state distributions are close (recursively, via a Wasserstein/optimal-transport term) — 'behaviorally equivalent' states collapse together regardless of surface appearance. Originates from exact bisimulation in process algebra (Givan, Dean & Greig), turned into a metric by Ferns, Panangaden & Precup, and made trainable at deep-RL scale by DBC. Used to build representations invariant to task-irrelevant visual/dynamics detail for zero-shot generalization.",
+  },
+  {
+    id: "unsupervised-environment-design",
+    type: "concept",
+    label: "Unsupervised Environment Design",
+    description:
+      "Auto-curriculum for generalization: instead of a fixed training distribution, a level generator (adversary, regret-based sampler, or edit-based mutator) is trained to keep proposing levels at the frontier of the current policy's ability, so the policy sees a curriculum that tracks its own weaknesses. Instances: PAIRED (adversarial minimax regret), PLR (prioritizes high-regret levels from a fixed pool by replay), ACCEL (evolves levels via edits + PLR-style prioritization).",
+  },
 ];
 
 // Edges between non-paper nodes.
@@ -638,6 +673,13 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "rl",                   target: "llm-for-rl",           label: "lens" },
   { source: "rl",                   target: "rigorous-evaluation",  label: "lens" },
   { source: "unsupervised-rl",      target: "auxiliary-tasks",      label: "includes" },
+  { source: "rl",                   target: "generalization-rl",    label: "includes" },
+  { source: "contextual-mdp",       target: "generalization-rl",    label: "formalizes" },
+  { source: "generalization-rl",    target: "bisimulation-metric",  label: "uses" },
+  { source: "generalization-rl",    target: "unsupervised-environment-design", label: "includes" },
+  { source: "generalization-rl",    target: "carl",                 label: "evaluated on" },
+  { source: "generalization-rl",    target: "procgen",               label: "evaluated on" },
+  { source: "causal-rl",            target: "bisimulation-metric",  label: "related" },
   { source: "scaling-rl",           target: "plasticity",           label: "bottleneck" },
 
   // MDP formalisms (problem-formulation axis)
