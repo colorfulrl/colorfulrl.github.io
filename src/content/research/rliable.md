@@ -9,6 +9,8 @@ draft: false
 graphLabel: "Rliable"
 graphDescription: "Agarwal et al. (2021), NeurIPS Outstanding Paper. Shows that comparing mean/median scores across a handful of training runs per task routinely produces false conclusions about which algorithm is better, because the statistical uncertainty from few runs is never reported. Proposes interval estimates, performance profiles (fraction of runs above a score threshold), and the interquartile mean as a low-variance, outlier-robust aggregate — packaged as the `rliable` library. Re-audits published Atari 100k / Procgen / DM Control results and finds several reversed rankings. Now a de-facto reporting standard for RL papers."
 graphEdges:
+  - target: rigorous-evaluation
+    label: introduces
   - target: atari
     label: evaluated on
   - target: dm-control

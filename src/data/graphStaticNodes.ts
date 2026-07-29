@@ -601,6 +601,20 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Optimises a sequence of actions over a receding horizon using a learned model — decoder-free in TD-MPC, CEM-based in PlaNet.",
   },
+  {
+    id: "auxiliary-tasks",
+    type: "concept",
+    label: "Auxiliary Tasks",
+    description:
+      "Extra self-supervised prediction/control objectives (predict reward, control pixel change, replay the value function) trained jointly with the main RL loss on a shared representation, so that representation matures even when extrinsic reward is sparse. Introduced by UNREAL; conceptually a precursor to reward-free unsupervised RL.",
+  },
+  {
+    id: "rigorous-evaluation",
+    type: "concept",
+    label: "Rigorous Evaluation",
+    description:
+      "Statistically sound comparison of RL algorithms under a small number of training runs — interval estimates, performance profiles, and outlier-robust aggregates (interquartile mean) in place of raw mean/median point estimates, which routinely produce reversed rankings. Formalized and popularized by Rliable.",
+  },
 ];
 
 // Edges between non-paper nodes.
@@ -622,6 +636,8 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "latent-dynamics",      target: "decoder-free",         label: "variant: no recon" },
   { source: "rl",                   target: "causal-rl",            label: "lens" },
   { source: "rl",                   target: "llm-for-rl",           label: "lens" },
+  { source: "rl",                   target: "rigorous-evaluation",  label: "lens" },
+  { source: "unsupervised-rl",      target: "auxiliary-tasks",      label: "includes" },
   { source: "scaling-rl",           target: "plasticity",           label: "bottleneck" },
 
   // MDP formalisms (problem-formulation axis)

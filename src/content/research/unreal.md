@@ -11,6 +11,8 @@ graphDescription: "Jaderberg et al. (2016). Builds on A3C: adds auxiliary unsupe
 graphEdges:
   - target: a3c
     label: extends
+  - target: auxiliary-tasks
+    label: introduces
   - target: unsupervised-rl
     label: uses
   - target: atari
