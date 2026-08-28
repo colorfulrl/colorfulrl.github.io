@@ -1,0 +1,12 @@
+---
+title: "A Survey on Deep Reinforcement Learning for Audio-Based Applications"
+url: "https://arxiv.org/abs/2101.00240"
+type: "paper"
+source: "ArXiv"
+thumbnail: "https://th.bing.com/th/id/R.f7e1f093c2ab2adbd801eab0a84e7a44?rik=8FAYbI113WkaJA&pid=ImgRaw&r=0"
+description: "Deep reinforcement learning (DRL) is poised to revolutionise the field of artificial intelligence (AI) by endowing autonomous systems with high levels of understanding of the real world. Currently, deep learning (DL) is enabling DRL to effectively solve various intractable problems in various fields. Most importantly, DRL algorithms are also being employed in audio signal processing to learn directly from speech, music and other sound signals in order to create audio-based autonomous systems that have many promising application in the real world. In this article, we conduct a comprehensive survey on the progress of DRL in the audio domain by bringing together the research studies across different speech and music-related areas. We begin with an introduction to the general field of DL and reinforcement learning (RL), then progress to the main DRL methods and their applications in the audio domain. We conclude by presenting challenges faced by audio-based DRL agents and highlighting open areas for future research and investigation."
+descriptionEn: "Deep reinforcement learning (DRL) is poised to revolutionise the field of artificial intelligence (AI) by endowing autonomous systems with high levels of understanding of the real world. Currently, deep learning (DL) is enabling DRL to effectively solve various intractable problems in various fields. Most importantly, DRL algorithms are also being employed in audio signal processing to learn directly from speech, music and other sound signals in order to create audio-based autonomous systems that have many promising application in the real world. In this article, we conduct a comprehensive survey on the progress of DRL in the audio domain by bringing together the research studies across different speech and music-related areas. We begin with an introduction to the general field of DL and reinforcement learning (RL), then progress to the main DRL methods and their applications in the audio domain. We conclude by presenting challenges faced by audio-based DRL agents and highlighting open areas for future research and investigation."
+date: 2021-09-02
+order: 1
+draft: false
+---
