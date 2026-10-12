@@ -1,0 +1,132 @@
+---
+import type { CollectionEntry } from "astro:content";
+import IconVideo from "@/assets/icons/IconVideo.svg";
+import { useTranslations } from "@/i18n";
+
+type Props = CollectionEntry<"videos">;
+
+const { data } = Astro.props;
+const { title, titleEn, youtube, src, thumbnail, description, descriptionEn, date } =
+  data;
+
+const t = useTranslations();
+const tEn = useTranslations("en");
+
+/** Accepts a bare ID or any common YouTube URL form and returns the video ID. */
+function getYoutubeId(value?: string) {
+  if (!value) return undefined;
+  if (/^[\w-]{11}$/.test(value)) return value;
+  const match = value.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/
+  );
+  return match?.[1];
+}
+
+const youtubeId = getYoutubeId(youtube);
+const poster =
+  thumbnail ??
+  (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : undefined);
+
+const formattedDate = date
+  ? date.toLocaleDateString("vi-VN", { year: "numeric", month: "short" })
+  : null;
+---
+
+<li class="border-border bg-surface group/card flex h-full flex-col overflow-hidden rounded-lg border transition-all duration-300 hover:border-accent/50 hover:shadow-lg">
+  <div class="bg-muted relative w-full shrink-0 overflow-hidden" style="aspect-ratio: 16/9;">
+    {
+      youtubeId ? (
+        <button
+          type="button"
+          data-yt-play={youtubeId}
+          data-yt-title={title}
+          class="group/play absolute inset-0 h-full w-full cursor-pointer"
+          aria-label={`${t.videos.play}: ${title}`}
+          data-en-aria-label={`${tEn.videos.play}: ${titleEn ?? title}`}
+        >
+          {poster && (
+            <img
+              src={poster}
+              alt=""
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-300 group-hover/card:scale-105"
+            />
+          )}
+          <span class="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover/play:bg-black/35">
+            <span class="flex size-14 items-center justify-center rounded-full bg-red-600 text-white shadow-lg transition-transform group-hover/play:scale-110">
+              <IconVideo class="size-7 translate-x-0.5 fill-current" />
+            </span>
+          </span>
+        </button>
+      ) : src ? (
+        <video
+          src={src}
+          poster={poster}
+          controls
+          preload="metadata"
+          playsinline
+          class="h-full w-full bg-black object-contain"
+        />
+      ) : (
+        <div class="text-muted-foreground flex h-full w-full items-center justify-center">
+          <IconVideo class="size-10 opacity-40" />
+        </div>
+      )
+    }
+  </div>
+
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <h2 class="font-display font-semibold leading-snug tracking-tight sm:text-lg">
+      <span data-en={titleEn || undefined}>{title}</span>
+    </h2>
+
+    {formattedDate && <p class="text-muted-foreground text-xs">{formattedDate}</p>}
+
+    {
+      description && (
+        <p data-en={descriptionEn || undefined} class="text-sm leading-relaxed">
+          {description}
+        </p>
+      )
+    }
+
+    {
+      youtubeId && (
+        <div class="mt-auto pt-2">
+          <a
+            href={`https://www.youtube.com/watch?v=${youtubeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-accent inline-block text-sm font-medium decoration-dashed underline-offset-4 hover:underline"
+          >
+            <span data-i18n="videos.watchOnYoutube">{t.videos.watchOnYoutube}</span> ↗
+          </a>
+        </div>
+      )
+    }
+  </div>
+</li>
+
+<script>
+  // Lite YouTube embed: only load the iframe once the viewer clicks play.
+  function initVideoPlayers() {
+    document.querySelectorAll<HTMLButtonElement>("[data-yt-play]").forEach(btn => {
+      btn.addEventListener(
+        "click",
+        () => {
+          const iframe = document.createElement("iframe");
+          iframe.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.ytPlay}?autoplay=1&rel=0`;
+          iframe.title = btn.dataset.ytTitle ?? "YouTube video";
+          iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+          iframe.allowFullscreen = true;
+          iframe.className = "absolute inset-0 h-full w-full border-0";
+          btn.replaceWith(iframe);
+        },
+        { once: true }
+      );
+    });
+  }
+
+  document.addEventListener("astro:page-load", initVideoPlayers);
+</script>

@@ -8,6 +8,7 @@ export interface UIStrings {
     search: string;
     ebooks: string;
     resources: string;
+    videos: string;
     research: string;
     curriculum: string;
     categories: string;
@@ -81,6 +82,9 @@ export interface UIStrings {
     resourcesTitle: string;
     resourcesDesc: string;
 
+    videosTitle: string;
+    videosDesc: string;
+
     researchTitle: string;
     researchDesc: string;
   };
@@ -94,6 +98,11 @@ export interface UIStrings {
     categories: string;
     readMore: string;
     readLess: string;
+  };
+  videos: {
+    comingSoon: string;
+    play: string;
+    watchOnYoutube: string;
   };
   a11y: {
     skipToContent: string;

@@ -85,6 +85,28 @@ const resources = defineCollection({
   }),
 });
 
+export const VIDEOS_PATH = "src/content/videos";
+
+const videos = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${VIDEOS_PATH}` }),
+  schema: z.object({
+    title: z.string(),
+    titleEn: z.string().optional(),
+    // YouTube: dán link (watch / youtu.be / shorts / embed) hoặc chỉ video ID.
+    youtube: z.string().optional(),
+    // Video tự host: đường dẫn trong public/ (vd. "/videos/rl-il-bc.mp4") hoặc URL ngoài.
+    // Dùng khi không có `youtube`.
+    src: z.string().optional(),
+    // Ảnh poster/thumbnail (tùy chọn). YouTube sẽ tự lấy thumbnail nếu bỏ trống.
+    thumbnail: z.string().optional(),
+    description: z.string().optional(),
+    descriptionEn: z.string().optional(),
+    date: z.coerce.date().optional(),
+    order: z.number().optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
 export const RESEARCH_PATH = "src/content/research";
 
 const research = defineCollection({
@@ -208,4 +230,4 @@ const postsEn = defineCollection({
   schema: z.unknown(),
 });
 
-export const collections = { posts, pages, ebooks, resources, research, curriculum, curriculumPaper, otherTopics, otherTopicsPaper, postsEn };
+export const collections = { posts, pages, ebooks, resources, videos, research, curriculum, curriculumPaper, otherTopics, otherTopicsPaper, postsEn };

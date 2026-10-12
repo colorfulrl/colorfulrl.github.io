@@ -8,6 +8,7 @@
     "search":     { "vi": "Tìm kiếm",          "en": "Search" },
     "ebooks":     { "vi": "Ebook",             "en": "Ebooks" },
     "resources":  { "vi": "Tài nguyên",        "en": "Resources" },
+    "videos":     { "vi": "Video",             "en": "Videos" },
     "research":   { "vi": "Nghiên cứu",        "en": "Research" },
     "curriculum": { "vi": "Lộ trình",          "en": "Curriculum" },
     "categories": { "vi": "Chủ đề",            "en": "Categories" },
@@ -75,6 +76,8 @@
     "supportDesc":    { "vi": "Cách ủng hộ mình duy trì và phát triển blog.", "en": "Ways you can support me in keeping this blog running." },
     "resourcesTitle": { "vi": "Tài nguyên",      "en": "Resources" },
     "resourcesDesc":  { "vi": "Bài viết, video, repo và khóa học mình thấy đáng đọc.", "en": "Articles, videos, repos and courses worth reading." },
+    "videosTitle":    { "vi": "Video",           "en": "Videos" },
+    "videosDesc":     { "vi": "Các video giải thích Reinforcement Learning do mình thực hiện.", "en": "Explainer videos about Reinforcement Learning that I made." },
     "researchTitle":  { "vi": "Bản đồ nghiên cứu", "en": "Research Map" },
     "researchDesc":   { "vi": "Đồ thị tri thức RL: chủ đề, khái niệm và bài báo quan trọng.", "en": "RL knowledge graph: topics, concepts and key papers." }
   },
@@ -88,6 +91,11 @@
     "categories":     { "vi": "Chủ đề",         "en": "Categories" },
     "readMore":       { "vi": "Xem thêm",       "en": "Read more" },
     "readLess":       { "vi": "Thu gọn",        "en": "Read less" }
+  },
+  "videos": {
+    "comingSoon":     { "vi": "Video sẽ sớm được cập nhật.", "en": "Videos coming soon." },
+    "play":           { "vi": "Phát video",     "en": "Play video" },
+    "watchOnYoutube": { "vi": "Xem trên YouTube", "en": "Watch on YouTube" }
   },
   "a11y": {
     "skipToContent":    { "vi": "Bỏ qua tới nội dung", "en": "Skip to content" },

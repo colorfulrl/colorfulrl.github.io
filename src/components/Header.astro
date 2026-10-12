@@ -108,6 +108,15 @@ const isActive = (path: string) => {
             {t.nav.about}
           </a>
         </li>
+        <li class="col-span-2">
+          <a
+            href="/videos"
+            class:list={{ "active-nav": isActive("/videos") }}
+            data-i18n="nav.videos"
+          >
+            {t.nav.videos}
+          </a>
+        </li>
         <li class="relative col-span-2">
           <button
             type="button"
