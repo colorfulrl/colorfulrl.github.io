@@ -2,10 +2,11 @@
 import type { CollectionEntry } from "astro:content";
 import IconVideo from "@/assets/icons/IconVideo.svg";
 import { useTranslations } from "@/i18n";
+import { getYoutubeId, playlistSlug } from "@/utils/videos";
 
 type Props = CollectionEntry<"videos">;
 
-const { data } = Astro.props;
+const { id, data } = Astro.props;
 const {
   title,
   titleEn,
@@ -21,16 +22,6 @@ const {
 const t = useTranslations();
 const tEn = useTranslations("en");
 
-/** Accepts a bare ID or any common YouTube URL form and returns the video ID. */
-function getYoutubeId(value?: string) {
-  if (!value) return undefined;
-  if (/^[\w-]{11}$/.test(value)) return value;
-  const match = value.match(
-    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/
-  );
-  return match?.[1];
-}
-
 const youtubeId = getYoutubeId(youtube);
 const poster =
   thumbnail ??
@@ -41,8 +32,16 @@ const formattedDate = date
   : null;
 ---
 
-<li class="border-border bg-surface group/card flex h-full flex-col overflow-hidden rounded-lg border transition-all duration-300 hover:border-accent/50 hover:shadow-lg">
+<li
+  data-video-id={youtubeId ?? id}
+  class="border-border bg-surface group/card flex h-full flex-col overflow-hidden rounded-lg border transition-all duration-300 hover:border-accent/50 hover:shadow-lg">
   <div class="bg-muted relative w-full shrink-0 overflow-hidden" style="aspect-ratio: 16/9;">
+    <span
+      data-watched-badge
+      hidden
+      class="absolute top-2 left-2 z-10 rounded bg-black/70 px-2 py-0.5 text-xs font-medium text-white"
+      data-i18n="videos.watched"
+    >{t.videos.watched}</span>
     {
       youtubeId ? (
         <button
@@ -57,6 +56,8 @@ const formattedDate = date
             <img
               src={poster}
               alt=""
+              width="480"
+              height="270"
               loading="lazy"
               class="h-full w-full object-cover transition-transform duration-300 group-hover/card:scale-105"
             />
@@ -86,7 +87,9 @@ const formattedDate = date
 
   <div class="flex flex-1 flex-col gap-2 p-4">
     <h2 class="font-display font-semibold leading-snug tracking-tight sm:text-lg">
-      <span data-en={titleEn || undefined}>{title}</span>
+      <a href={`/videos/watch/${id}`} class="hover:text-accent transition-colors">
+        <span data-en={titleEn || undefined}>{title}</span>
+      </a>
     </h2>
 
     {
@@ -94,9 +97,12 @@ const formattedDate = date
         <div class="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
           {formattedDate && <span>{formattedDate}</span>}
           {playlists.map(name => (
-            <span class="bg-accent/10 text-accent rounded px-2 py-0.5 font-medium">
+            <a
+              href={`/videos/playlist/${playlistSlug(name)}`}
+              class="bg-accent/10 text-accent hover:bg-accent/20 rounded px-2 py-0.5 font-medium transition-colors"
+            >
               {name}
-            </span>
+            </a>
           ))}
         </div>
       )
@@ -128,24 +134,58 @@ const formattedDate = date
 </li>
 
 <script>
+  const WATCHED_KEY = "watchedVideos";
+
+  function readWatched(): string[] {
+    try {
+      return JSON.parse(localStorage.getItem(WATCHED_KEY) ?? "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function markWatched(id: string) {
+    try {
+      const list = readWatched();
+      if (!list.includes(id)) {
+        list.push(id);
+        localStorage.setItem(WATCHED_KEY, JSON.stringify(list.slice(-500)));
+      }
+    } catch {
+      /* storage unavailable (private mode) — watched state is a nicety, ignore */
+    }
+  }
+
+  function showWatchedBadges() {
+    const watched = new Set(readWatched());
+    document.querySelectorAll<HTMLElement>("[data-video-id]").forEach(card => {
+      const isWatched = watched.has(card.dataset.videoId ?? "");
+      card.querySelector<HTMLElement>("[data-watched-badge]")?.toggleAttribute("hidden", !isWatched);
+    });
+  }
+
   // Lite YouTube embed: only load the iframe once the viewer clicks play.
   function initVideoPlayers() {
     document.querySelectorAll<HTMLButtonElement>("[data-yt-play]").forEach(btn => {
       btn.addEventListener(
         "click",
         () => {
+          const id = btn.dataset.ytPlay ?? "";
+          markWatched(id);
           const iframe = document.createElement("iframe");
-          iframe.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.ytPlay}?autoplay=1&rel=0`;
+          iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
           iframe.title = btn.dataset.ytTitle ?? "YouTube video";
           iframe.allow =
             "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
           iframe.allowFullscreen = true;
           iframe.className = "absolute inset-0 h-full w-full border-0";
           btn.replaceWith(iframe);
+          showWatchedBadges();
         },
         { once: true }
       );
     });
+    showWatchedBadges();
   }
 
   document.addEventListener("astro:page-load", initVideoPlayers);

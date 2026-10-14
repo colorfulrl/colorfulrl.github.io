@@ -1,0 +1,191 @@
+---
+import { useTranslations } from "@/i18n";
+
+type Props = {
+  playlists: { name: string; slug: string; count: number }[];
+  /** slug of the playlist being viewed; undefined on the "all videos" page */
+  active?: string;
+};
+
+const { playlists, active } = Astro.props;
+const t = useTranslations();
+const tEn = useTranslations("en");
+
+const chip =
+  "inline-block rounded-full border px-3 py-1 text-sm transition-colors";
+const chipIdle = "border-border hover:border-accent hover:text-accent";
+const chipActive = "border-accent bg-accent text-accent-foreground";
+---
+
+<div
+  id="video-browser"
+  class="mb-8"
+  data-placeholder-vi={t.videos.searchPlaceholder}
+  data-placeholder-en={tEn.videos.searchPlaceholder}
+  data-empty-vi={t.videos.noResults}
+  data-empty-en={tEn.videos.noResults}
+>
+  <div class="relative">
+    <input
+      id="video-search"
+      type="search"
+      autocomplete="off"
+      placeholder={t.videos.searchPlaceholder}
+      aria-label={t.videos.searchPlaceholder}
+      class="border-border bg-surface/50 focus:border-accent focus:ring-accent/20 w-full rounded-lg border px-4 py-2.5 text-sm transition-colors outline-none focus:ring-1"
+    />
+    <ul
+      id="video-search-results"
+      hidden
+      class="border-border bg-background absolute inset-x-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-lg border shadow-lg"
+    >
+    </ul>
+  </div>
+
+  {
+    playlists.length > 0 && (
+      <nav aria-label={t.videos.playlists} class="mt-4">
+        <ul class="flex flex-wrap gap-2">
+          <li>
+            <a
+              href="/videos"
+              class:list={[chip, active ? chipIdle : chipActive]}
+            >
+              <span data-i18n="videos.all">{t.videos.all}</span>
+            </a>
+          </li>
+          {playlists.map(p => (
+            <li>
+              <a
+                href={`/videos/playlist/${p.slug}`}
+                class:list={[chip, active === p.slug ? chipActive : chipIdle]}
+              >
+                {p.name}{" "}
+                <span class="text-xs opacity-60">({p.count})</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+</div>
+
+<script>
+  import Fuse from "fuse.js";
+
+  type Item = {
+    id: string;
+    title: string;
+    titleEn: string;
+    playlists: string[];
+    description: string;
+    poster: string;
+  };
+
+  const lang = () => document.documentElement.getAttribute("data-lang") || "vi";
+
+  function initVideoSearch() {
+    const wrap = document.getElementById("video-browser");
+    const input = document.getElementById("video-search") as HTMLInputElement | null;
+    const list = document.getElementById("video-search-results");
+    if (!wrap || !input || !list || input.dataset.bound) return;
+    input.dataset.bound = "1";
+
+    let fuse: Fuse<Item> | null = null;
+    let loading: Promise<void> | null = null;
+
+    // The index is only downloaded the first time the box is focused.
+    const load = () =>
+      (loading ??= fetch("/videos/search.json")
+        .then(r => r.json())
+        .then((items: Item[]) => {
+          fuse = new Fuse(items, {
+            keys: [
+              { name: "title", weight: 3 },
+              { name: "titleEn", weight: 2 },
+              { name: "playlists", weight: 1.5 },
+              { name: "description", weight: 1 },
+            ],
+            threshold: 0.35,
+            ignoreLocation: true,
+          });
+        })
+        .catch(() => {
+          loading = null; // allow a retry on next focus
+        }));
+
+    const label = (key: "placeholder" | "empty") =>
+      (wrap.dataset as Record<string, string | undefined>)[`${key}${lang() === "en" ? "En" : "Vi"}`] ?? "";
+
+    function render(query: string) {
+      list!.replaceChildren();
+      if (!query || !fuse) {
+        list!.hidden = true;
+        return;
+      }
+      const hits = fuse.search(query, { limit: 8 });
+      if (hits.length === 0) {
+        const li = document.createElement("li");
+        li.className = "text-muted-foreground px-4 py-3 text-sm italic";
+        li.textContent = label("empty");
+        list!.append(li);
+      }
+      for (const { item } of hits) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = `/videos/watch/${item.id}`;
+        a.className = "hover:bg-accent/10 flex items-center gap-3 px-3 py-2";
+        if (item.poster) {
+          const img = document.createElement("img");
+          img.src = item.poster;
+          img.alt = "";
+          img.width = 96;
+          img.height = 54;
+          img.loading = "lazy";
+          img.className = "h-[54px] w-24 shrink-0 rounded object-cover";
+          a.append(img);
+        }
+        const text = document.createElement("span");
+        text.className = "min-w-0";
+        const title = document.createElement("span");
+        title.className = "block truncate text-sm font-medium";
+        title.textContent = lang() === "en" && item.titleEn ? item.titleEn : item.title;
+        const meta = document.createElement("span");
+        meta.className = "text-muted-foreground block truncate text-xs";
+        meta.textContent = item.playlists.join(" · ");
+        text.append(title, meta);
+        a.append(text);
+        li.append(a);
+        list!.append(li);
+      }
+      list!.hidden = false;
+    }
+
+    input.addEventListener("focus", () => void load());
+    input.addEventListener("input", async () => {
+      await load();
+      render(input.value.trim());
+    });
+    input.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        input.value = "";
+        render("");
+        input.blur();
+      }
+    });
+    document.addEventListener("click", e => {
+      if (!wrap.contains(e.target as Node)) list!.hidden = true;
+    });
+
+    // keep placeholder in sync with the language switcher
+    const syncPlaceholder = () => (input.placeholder = label("placeholder"));
+    new MutationObserver(syncPlaceholder).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-lang"],
+    });
+    syncPlaceholder();
+  }
+
+  document.addEventListener("astro:page-load", initVideoSearch);
+</script>

@@ -103,6 +103,16 @@ export interface UIStrings {
     comingSoon: string;
     play: string;
     watchOnYoutube: string;
+    searchPlaceholder: string;
+    noResults: string;
+    all: string;
+    playlists: string;
+    backToVideos: string;
+    related: string;
+    inPlaylist: string;
+    previous: string;
+    next: string;
+    watched: string;
   };
   a11y: {
     skipToContent: string;

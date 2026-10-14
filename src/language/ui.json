@@ -95,7 +95,17 @@
   "videos": {
     "comingSoon":     { "vi": "Video sẽ sớm được cập nhật.", "en": "Videos coming soon." },
     "play":           { "vi": "Phát video",     "en": "Play video" },
-    "watchOnYoutube": { "vi": "Xem trên YouTube", "en": "Watch on YouTube" }
+    "watchOnYoutube": { "vi": "Xem trên YouTube", "en": "Watch on YouTube" },
+    "searchPlaceholder": { "vi": "Tìm video...", "en": "Search videos..." },
+    "noResults":      { "vi": "Không tìm thấy video nào.", "en": "No videos found." },
+    "all":            { "vi": "Tất cả",        "en": "All" },
+    "playlists":      { "vi": "Chủ đề (playlist)", "en": "Topics (playlists)" },
+    "backToVideos":   { "vi": "← Tất cả video", "en": "← All videos" },
+    "related":        { "vi": "Video liên quan", "en": "Related videos" },
+    "inPlaylist":     { "vi": "Trong playlist", "en": "In playlist" },
+    "previous":       { "vi": "Video trước",   "en": "Previous video" },
+    "next":           { "vi": "Video kế tiếp", "en": "Next video" },
+    "watched":        { "vi": "Đã xem",        "en": "Watched" }
   },
   "a11y": {
     "skipToContent":    { "vi": "Bỏ qua tới nội dung", "en": "Skip to content" },

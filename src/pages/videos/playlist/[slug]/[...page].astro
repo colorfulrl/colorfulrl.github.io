@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import VideoCard from "@/components/VideoCard.astro";
+import VideoBrowser from "@/components/VideoBrowser.astro";
+import Pagination from "@/components/Pagination.astro";
+import { getSortedVideos, getPlaylists } from "@/utils/videos";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const videos = await getSortedVideos();
+  const playlists = getPlaylists(videos);
+  return playlists.flatMap(pl =>
+    paginate(
+      videos.filter(v => v.data.playlists.includes(pl.name)),
+      {
+        params: { slug: pl.slug },
+        pageSize: 12,
+        props: { playlists, active: pl.slug, playlistName: pl.name },
+      }
+    )
+  );
+}) satisfies GetStaticPaths;
+
+const { page, playlists, active, playlistName } = Astro.props;
+const t = useTranslations();
+---
+
+<Layout title={`${playlistName} | ${t.pages.videosTitle} | ${config.site.title}`}>
+  <Header />
+
+  <nav class="app-layout mt-8 mb-1">
+    <a href="/videos" class="opacity-80 hover:opacity-100" data-i18n="videos.backToVideos">
+      {t.videos.backToVideos}
+    </a>
+  </nav>
+
+  <Main pageTitle={playlistName} pageDesc={t.pages.videosDesc} i18nDesc="pages.videosDesc">
+    <VideoBrowser playlists={playlists} active={active} />
+    <ul class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {page.data.map(video => <VideoCard {...video} />)}
+    </ul>
+  </Main>
+
+  <Pagination {page} />
+
+  <Footer noMarginTop={page.lastPage > 1} />
+</Layout>

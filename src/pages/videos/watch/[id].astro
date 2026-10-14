@@ -1,0 +1,169 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import VideoCard from "@/components/VideoCard.astro";
+import {
+  getSortedVideos,
+  getRelatedVideos,
+  getYoutubeId,
+  getVideoPoster,
+  playlistSlug,
+} from "@/utils/videos";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+export const getStaticPaths = (async () => {
+  const videos = await getSortedVideos();
+  return videos.map(video => ({
+    params: { id: video.id },
+    props: { video, all: videos },
+  }));
+}) satisfies GetStaticPaths;
+
+const { video, all } = Astro.props;
+const t = useTranslations();
+const { title, titleEn, youtube, src, description, descriptionEn, date, playlists } =
+  video.data;
+
+const youtubeId = getYoutubeId(youtube);
+const poster = getVideoPoster(video);
+const related = getRelatedVideos(video, all, 4);
+
+// Previous / next video within the first playlist, oldest → newest (series order).
+const series = playlists[0]
+  ? all
+      .filter(v => v.data.playlists.includes(playlists[0]))
+      .sort((a, b) => (a.data.date?.getTime() ?? 0) - (b.data.date?.getTime() ?? 0))
+  : [];
+const idx = series.findIndex(v => v.id === video.id);
+const prev = idx > 0 ? series[idx - 1] : undefined;
+const next = idx >= 0 && idx < series.length - 1 ? series[idx + 1] : undefined;
+
+const formattedDate = date
+  ? date.toLocaleDateString("vi-VN", { year: "numeric", month: "long", day: "numeric" })
+  : null;
+---
+
+<Layout
+  title={`${title} | ${t.pages.videosTitle} | ${config.site.title}`}
+  description={description}
+  ogImage={poster}
+>
+  <Header />
+
+  <nav class="app-layout mt-8 mb-1">
+    <a href="/videos" class="opacity-80 hover:opacity-100" data-i18n="videos.backToVideos">
+      {t.videos.backToVideos}
+    </a>
+  </nav>
+
+  <main id="main-content" class="app-layout pb-4" data-watch-id={youtubeId ?? video.id}>
+    <div class="bg-muted relative w-full overflow-hidden rounded-lg" style="aspect-ratio: 16/9;">
+      {
+        youtubeId ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0`}
+            title={title}
+            class="absolute inset-0 h-full w-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          />
+        ) : src ? (
+          <video src={src} poster={poster} controls preload="metadata" playsinline class="h-full w-full bg-black object-contain" />
+        ) : null
+      }
+    </div>
+
+    <h1 class="mt-6 text-2xl font-semibold sm:text-3xl">
+      <span data-en={titleEn || undefined}>{title}</span>
+    </h1>
+
+    <div class="text-muted-foreground mt-3 flex flex-wrap items-center gap-2 text-sm">
+      {formattedDate && <span>{formattedDate}</span>}
+      {
+        playlists.map(name => (
+          <a
+            href={`/videos/playlist/${playlistSlug(name)}`}
+            class="bg-accent/10 text-accent hover:bg-accent/20 rounded px-2 py-0.5 text-xs font-medium transition-colors"
+          >
+            {name}
+          </a>
+        ))
+      }
+      {
+        youtubeId && (
+          <a
+            href={`https://www.youtube.com/watch?v=${youtubeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-accent ms-auto decoration-dashed underline-offset-4 hover:underline"
+          >
+            <span data-i18n="videos.watchOnYoutube">{t.videos.watchOnYoutube}</span> ↗
+          </a>
+        )
+      }
+    </div>
+
+    {
+      description && (
+        <p data-en={descriptionEn || undefined} class="mt-4 leading-relaxed">
+          {description}
+        </p>
+      )
+    }
+
+    {
+      (prev || next) && (
+        <nav class="border-border mt-8 grid gap-3 border-t pt-6 sm:grid-cols-2" aria-label={playlists[0]}>
+          {prev ? (
+            <a href={`/videos/watch/${prev.id}`} class="hover:text-accent block">
+              <span class="text-muted-foreground block text-xs" data-i18n="videos.previous">{t.videos.previous}</span>
+              <span class="font-medium">← {prev.data.title}</span>
+            </a>
+          ) : <span />}
+          {next && (
+            <a href={`/videos/watch/${next.id}`} class="hover:text-accent block sm:text-end">
+              <span class="text-muted-foreground block text-xs" data-i18n="videos.next">{t.videos.next}</span>
+              <span class="font-medium">{next.data.title} →</span>
+            </a>
+          )}
+        </nav>
+      )
+    }
+
+    {
+      related.length > 0 && (
+        <section class="mt-10">
+          <h2 class="font-display mb-4 text-xl font-semibold tracking-tight" data-i18n="videos.related">
+            {t.videos.related}
+          </h2>
+          <ul class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {related.map(v => <VideoCard {...v} />)}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Remember that this video was opened so cards elsewhere can show "Watched".
+  function markCurrentWatched() {
+    const id = document.getElementById("main-content")?.dataset.watchId;
+    if (!id) return;
+    try {
+      const list: string[] = JSON.parse(localStorage.getItem("watchedVideos") ?? "[]");
+      if (!list.includes(id)) {
+        list.push(id);
+        localStorage.setItem("watchedVideos", JSON.stringify(list.slice(-500)));
+      }
+    } catch {
+      /* storage unavailable — ignore */
+    }
+  }
+  document.addEventListener("astro:page-load", markCurrentWatched);
+</script>

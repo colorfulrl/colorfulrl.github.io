@@ -1,31 +1,26 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import VideoCard from "@/components/VideoCard.astro";
+import VideoBrowser from "@/components/VideoBrowser.astro";
 import Pagination from "@/components/Pagination.astro";
+import { getSortedVideos, getPlaylists } from "@/utils/videos";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const videos = (await getCollection("videos", ({ data }) => !data.draft)).sort(
-    (a, b) => {
-      const orderA = a.data.order ?? Number.MAX_SAFE_INTEGER;
-      const orderB = b.data.order ?? Number.MAX_SAFE_INTEGER;
-      if (orderA !== orderB) return orderA - orderB;
-      const dateA = a.data.date?.getTime() ?? 0;
-      const dateB = b.data.date?.getTime() ?? 0;
-      return dateB - dateA;
-    }
-  );
-  return paginate(videos, { pageSize: 12 });
+  const videos = await getSortedVideos();
+  return paginate(videos, {
+    pageSize: 12,
+    props: { playlists: getPlaylists(videos) },
+  });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page, playlists } = Astro.props;
 const t = useTranslations();
 ---
 
@@ -34,6 +29,7 @@ const t = useTranslations();
   <Breadcrumb />
 
   <Main pageTitle={t.pages.videosTitle} pageDesc={t.pages.videosDesc} i18nTitle="pages.videosTitle" i18nDesc="pages.videosDesc">
+    <VideoBrowser playlists={playlists} />
     {
       page.data.length === 0 ? (
         <p class="text-muted-foreground italic" data-i18n="videos.comingSoon">{t.videos.comingSoon}</p>
