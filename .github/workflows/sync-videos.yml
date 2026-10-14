@@ -1,0 +1,53 @@
+name: Sync YouTube videos
+
+on:
+  schedule:
+    # 00:00 giờ Việt Nam (UTC+7) = 17:00 UTC hôm trước
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: sync-videos
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Sync videos from YouTube playlists
+        run: node scripts/sync-videos.mjs
+
+      - name: Commit changes
+        id: commit
+        run: |
+          if [ -z "$(git status --porcelain src/content/videos)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Không có video mới."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/content/videos
+          git commit -m "chore(videos): sync from YouTube playlists"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # Commit do GITHUB_TOKEN tạo ra không kích hoạt workflow khác,
+      # nên phải gọi deploy thủ công.
+      - name: Trigger deploy
+        if: steps.commit.outputs.changed == 'true'
+        run: gh workflow run deploy-blog.yml --ref "${{ github.ref_name }}"
+        env:
+          GH_TOKEN: ${{ github.token }}

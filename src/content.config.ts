@@ -104,6 +104,11 @@ const videos = defineCollection({
     date: z.coerce.date().optional(),
     order: z.number().optional(),
     draft: z.boolean().optional(),
+    // Tên các playlist YouTube (bắt đầu bằng "RL") chứa video này — chủ đề của video.
+    // Do scripts/sync-videos.mjs tự ghi đè mỗi lần đồng bộ, đừng sửa tay.
+    playlists: z.array(z.string()).default([]),
+    // true = file do script tạo; script được phép ẩn (draft) nếu video rời khỏi mọi playlist RL.
+    synced: z.boolean().optional(),
   }),
 });
 
@@ -155,9 +160,9 @@ const curriculum = defineCollection({
           z.object({
             ref: z.string(),
             after: z.array(z.string()).optional(),
-          }),
+          })
         ),
-      }),
+      })
     ),
   }),
 });
@@ -166,7 +171,10 @@ const curriculum = defineCollection({
 // central Core-RL graph. id = "<domain>/papers/<slug>" (Astro uses the
 // path relative to the collection base as the id).
 const curriculumPaper = defineCollection({
-  loader: glob({ pattern: "*/papers/*.{md,mdx}", base: `./${CURRICULUM_PATH}` }),
+  loader: glob({
+    pattern: "*/papers/*.{md,mdx}",
+    base: `./${CURRICULUM_PATH}`,
+  }),
   schema: z.object({
     title: z.string(),
     authors: z.array(z.string()).optional(),
@@ -191,25 +199,30 @@ const otherTopics = defineCollection({
     descriptionEn: z.string().optional(),
     order: z.number().optional(),
     draft: z.boolean().optional(),
-    stages: z.array(
-      z.object({
-        id: z.string(),
-        label: z.string(),
-        labelEn: z.string().optional(),
-        items: z.array(
-          z.object({
-            ref: z.string(),
-            after: z.array(z.string()).optional(),
-          }),
-        ),
-      }),
-    ).default([]),
+    stages: z
+      .array(
+        z.object({
+          id: z.string(),
+          label: z.string(),
+          labelEn: z.string().optional(),
+          items: z.array(
+            z.object({
+              ref: z.string(),
+              after: z.array(z.string()).optional(),
+            })
+          ),
+        })
+      )
+      .default([]),
   }),
 });
 
 // Domain-specific papers for other-topics folders — same shape as curriculumPaper.
 const otherTopicsPaper = defineCollection({
-  loader: glob({ pattern: "*/papers/*.{md,mdx}", base: `./${OTHER_TOPICS_PATH}` }),
+  loader: glob({
+    pattern: "*/papers/*.{md,mdx}",
+    base: `./${OTHER_TOPICS_PATH}`,
+  }),
   schema: z.object({
     title: z.string(),
     authors: z.array(z.string()).optional(),
@@ -230,4 +243,16 @@ const postsEn = defineCollection({
   schema: z.unknown(),
 });
 
-export const collections = { posts, pages, ebooks, resources, videos, research, curriculum, curriculumPaper, otherTopics, otherTopicsPaper, postsEn };
+export const collections = {
+  posts,
+  pages,
+  ebooks,
+  resources,
+  videos,
+  research,
+  curriculum,
+  curriculumPaper,
+  otherTopics,
+  otherTopicsPaper,
+  postsEn,
+};

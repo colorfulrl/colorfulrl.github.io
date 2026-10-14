@@ -6,8 +6,17 @@ import { useTranslations } from "@/i18n";
 type Props = CollectionEntry<"videos">;
 
 const { data } = Astro.props;
-const { title, titleEn, youtube, src, thumbnail, description, descriptionEn, date } =
-  data;
+const {
+  title,
+  titleEn,
+  youtube,
+  src,
+  thumbnail,
+  description,
+  descriptionEn,
+  date,
+  playlists,
+} = data;
 
 const t = useTranslations();
 const tEn = useTranslations("en");
@@ -80,7 +89,18 @@ const formattedDate = date
       <span data-en={titleEn || undefined}>{title}</span>
     </h2>
 
-    {formattedDate && <p class="text-muted-foreground text-xs">{formattedDate}</p>}
+    {
+      (formattedDate || playlists.length > 0) && (
+        <div class="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+          {formattedDate && <span>{formattedDate}</span>}
+          {playlists.map(name => (
+            <span class="bg-accent/10 text-accent rounded px-2 py-0.5 font-medium">
+              {name}
+            </span>
+          ))}
+        </div>
+      )
+    }
 
     {
       description && (
