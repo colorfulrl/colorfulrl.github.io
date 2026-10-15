@@ -650,6 +650,143 @@ export const GRAPH_STATIC_NODES: GraphNode[] = [
     description:
       "Auto-curriculum for generalization: instead of a fixed training distribution, a level generator (adversary, regret-based sampler, or edit-based mutator) is trained to keep proposing levels at the frontier of the current policy's ability, so the policy sees a curriculum that tracks its own weaknesses. Instances: PAIRED (adversarial minimax regret), PLR (prioritizes high-regret levels from a fixed pool by replay), ACCEL (evolves levels via edits + PLR-style prioritization).",
   },
+
+  // ── HRL for language / LLM fine-tuning ──────────────────────────
+  {
+    id: "rl-for-llm",
+    type: "approach",
+    label: "RL for LLM",
+    description:
+      "Using RL to train a language model: alignment from preferences (RLHF), offline utility maximization (ILQL), multi-turn agents (ArCHer, GLIDER), and reasoning RL with verifiable rewards (GRPO, ReMA, HICRA). The opposite direction of LLM-Guided RL, where the LLM is a component inside an RL agent's loop; here RL is the tool that shapes the LLM.",
+  },
+  {
+    id: "options-framework",
+    type: "concept",
+    label: "Options Framework",
+    description:
+      "Formalizes temporally extended actions as options o = (initiation set, intra-option policy, termination condition), turning an MDP into a semi-MDP over skills. The concrete unit of temporal abstraction that eigenoptions discover, that HAL's language instructions play the role of, and that Voyager's stored programs mimic.",
+  },
+  {
+    id: "proto-value-functions",
+    type: "concept",
+    label: "Proto-Value Functions",
+    description:
+      "Basis functions for value approximation given by the smoothest eigenvectors of the state-graph Laplacian — they capture the global geometry (bottlenecks, diffusive flow) of the environment independent of any reward. Machado et al. show they implicitly define options (eigenoptions); in the non-tabular case they coincide with the span of the successor representation.",
+  },
+  {
+    id: "language-as-abstraction",
+    type: "concept",
+    label: "Language as Abstraction",
+    description:
+      "Using natural language as the interface between levels of a hierarchy: the high-level policy emits instructions, subtasks, or meta-thoughts as text, and the low-level policy conditions on them. Language is compositional, so it generalizes zero-shot to unseen instruction combinations — HAL (instructions), GLIDER (subtask plans), ReMA (meta-thoughts).",
+  },
+  {
+    id: "hindsight-relabeling",
+    type: "concept",
+    label: "Hindsight Relabeling",
+    description:
+      "Turning failures into supervision: relabel a trajectory with the goal it actually achieved so a sparse-reward episode still yields a positive training signal. HER relabels with goal states; HAL's hindsight instruction relabeling (HIR) extends it to language statements describing the reached state.",
+  },
+  {
+    id: "token-level-mdp",
+    type: "concept",
+    label: "Token-Level MDP",
+    description:
+      "Casts text generation as an MDP in which each token is an action and the history is the state, so RL can be applied to language models — with a coarser utterance-level (turn-level) MDP above it for multi-turn tasks. ILQL does Q-learning at the token level; ArCHer and GLIDER put a critic at the utterance level to shorten the effective horizon.",
+  },
+  {
+    id: "hierarchical-llm-agent",
+    type: "concept",
+    label: "Hierarchical LLM Agent",
+    description:
+      "Splitting an LLM policy into a high-level part that plans (subtasks, strategies, meta-thoughts) and a low-level part that executes (tokens, primitive actions), often sharing one backbone and distinguished by prompts or adapters. ArCHer (utterance critic + token actor), GLIDER (planner + controller), ReMA (meta-thinker + reasoner), HICRA (planning vs execution tokens).",
+  },
+  {
+    id: "planning-execution-tokens",
+    type: "concept",
+    label: "Planning vs Execution Tokens",
+    description:
+      "The observation that RL-trained reasoning traces mix a small set of high-leverage planning tokens (strategic phrases like 'let me try a different approach') with many low-level execution tokens. Learning first consolidates execution, then the bottleneck moves to planning; uniform GRPO credit dilutes the planning signal. Measured via Strategic Grams and semantic entropy, exploited by HICRA.",
+  },
+  {
+    id: "ai-feedback-reward",
+    type: "concept",
+    label: "AI Feedback Reward",
+    description:
+      "Using an LLM's judgments (preferences, scores) instead of humans' or hand-coded rewards as the training signal. Motif asks an LLM to compare pairs of in-game captions and distills the preferences into an intrinsic reward — easier to evaluate than to generate. Close kin to RLAIF; shares reward-hacking risks with RLHF.",
+  },
+  {
+    id: "automatic-curriculum",
+    type: "concept",
+    label: "Automatic Curriculum",
+    description:
+      "The agent (or a model) picks its own next task so difficulty tracks current ability, with no hand-designed schedule. Voyager has GPT-4 propose the next Minecraft task from the agent's state and progress — an LLM-driven counterpart of unsupervised environment design, aimed at open-ended novelty-seeking.",
+  },
+  {
+    id: "skill-library",
+    type: "concept",
+    label: "Skill Library",
+    description:
+      "A growing, retrievable store of reusable skills. In Voyager each verified program is saved with an embedding of its description and retrieved for related tasks, letting complex skills compose simpler ones and avoiding catastrophic forgetting — code as the action space, a non-parametric analogue of learned options.",
+  },
+  {
+    id: "grpo",
+    type: "algorithm",
+    label: "GRPO",
+    description:
+      "Group Relative Policy Optimization — PPO-style update without a value network: sample a group of responses per prompt and use the group-normalized reward as the advantage for every token. The workhorse of RL with verifiable rewards for LLM reasoning; the baseline ReMA's multi-turn variant and HICRA build on.",
+  },
+
+  // ── Benchmarks for language agents / LLM RL ─────────────────────
+  {
+    id: "nethack",
+    type: "benchmark",
+    label: "NetHack",
+    description:
+      "NetHack Learning Environment — a procedurally generated, extremely long-horizon roguelike with sparse rewards and rich text messages. Motif's testbed: score, staircase-descent, and Oracle tasks where extrinsic-only and curiosity baselines stall.",
+  },
+  {
+    id: "scienceworld",
+    type: "benchmark",
+    label: "ScienceWorld",
+    description:
+      "Text-based interactive science-experiment environment with 30 task types and dense per-step rewards, requiring multi-step planning from language. GLIDER's main testbed, with seen and unseen task splits.",
+  },
+  {
+    id: "alfworld",
+    type: "benchmark",
+    label: "ALFWorld",
+    description:
+      "Text-aligned household-manipulation environment (find, move, heat, clean objects) with sparse binary success rewards over long horizons. Used with ScienceWorld to evaluate LLM agents such as GLIDER.",
+  },
+  {
+    id: "webshop",
+    type: "benchmark",
+    label: "WebShop",
+    description:
+      "Simulated e-commerce website where an agent searches, browses, and buys a product matching a natural-language request. Multi-turn, with dense partial-match rewards; used by ArCHer to compare against prompted GPT-3.5 agents.",
+  },
+  {
+    id: "lmrl-gym",
+    type: "benchmark",
+    label: "LMRL Gym",
+    description:
+      "Suite of multi-turn language tasks for evaluating RL on LLMs (Abdulhai et al., 2023): Twenty Questions, Guess My City, and others that require information-seeking and credit assignment across turns. Used by ArCHer; Visual Dialogue and Wordle play the same role for ILQL.",
+  },
+  {
+    id: "clevr-robot",
+    type: "benchmark",
+    label: "CLEVR-Robot",
+    description:
+      "MuJoCo robot-arm environment with CLEVR-style objects, introduced with HAL (Jiang et al., 2019): tasks like moving, ordering, and sorting objects are specified by language statements, probing compositional generalization of language-conditioned hierarchical policies.",
+  },
+  {
+    id: "math-reasoning",
+    type: "benchmark",
+    label: "Math Reasoning",
+    description:
+      "Verifiable-reward reasoning benchmarks for LLM RL: MATH500, GSM8K, AIME24/25, AMC23, OlympiadBench, Minerva. ReMA and HICRA train on MATH/DAPO-style data and report in-distribution and out-of-distribution accuracy here.",
+  },
 ];
 
 // Edges between non-paper nodes.
@@ -785,4 +922,51 @@ export const GRAPH_STATIC_EDGES: GraphEdge[] = [
   { source: "rl",                   target: "meta-rl",              label: "includes" },
   { source: "meta-rl",              target: "task-inference",       label: "includes" },
   { source: "meta-rl",              target: "meta-exploration",     label: "includes" },
+
+  // Hierarchical RL: options, language, LLM agents
+  { source: "temporal-abstraction", target: "options-framework",    label: "formalized by" },
+  { source: "options-framework",    target: "proto-value-functions", label: "discovered via" },
+  { source: "proto-value-functions", target: "successor-features",  label: "equivalent to" },
+  { source: "hierarchical-rl",      target: "language-as-abstraction", label: "includes" },
+  { source: "language-as-abstraction", target: "goal-conditioned-rl", label: "extends" },
+  { source: "language-as-abstraction", target: "hindsight-relabeling", label: "uses" },
+  { source: "goal-conditioned-rl",  target: "hindsight-relabeling", label: "uses" },
+  { source: "hierarchical-rl",      target: "hierarchical-llm-agent", label: "includes" },
+  { source: "hierarchical-llm-agent", target: "language-as-abstraction", label: "uses" },
+  { source: "hierarchical-llm-agent", target: "credit-assignment",  label: "addresses" },
+  { source: "hierarchical-llm-agent", target: "planning-execution-tokens", label: "includes" },
+  { source: "planning-execution-tokens", target: "credit-assignment", label: "reweights" },
+
+  // RL for LLM
+  { source: "rl",                   target: "rl-for-llm",           label: "includes" },
+  { source: "rl-for-llm",           target: "rlhf",                 label: "includes" },
+  { source: "rl-for-llm",           target: "token-level-mdp",      label: "based on" },
+  { source: "rl-for-llm",           target: "hierarchical-llm-agent", label: "includes" },
+  { source: "rl-for-llm",           target: "grpo",                 label: "uses" },
+  { source: "rl-for-llm",           target: "offline-rl",           label: "uses" },
+  { source: "rl-for-llm",           target: "llm-for-rl",           label: "reverse of" },
+  { source: "token-level-mdp",      target: "pomdp",                label: "special case of" },
+  { source: "policy-gradient",      target: "grpo",                 label: "uses" },
+  { source: "grpo",                 target: "math-reasoning",       label: "evaluated on" },
+
+  // LLM-guided RL: AI feedback, curriculum, skills
+  { source: "llm-for-rl",           target: "ai-feedback-reward",   label: "includes" },
+  { source: "ai-feedback-reward",   target: "intrinsic-motivation", label: "provides" },
+  { source: "ai-feedback-reward",   target: "rlhf",                 label: "variant of" },
+  { source: "ai-feedback-reward",   target: "reward-hacking",       label: "risks" },
+  { source: "llm-for-rl",           target: "automatic-curriculum", label: "includes" },
+  { source: "automatic-curriculum", target: "unsupervised-environment-design", label: "related to" },
+  { source: "llm-for-rl",           target: "skill-library",        label: "includes" },
+  { source: "skill-library",        target: "options-framework",    label: "analogue of" },
+  { source: "skill-library",        target: "skill-discovery",      label: "related to" },
+  { source: "automatic-curriculum", target: "exploration",          label: "drives" },
+
+  // Benchmarks
+  { source: "ai-feedback-reward",   target: "nethack",              label: "evaluated on" },
+  { source: "hierarchical-llm-agent", target: "scienceworld",       label: "evaluated on" },
+  { source: "hierarchical-llm-agent", target: "alfworld",           label: "evaluated on" },
+  { source: "hierarchical-llm-agent", target: "webshop",            label: "evaluated on" },
+  { source: "hierarchical-llm-agent", target: "lmrl-gym",           label: "evaluated on" },
+  { source: "hierarchical-llm-agent", target: "math-reasoning",     label: "evaluated on" },
+  { source: "language-as-abstraction", target: "clevr-robot",       label: "evaluated on" },
 ];
